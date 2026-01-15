@@ -1,0 +1,41 @@
+{
+  "repoName": "365-Weapons-IOS-Admin",
+  "codebases": [
+    {
+      "id": "ios",
+      "root": ".",
+      "type": "swift",
+      "include": ["**/*.swift", "**/*.md", "**/*.plist", "**/*.xcconfig"],
+      "exclude": ["**/DerivedData/**", "**/.build/**", "**/Pods/**", "**/*.xcuserstate", "**/365Weapons Website/**"]
+    },
+    {
+      "id": "web",
+      "root": "365Weapons Website",
+      "type": "nextjs",
+      "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json", "**/*.md"],
+      "exclude": [
+        "**/node_modules/**",
+        "**/.next/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/.turbo/**",
+        "**/coverage/**"
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "createdAt": "2026-01-14T00:00:00Z",
+    "description": "Codebase map for 365Weapons iOS Admin and Web repositories"
+  },
+  "rules": {
+    "hardRules": [
+      "Any retrieval must include codebaseId",
+      "Paths are always resolved relative to that codebase root",
+      "No agent may invent Convex mutation/query names unless explicitly created in a Feature Pack",
+      "No agent may invent tables/indexes unless explicitly created in a Feature Pack",
+      "No agent may invent auth rules unless explicitly created in a Feature Pack",
+      "No agent may invent URLs/routes for admin/vendor panels unless explicitly created in a Feature Pack"
+    ]
+  }
+}

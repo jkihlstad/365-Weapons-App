@@ -1,0 +1,805 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1000001 /* 365WeaponsAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000002 /* 365WeaponsAdminApp.swift */; };
+		A1000003 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000004 /* ContentView.swift */; };
+		A1000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000006 /* Assets.xcassets */; };
+		A1000007 /* DataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000008 /* DataModels.swift */; };
+		A1000009 /* OrchestrationAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000010 /* OrchestrationAgent.swift */; };
+		A1000011 /* DashboardAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000012 /* DashboardAgent.swift */; };
+		A1000013 /* ProductsAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000014 /* ProductsAgent.swift */; };
+		A1000015 /* ChatAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000016 /* ChatAgent.swift */; };
+		A1000017 /* ConvexClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000018 /* ConvexClient.swift */; };
+		A1000019 /* ClerkAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000020 /* ClerkAuthClient.swift */; };
+		A1000021 /* OpenRouterClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000022 /* OpenRouterClient.swift */; };
+		A1000023 /* OpenAIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000024 /* OpenAIClient.swift */; };
+		A1000025 /* PostgreSQLClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000026 /* PostgreSQLClient.swift */; };
+		A1000027 /* LanceDBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000028 /* LanceDBClient.swift */; };
+		A1000029 /* LangGraphService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000030 /* LangGraphService.swift */; };
+		A1000031 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000032 /* DashboardView.swift */; };
+		A1000033 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000034 /* DashboardViewModel.swift */; };
+		A1000035 /* OrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000036 /* OrdersView.swift */; };
+		A1000037 /* ProductsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000038 /* ProductsView.swift */; };
+		A1000039 /* AIChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000040 /* AIChatView.swift */; };
+		A1000041 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000042 /* AnalyticsView.swift */; };
+		A1000043 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000044 /* SettingsView.swift */; };
+		A1000045 /* ActionTrackingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000046 /* ActionTrackingService.swift */; };
+		A1000047 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000048 /* Extensions.swift */; };
+		A1000100 /* Clerk in Frameworks */ = {isa = PBXBuildFile; productRef = A1000101 /* Clerk */; };
+		A1000200 /* DebugLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000201 /* DebugLogger.swift */; };
+		A2648D3C /* SecureConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DCBB64 /* SecureConfiguration.swift */; };
+		A2FDB71F /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BB1613 /* ConfigurationManager.swift */; };
+		A2B7D9AB /* SyncModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9D63A /* SyncModels.swift */; };
+		A238AAC9 /* WebhookModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A245C26B /* WebhookModels.swift */; };
+		A20DB892 /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2ABEF3F /* CacheService.swift */; };
+		A2A2F453 /* OfflineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A4EC2E /* OfflineManager.swift */; };
+		A24E5FB8 /* WebhookService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28F8704 /* WebhookService.swift */; };
+		A2FC2798 /* ErrorHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23250BE /* ErrorHandling.swift */; };
+		A2D4F12B /* ErrorRecoveryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2799121 /* ErrorRecoveryService.swift */; };
+		A2C22B97 /* StatCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26CA1A3 /* StatCard.swift */; };
+		A2A23EC9 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B5DF08 /* SearchBar.swift */; };
+		A2DD7E1C /* StatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2ECA63B /* StatusBadge.swift */; };
+		A294955A /* LoadingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26C225D /* LoadingOverlay.swift */; };
+		A21EEF06 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A296E1FE /* EmptyStateView.swift */; };
+		A2652F4D /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A241C4C5 /* SectionHeader.swift */; };
+		A26ED32E /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A241813F /* ActionButton.swift */; };
+		A2F04FCB /* ErrorAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2088BDF /* ErrorAlertView.swift */; };
+		A2F2C666 /* ErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EA66AC /* ErrorBanner.swift */; };
+		A26B37EC /* OfflineIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2D4E237 /* OfflineIndicator.swift */; };
+		A2627379 /* OrdersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B4E35B /* OrdersViewModel.swift */; };
+		A291D52D /* ProductsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29518C3 /* ProductsViewModel.swift */; };
+		A26A511F /* WebhookSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E383BE /* WebhookSettingsView.swift */; };
+		A3119C45 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C01EA0 /* ModelTests.swift */; };
+		A3E3DBAD /* NetworkingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FCECAA /* NetworkingTests.swift */; };
+		A30848B4 /* AgentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30C5998 /* AgentTests.swift */; };
+		A3AF7C8D /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A346159C /* ServiceTests.swift */; };
+		A3116040 /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A366CCF1 /* ViewModelTests.swift */; };
+		A311FD76 /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32E684F /* IntegrationTests.swift */; };
+/* End PBXBuildFile section */
+
+
+/* Begin PBXContainerItemProxy section */
+		A3E026DB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1000071 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1000067;
+			remoteInfo = 365WeaponsAdmin;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A1000002 /* 365WeaponsAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 365WeaponsAdminApp.swift; sourceTree = "<group>"; };
+		A1000004 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A1000006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1000008 /* DataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModels.swift; sourceTree = "<group>"; };
+		A1000010 /* OrchestrationAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrchestrationAgent.swift; sourceTree = "<group>"; };
+		A1000012 /* DashboardAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardAgent.swift; sourceTree = "<group>"; };
+		A1000014 /* ProductsAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsAgent.swift; sourceTree = "<group>"; };
+		A1000016 /* ChatAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAgent.swift; sourceTree = "<group>"; };
+		A1000018 /* ConvexClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvexClient.swift; sourceTree = "<group>"; };
+		A1000020 /* ClerkAuthClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClerkAuthClient.swift; sourceTree = "<group>"; };
+		A1000022 /* OpenRouterClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenRouterClient.swift; sourceTree = "<group>"; };
+		A1000024 /* OpenAIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIClient.swift; sourceTree = "<group>"; };
+		A1000026 /* PostgreSQLClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostgreSQLClient.swift; sourceTree = "<group>"; };
+		A1000028 /* LanceDBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanceDBClient.swift; sourceTree = "<group>"; };
+		A1000030 /* LangGraphService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangGraphService.swift; sourceTree = "<group>"; };
+		A1000032 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		A1000034 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		A1000036 /* OrdersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersView.swift; sourceTree = "<group>"; };
+		A1000038 /* ProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsView.swift; sourceTree = "<group>"; };
+		A1000040 /* AIChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIChatView.swift; sourceTree = "<group>"; };
+		A1000042 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
+		A1000044 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A1000046 /* ActionTrackingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTrackingService.swift; sourceTree = "<group>"; };
+		A1000048 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		A1000050 /* 365WeaponsAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "365WeaponsAdmin.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1000103 /* 365WeaponsAdmin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "365WeaponsAdmin.entitlements"; sourceTree = "<group>"; };
+		A1000201 /* DebugLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogger.swift; sourceTree = "<group>"; };
+		A2DCBB64 /* SecureConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureConfiguration.swift; sourceTree = "<group>"; };
+		A2BB1613 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
+		A2B9D63A /* SyncModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncModels.swift; sourceTree = "<group>"; };
+		A245C26B /* WebhookModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebhookModels.swift; sourceTree = "<group>"; };
+		A2ABEF3F /* CacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheService.swift; sourceTree = "<group>"; };
+		A2A4EC2E /* OfflineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineManager.swift; sourceTree = "<group>"; };
+		A28F8704 /* WebhookService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebhookService.swift; sourceTree = "<group>"; };
+		A23250BE /* ErrorHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandling.swift; sourceTree = "<group>"; };
+		A2799121 /* ErrorRecoveryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorRecoveryService.swift; sourceTree = "<group>"; };
+		A26CA1A3 /* StatCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCard.swift; sourceTree = "<group>"; };
+		A2B5DF08 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		A2ECA63B /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
+		A26C225D /* LoadingOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingOverlay.swift; sourceTree = "<group>"; };
+		A296E1FE /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+		A241C4C5 /* SectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeader.swift; sourceTree = "<group>"; };
+		A241813F /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
+		A2088BDF /* ErrorAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorAlertView.swift; sourceTree = "<group>"; };
+		A2EA66AC /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
+		A2D4E237 /* OfflineIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineIndicator.swift; sourceTree = "<group>"; };
+		A2B4E35B /* OrdersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersViewModel.swift; sourceTree = "<group>"; };
+		A29518C3 /* ProductsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsViewModel.swift; sourceTree = "<group>"; };
+		A2E383BE /* WebhookSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebhookSettingsView.swift; sourceTree = "<group>"; };
+		A3C01EA0 /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
+		A3FCECAA /* NetworkingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingTests.swift; sourceTree = "<group>"; };
+		A30C5998 /* AgentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentTests.swift; sourceTree = "<group>"; };
+		A346159C /* ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
+		A366CCF1 /* ViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelTests.swift; sourceTree = "<group>"; };
+		A32E684F /* IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
+		A370F589 /* 365WeaponsAdminTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "365WeaponsAdminTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1000051 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000100 /* ClerkSDK in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+
+		A3C75B00 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1000052 = {
+			isa = PBXGroup;
+			children = (
+				A1000053 /* 365WeaponsAdmin */,
+				A1000054 /* Products */,
+				A38CBC18 /* 365WeaponsAdminTests */);
+			sourceTree = "<group>";
+		};
+		A1000053 /* 365WeaponsAdmin */ = {
+			isa = PBXGroup;
+			children = (
+				A1000002 /* 365WeaponsAdminApp.swift */,
+				A1000103 /* 365WeaponsAdmin.entitlements */,
+				A1000055 /* Views */,
+				A1000056 /* Models */,
+				A1000057 /* Agents */,
+				A1000058 /* Networking */,
+				A1000059 /* Services */,
+				A1000060 /* Utils */,
+				A1000061 /* Resources */,
+				A28D8260 /* Config */);
+			path = "365WeaponsAdmin";
+			sourceTree = "<group>";
+		};
+		A1000054 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1000050 /* 365WeaponsAdmin.app */,
+				A370F589 /* 365WeaponsAdminTests.xctest */);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1000055 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A1000004 /* ContentView.swift */,
+				A1000044 /* SettingsView.swift */,
+				A1000062 /* Dashboard */,
+				A1000063 /* Orders */,
+				A1000064 /* Products */,
+				A1000065 /* Chat */,
+				A1000066 /* Analytics */,
+				A24BDC9A /* Components */,
+				A2C8D694 /* Settings */);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A1000056 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A1000008 /* DataModels.swift */,
+				A2B9D63A /* SyncModels.swift */,
+				A245C26B /* WebhookModels.swift */);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A1000057 /* Agents */ = {
+			isa = PBXGroup;
+			children = (
+				A1000010 /* OrchestrationAgent.swift */,
+				A1000012 /* DashboardAgent.swift */,
+				A1000014 /* ProductsAgent.swift */,
+				A1000016 /* ChatAgent.swift */,
+			);
+			path = Agents;
+			sourceTree = "<group>";
+		};
+		A1000058 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				A1000018 /* ConvexClient.swift */,
+				A1000020 /* ClerkAuthClient.swift */,
+				A1000022 /* OpenRouterClient.swift */,
+				A1000024 /* OpenAIClient.swift */,
+				A1000026 /* PostgreSQLClient.swift */,
+				A1000028 /* LanceDBClient.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		A1000059 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A1000030 /* LangGraphService.swift */,
+				A1000046 /* ActionTrackingService.swift */,
+				A2ABEF3F /* CacheService.swift */,
+				A2A4EC2E /* OfflineManager.swift */,
+				A28F8704 /* WebhookService.swift */);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A1000060 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				A1000048 /* Extensions.swift */,
+				A1000201 /* DebugLogger.swift */,
+				A23250BE /* ErrorHandling.swift */,
+				A2799121 /* ErrorRecoveryService.swift */);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		A1000061 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A1000006 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A1000062 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				A1000032 /* DashboardView.swift */,
+				A1000034 /* DashboardViewModel.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		A1000063 /* Orders */ = {
+			isa = PBXGroup;
+			children = (
+				A1000036 /* OrdersView.swift */,
+				A2B4E35B /* OrdersViewModel.swift */);
+			path = Orders;
+			sourceTree = "<group>";
+		};
+		A1000064 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1000038 /* ProductsView.swift */,
+				A29518C3 /* ProductsViewModel.swift */);
+			path = Products;
+			sourceTree = "<group>";
+		};
+		A1000065 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				A1000040 /* AIChatView.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		A1000066 /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				A1000042 /* AnalyticsView.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
+
+		A28D8260 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				A2DCBB64 /* SecureConfiguration.swift */,
+				A2BB1613 /* ConfigurationManager.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		A24BDC9A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A26CA1A3 /* StatCard.swift */,
+				A2B5DF08 /* SearchBar.swift */,
+				A2ECA63B /* StatusBadge.swift */,
+				A26C225D /* LoadingOverlay.swift */,
+				A296E1FE /* EmptyStateView.swift */,
+				A241C4C5 /* SectionHeader.swift */,
+				A241813F /* ActionButton.swift */,
+				A2088BDF /* ErrorAlertView.swift */,
+				A2EA66AC /* ErrorBanner.swift */,
+				A2D4E237 /* OfflineIndicator.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		A2C8D694 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A2E383BE /* WebhookSettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+
+		A38CBC18 /* 365WeaponsAdminTests */ = {
+			isa = PBXGroup;
+			children = (
+				A3C01EA0 /* ModelTests.swift */,
+				A3FCECAA /* NetworkingTests.swift */,
+				A30C5998 /* AgentTests.swift */,
+				A346159C /* ServiceTests.swift */,
+				A366CCF1 /* ViewModelTests.swift */,
+				A32E684F /* IntegrationTests.swift */,
+			);
+			path = 365WeaponsAdminTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1000067 /* 365WeaponsAdmin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1000068 /* Build configuration list for PBXNativeTarget "365WeaponsAdmin" */;
+			buildPhases = (
+				A1000069 /* Sources */,
+				A1000051 /* Frameworks */,
+				A1000070 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "365WeaponsAdmin";
+			packageProductDependencies = (
+				A1000101 /* ClerkSDK */,
+			);
+			productName = "365WeaponsAdmin";
+			productReference = A1000050 /* 365WeaponsAdmin.app */;
+			productType = "com.apple.product-type.application";
+		};
+
+		A36CD6FC /* 365WeaponsAdminTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A3B8CBC1 /* Build configuration list for PBXNativeTarget "365WeaponsAdminTests" */;
+			buildPhases = (
+				A300E7AC /* Sources */,
+				A3C75B00 /* Frameworks */,
+				A3DF17D4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A3FFD72F /* PBXTargetDependency */,
+			);
+			name = 365WeaponsAdminTests;
+			productName = 365WeaponsAdminTests;
+			productReference = A370F589 /* 365WeaponsAdminTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1000071 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A1000067 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A1000072 /* Build configuration list for PBXProject "365WeaponsAdmin" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1000052;
+			packageReferences = (
+				A1000102 /* XCRemoteSwiftPackageReference "clerk-ios" */,
+			);
+			productRefGroup = A1000054 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1000067 /* 365WeaponsAdmin */,
+				A36CD6FC /* 365WeaponsAdminTests */);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1000070 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000005 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+
+		A3DF17D4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1000069 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000001 /* 365WeaponsAdminApp.swift in Sources */,
+				A1000003 /* ContentView.swift in Sources */,
+				A1000007 /* DataModels.swift in Sources */,
+				A1000009 /* OrchestrationAgent.swift in Sources */,
+				A1000011 /* DashboardAgent.swift in Sources */,
+				A1000013 /* ProductsAgent.swift in Sources */,
+				A1000015 /* ChatAgent.swift in Sources */,
+				A1000017 /* ConvexClient.swift in Sources */,
+				A1000019 /* ClerkAuthClient.swift in Sources */,
+				A1000021 /* OpenRouterClient.swift in Sources */,
+				A1000023 /* OpenAIClient.swift in Sources */,
+				A1000025 /* PostgreSQLClient.swift in Sources */,
+				A1000027 /* LanceDBClient.swift in Sources */,
+				A1000029 /* LangGraphService.swift in Sources */,
+				A1000031 /* DashboardView.swift in Sources */,
+				A1000033 /* DashboardViewModel.swift in Sources */,
+				A1000035 /* OrdersView.swift in Sources */,
+				A1000037 /* ProductsView.swift in Sources */,
+				A1000039 /* AIChatView.swift in Sources */,
+				A1000041 /* AnalyticsView.swift in Sources */,
+				A1000043 /* SettingsView.swift in Sources */,
+				A1000045 /* ActionTrackingService.swift in Sources */,
+				A1000047 /* Extensions.swift in Sources */,
+				A1000200 /* DebugLogger.swift in Sources */,
+				A2648D3C /* SecureConfiguration.swift in Sources */,
+				A2FDB71F /* ConfigurationManager.swift in Sources */,
+				A2B7D9AB /* SyncModels.swift in Sources */,
+				A238AAC9 /* WebhookModels.swift in Sources */,
+				A20DB892 /* CacheService.swift in Sources */,
+				A2A2F453 /* OfflineManager.swift in Sources */,
+				A24E5FB8 /* WebhookService.swift in Sources */,
+				A2FC2798 /* ErrorHandling.swift in Sources */,
+				A2D4F12B /* ErrorRecoveryService.swift in Sources */,
+				A2C22B97 /* StatCard.swift in Sources */,
+				A2A23EC9 /* SearchBar.swift in Sources */,
+				A2DD7E1C /* StatusBadge.swift in Sources */,
+				A294955A /* LoadingOverlay.swift in Sources */,
+				A21EEF06 /* EmptyStateView.swift in Sources */,
+				A2652F4D /* SectionHeader.swift in Sources */,
+				A26ED32E /* ActionButton.swift in Sources */,
+				A2F04FCB /* ErrorAlertView.swift in Sources */,
+				A2F2C666 /* ErrorBanner.swift in Sources */,
+				A26B37EC /* OfflineIndicator.swift in Sources */,
+				A2627379 /* OrdersViewModel.swift in Sources */,
+				A291D52D /* ProductsViewModel.swift in Sources */,
+				A26A511F /* WebhookSettingsView.swift in Sources */);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+
+		A300E7AC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3119C45 /* ModelTests.swift in Sources */,
+				A3E3DBAD /* NetworkingTests.swift in Sources */,
+				A30848B4 /* AgentTests.swift in Sources */,
+				A3AF7C8D /* ServiceTests.swift in Sources */,
+				A3116040 /* ViewModelTests.swift in Sources */,
+				A311FD76 /* IntegrationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1000073 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A1000074 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A1000075 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "365WeaponsAdmin/365WeaponsAdmin.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "365Weapons Admin";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app uses the microphone for voice commands.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.weapons365.admin";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A1000076 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "365WeaponsAdmin/365WeaponsAdmin.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "365Weapons Admin";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app uses the microphone for voice commands.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.weapons365.admin";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+
+		A3033897 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.365weapons.admin.tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/365WeaponsAdmin.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/365WeaponsAdmin";
+			};
+			name = Debug;
+		};
+
+		A3924301 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.365weapons.admin.tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/365WeaponsAdmin.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/365WeaponsAdmin";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1000068 /* Build configuration list for PBXNativeTarget "365WeaponsAdmin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000075 /* Debug */,
+				A1000076 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1000072 /* Build configuration list for PBXProject "365WeaponsAdmin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000073 /* Debug */,
+				A1000074 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+
+		A3B8CBC1 /* Build configuration list for PBXNativeTarget "365WeaponsAdminTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3033897 /* Debug */,
+				A3924301 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A1000102 /* XCRemoteSwiftPackageReference "clerk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/clerk/clerk-ios";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.71.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A1000101 /* Clerk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1000102 /* XCRemoteSwiftPackageReference "clerk-ios" */;
+			productName = Clerk;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+
+/* Begin PBXTargetDependency section */
+		A3FFD72F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1000067 /* 365WeaponsAdmin */;
+			targetProxy = A3E026DB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+	rootObject = A1000071 /* Project object */;
+}

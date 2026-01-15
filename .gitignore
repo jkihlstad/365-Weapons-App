@@ -1,0 +1,98 @@
+# Xcode
+build/
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+*.xcscmblueprint
+*.xcworkspace
+!default.xcworkspace
+
+# Swift Package Manager
+.build/
+Packages/
+Package.resolved
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# CocoaPods
+Pods/
+*.xcworkspace
+
+# Carthage
+Carthage/Build/
+Carthage/Checkouts/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# Code Injection
+iOSInjectionProject/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.mobileprovision
+secrets/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python (backend)
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+*.egg-info/
+dist/
+backend/lancedb_data/
+
+# Logs
+*.log
+logs/
+
+# Test output
+coverage/
+*.gcda
+*.gcno
+*.gcov
+
+# Archives
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+
+# Separate repositories
+365Weapons Website/

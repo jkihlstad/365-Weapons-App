@@ -1,0 +1,21 @@
+{
+  "sourcePackId": "365-weapons:main:FP-0001-initial:1736812800",
+  "branch": "main",
+  "commitSHA": "FP-0001-initial",
+  "timestamp": 1736812800,
+  "createdAt": "2026-01-14T00:00:00Z",
+  "description": "Feature Pack 0001 - Repo Split Index + Unified Contracts + Actions Audit Log",
+  "codebases": {
+    "ios": {
+      "fileCount": 0,
+      "chunkCount": 0,
+      "lastIndexed": null
+    },
+    "web": {
+      "fileCount": 0,
+      "chunkCount": 0,
+      "lastIndexed": null
+    }
+  },
+  "status": "pending_indexing"
+}
