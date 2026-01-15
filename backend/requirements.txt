@@ -1,13 +1,11 @@
-# LanceDB and LangGraph Backend Dependencies
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
-lancedb==0.4.0
-langgraph==0.0.26
-langchain==0.1.4
-langchain-openai==0.0.5
-openai==1.10.0
-pydantic==2.5.3
-python-dotenv==1.0.0
-httpx==0.26.0
-numpy==1.26.3
-pyarrow==15.0.0
+# 365 Weapons Admin Backend Dependencies
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+lancedb>=0.6.0
+openai>=1.30.0
+pydantic>=2.5.0
+python-dotenv>=1.0.0
+httpx>=0.26.0
+numpy>=1.26.0
+pyarrow>=15.0.0
+pandas>=2.0.0
