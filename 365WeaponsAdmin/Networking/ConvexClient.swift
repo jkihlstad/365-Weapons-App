@@ -11,7 +11,7 @@ import Combine
 
 // MARK: - Convex Configuration
 struct ConvexConfig {
-    static let deploymentURL = "https://clear-pony-963.convex.cloud"
+    static let deploymentURL = "https://guiding-oriole-926.convex.cloud"
     static let httpEndpoint = "\(deploymentURL)/api"
 
     // Function endpoints
