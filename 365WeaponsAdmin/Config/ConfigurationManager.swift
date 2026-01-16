@@ -286,6 +286,15 @@ final class ConfigurationManager: ObservableObject {
                     "Convex URL should contain '.convex.cloud' or '.convex.site'"
                 )
             }
+
+        case .backendAuth:
+            // Backend auth tokens should be at least 32 characters (hex string)
+            if key.count < 32 {
+                throw ConfigurationError.invalidKeyFormat(
+                    keyType,
+                    "Backend auth token should be at least 32 characters"
+                )
+            }
         }
     }
 
