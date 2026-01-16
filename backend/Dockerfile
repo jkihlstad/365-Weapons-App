@@ -27,5 +27,6 @@ ENV PORT=8000
 # Expose port
 EXPOSE 8000
 
-# Run the application using shell form to expand $PORT
-CMD uvicorn main:app --host 0.0.0.0 --port $PORT
+# Run the application - explicitly use shell to expand $PORT
+ENTRYPOINT ["/bin/sh", "-c"]
+CMD ["uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
