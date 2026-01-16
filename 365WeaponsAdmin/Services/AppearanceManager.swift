@@ -82,19 +82,15 @@ class AppearanceManager: ObservableObject {
     // MARK: - Initialization
 
     private init() {
-        // Load saved preferences
-        let savedMode = UserDefaults.standard.string(forKey: "appearanceMode") ?? "dark"
-        self.appearanceMode = AppearanceMode(rawValue: savedMode) ?? .dark
+        // FORCE dark mode - ignore saved preferences
+        self.appearanceMode = .dark
+        self.currentColorScheme = .dark
 
-        // Default: Light mode from 7 AM to 7 PM
+        // Default: Light mode from 7 AM to 7 PM (unused since dark mode is forced)
         self.autoLightStartHour = UserDefaults.standard.object(forKey: "autoLightStartHour") as? Int ?? 7
         self.autoDarkStartHour = UserDefaults.standard.object(forKey: "autoDarkStartHour") as? Int ?? 19
 
-        // Initial update
-        updateColorScheme()
-
-        // Start timer for auto mode checking (every minute)
-        startAutoModeTimer()
+        // No need for timer since dark mode is forced
     }
 
     deinit {
@@ -103,21 +99,14 @@ class AppearanceManager: ObservableObject {
 
     // MARK: - Public Methods
 
-    /// Force update the color scheme
+    /// Force update the color scheme - ALWAYS dark mode
     func updateColorScheme() {
-        switch appearanceMode {
-        case .light:
-            currentColorScheme = .light
-        case .dark:
-            currentColorScheme = .dark
-        case .auto:
-            currentColorScheme = calculateAutoColorScheme()
-        }
+        currentColorScheme = .dark  // Force dark mode always
     }
 
-    /// Check if currently in dark mode
+    /// Check if currently in dark mode - FORCED to always be dark
     var isDarkMode: Bool {
-        currentColorScheme == .dark
+        true  // Force dark mode always
     }
 
     // MARK: - Private Methods
