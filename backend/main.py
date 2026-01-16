@@ -1,20 +1,27 @@
 """
 365 Weapons Admin Backend
-LanceDB Vector Search + LangGraph Agent Orchestration API
+LanceDB Vector Search + AI Services API
+
+- OpenAI: Embeddings, TTS, Whisper (speech)
+- OpenRouter: Chat completions, AI assistants
 """
 
 import os
 import json
 import uuid
+import base64
+import tempfile
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Header, Depends
+from fastapi import FastAPI, HTTPException, Header, Depends, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import lancedb
 import numpy as np
+import httpx
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -24,10 +31,18 @@ load_dotenv()
 # Configuration
 # ============================================================================
 
+# OpenAI - for embeddings, TTS, and Whisper
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-AUTH_TOKEN = os.getenv("API_AUTH_TOKEN", "your-secret-token")
 EMBEDDING_MODEL = "text-embedding-3-small"
 EMBEDDING_DIMENSION = 1536
+
+# OpenRouter - for chat and AI completions
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+DEFAULT_CHAT_MODEL = "anthropic/claude-3.5-sonnet"  # or "openai/gpt-4-turbo"
+
+# Auth
+AUTH_TOKEN = os.getenv("API_AUTH_TOKEN", "your-secret-token")
 
 # ============================================================================
 # Database Setup
@@ -41,15 +56,17 @@ async def lifespan(app: FastAPI):
     """Initialize connections on startup."""
     global db, openai_client
 
-    # Initialize LanceDB (uses local storage, can be configured for S3)
+    # Initialize LanceDB
     db_path = os.getenv("LANCEDB_PATH", "./lancedb_data")
     db = lancedb.connect(db_path)
 
-    # Initialize OpenAI client for embeddings
+    # Initialize OpenAI client for embeddings/TTS/Whisper
     if OPENAI_API_KEY:
         openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
     print(f"LanceDB initialized at {db_path}")
+    print(f"OpenAI configured: {bool(OPENAI_API_KEY)}")
+    print(f"OpenRouter configured: {bool(OPENROUTER_API_KEY)}")
     yield
 
     print("Shutting down...")
@@ -60,15 +77,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="365 Weapons Admin API",
-    description="LanceDB Vector Search and LangGraph Agent Orchestration",
+    description="LanceDB Vector Search, OpenRouter AI, OpenAI TTS/Whisper",
     version="1.0.0",
     lifespan=lifespan
 )
 
-# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -106,7 +122,7 @@ class HybridSearchRequest(BaseModel):
     query: str
     table: str = "products_embeddings"
     limit: int = 10
-    alpha: float = 0.5  # Balance between vector and keyword search
+    alpha: float = 0.5
     filter: Optional[Dict[str, Any]] = None
 
 class InsertRequest(BaseModel):
@@ -119,22 +135,38 @@ class DeleteRequest(BaseModel):
 
 class CreateTableRequest(BaseModel):
     table: str
-    schema_fields: Dict[str, str]  # field_name: field_type
+    schema_fields: Dict[str, str]
 
-class GraphRunRequest(BaseModel):
-    graph_name: str
-    input_message: str
+# OpenRouter Chat Models
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+class ChatRequest(BaseModel):
+    messages: List[ChatMessage]
+    model: str = DEFAULT_CHAT_MODEL
+    max_tokens: int = 1000
+    temperature: float = 0.7
+    stream: bool = False
+
+class AgentRequest(BaseModel):
+    agent_type: str  # "admin_assistant", "order_processor", "analytics"
+    message: str
     context: Optional[Dict[str, Any]] = None
-    config: Optional[Dict[str, Any]] = None
+    model: str = DEFAULT_CHAT_MODEL
 
-class GraphState(BaseModel):
-    messages: List[Dict[str, Any]] = []
-    current_agent: Optional[str] = None
-    context: Dict[str, Any] = {}
-    tool_calls: List[Dict[str, Any]] = []
-    result: Optional[str] = None
-    error: Optional[str] = None
-    is_complete: bool = False
+# OpenAI TTS/Whisper Models
+class TTSRequest(BaseModel):
+    text: str
+    voice: str = "alloy"  # alloy, echo, fable, onyx, nova, shimmer
+    model: str = "tts-1"  # tts-1 or tts-1-hd
+    speed: float = 1.0
+    response_format: str = "mp3"  # mp3, opus, aac, flac
+
+class TranscriptionResponse(BaseModel):
+    text: str
+    language: Optional[str] = None
+    duration: Optional[float] = None
 
 # ============================================================================
 # Helper Functions
@@ -154,16 +186,49 @@ def get_embedding(text: str) -> List[float]:
 def ensure_table_exists(table_name: str):
     """Ensure the table exists, create if not."""
     if table_name not in db.table_names():
-        # Create with default schema
         db.create_table(table_name, data=[{
             "id": "placeholder",
             "text": "placeholder",
             "vector": [0.0] * EMBEDDING_DIMENSION,
             "metadata": "{}"
         }])
-        # Delete placeholder
         table = db.open_table(table_name)
         table.delete('id = "placeholder"')
+
+async def call_openrouter(
+    messages: List[Dict[str, str]],
+    model: str = DEFAULT_CHAT_MODEL,
+    max_tokens: int = 1000,
+    temperature: float = 0.7
+) -> str:
+    """Call OpenRouter API for chat completions."""
+    if not OPENROUTER_API_KEY:
+        raise HTTPException(status_code=500, detail="OpenRouter API key not configured")
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{OPENROUTER_BASE_URL}/chat/completions",
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://365weapons.com",
+                "X-Title": "365 Weapons Admin"
+            },
+            json={
+                "model": model,
+                "messages": messages,
+                "max_tokens": max_tokens,
+                "temperature": temperature
+            },
+            timeout=60.0
+        )
+
+        if response.status_code != 200:
+            error_detail = response.text
+            raise HTTPException(status_code=response.status_code, detail=f"OpenRouter error: {error_detail}")
+
+        result = response.json()
+        return result["choices"][0]["message"]["content"]
 
 # ============================================================================
 # LanceDB Endpoints
@@ -188,23 +253,16 @@ async def vector_search(
         ensure_table_exists(request.table)
         table = db.open_table(request.table)
 
-        # Generate query embedding
         query_embedding = get_embedding(request.query)
-
-        # Perform search
         results = table.search(query_embedding).limit(request.limit).to_pandas()
 
-        # Convert to list of dicts
         items = results.to_dict(orient='records')
-
-        # Parse metadata JSON strings
         for item in items:
             if 'metadata' in item and isinstance(item['metadata'], str):
                 try:
                     item['metadata'] = json.loads(item['metadata'])
                 except:
                     pass
-            # Remove vector from response (too large)
             if 'vector' in item:
                 del item['vector']
 
@@ -228,21 +286,18 @@ async def hybrid_search(
         ensure_table_exists(request.table)
         table = db.open_table(request.table)
 
-        # Generate query embedding
         query_embedding = get_embedding(request.query)
-
-        # Vector search
         vector_results = table.search(query_embedding).limit(request.limit * 2).to_pandas()
 
-        # Keyword search (simple text matching)
-        keyword_results = table.search(request.query, query_type="fts").limit(request.limit * 2).to_pandas()
+        try:
+            keyword_results = table.search(request.query, query_type="fts").limit(request.limit * 2).to_pandas()
+        except:
+            keyword_results = vector_results.head(0)  # Empty if FTS not available
 
-        # Combine and rerank using alpha
         combined = {}
-
         for idx, row in vector_results.iterrows():
             doc_id = row.get('id', str(idx))
-            score = 1.0 / (idx + 1)  # Rank-based score
+            score = 1.0 / (idx + 1)
             combined[doc_id] = {
                 'data': row.to_dict(),
                 'vector_score': score * (1 - request.alpha),
@@ -261,7 +316,6 @@ async def hybrid_search(
                     'keyword_score': score * request.alpha
                 }
 
-        # Sort by combined score
         ranked = sorted(
             combined.items(),
             key=lambda x: x[1]['vector_score'] + x[1]['keyword_score'],
@@ -301,10 +355,8 @@ async def insert_documents(
         ensure_table_exists(request.table)
         table = db.open_table(request.table)
 
-        # Process documents
         records = []
         for doc in request.documents:
-            # Generate embedding from text field
             text = doc.get('text', doc.get('content', doc.get('description', '')))
             if not text:
                 text = json.dumps(doc)
@@ -319,7 +371,6 @@ async def insert_documents(
             }
             records.append(record)
 
-        # Insert into table
         table.add(records)
 
         return {
@@ -342,8 +393,6 @@ async def delete_documents(
             raise HTTPException(status_code=404, detail=f"Table {request.table} not found")
 
         table = db.open_table(request.table)
-
-        # Delete each ID
         for doc_id in request.ids:
             table.delete(f'id = "{doc_id}"')
 
@@ -370,7 +419,6 @@ async def create_table(
                 "message": "Table already exists"
             }
 
-        # Create with placeholder data
         db.create_table(request.table, data=[{
             "id": "placeholder",
             "text": "placeholder",
@@ -378,7 +426,6 @@ async def create_table(
             "metadata": "{}"
         }])
 
-        # Remove placeholder
         table = db.open_table(request.table)
         table.delete('id = "placeholder"')
 
@@ -400,50 +447,38 @@ async def list_tables(token: str = Depends(verify_token)):
     }
 
 # ============================================================================
-# LangGraph Endpoints
+# OpenRouter Chat Endpoints
 # ============================================================================
 
-@app.get("/langgraph")
-async def langgraph_health():
-    """Health check for LangGraph service."""
+@app.get("/openrouter")
+async def openrouter_health():
+    """Health check for OpenRouter service."""
     return {
-        "status": "healthy",
-        "service": "langgraph",
-        "available_graphs": ["admin_assistant", "order_processor", "analytics"]
+        "status": "healthy" if OPENROUTER_API_KEY else "not_configured",
+        "service": "openrouter",
+        "default_model": DEFAULT_CHAT_MODEL
     }
 
-@app.post("/langgraph/run")
-async def run_graph(
-    request: GraphRunRequest,
+@app.post("/openrouter/chat")
+async def chat_completion(
+    request: ChatRequest,
     token: str = Depends(verify_token)
 ):
-    """Run a LangGraph workflow."""
+    """Chat completion via OpenRouter."""
     try:
-        # Initialize state
-        state = GraphState(
-            messages=[{
-                "id": str(uuid.uuid4()),
-                "role": "user",
-                "content": request.input_message,
-                "timestamp": datetime.utcnow().isoformat()
-            }],
-            context=request.context or {}
-        )
+        messages = [{"role": m.role, "content": m.content} for m in request.messages]
 
-        # Route to appropriate graph
-        if request.graph_name == "admin_assistant":
-            result = await run_admin_assistant(state, request.config)
-        elif request.graph_name == "order_processor":
-            result = await run_order_processor(state, request.config)
-        elif request.graph_name == "analytics":
-            result = await run_analytics_agent(state, request.config)
-        else:
-            raise HTTPException(status_code=404, detail=f"Graph {request.graph_name} not found")
+        response = await call_openrouter(
+            messages=messages,
+            model=request.model,
+            max_tokens=request.max_tokens,
+            temperature=request.temperature
+        )
 
         return {
             "status": "success",
-            "graph": request.graph_name,
-            "result": result.dict()
+            "model": request.model,
+            "response": response
         }
 
     except HTTPException:
@@ -451,68 +486,248 @@ async def run_graph(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-async def run_admin_assistant(state: GraphState, config: Optional[Dict] = None) -> GraphState:
-    """Run the admin assistant graph."""
-    if not openai_client:
-        state.error = "OpenAI client not configured"
-        state.is_complete = True
-        return state
-
+@app.post("/openrouter/agent")
+async def run_agent(
+    request: AgentRequest,
+    token: str = Depends(verify_token)
+):
+    """Run an AI agent via OpenRouter."""
     try:
-        # Simple assistant using OpenAI
-        messages = [
-            {"role": "system", "content": """You are an AI assistant for the 365 Weapons admin dashboard.
-            You help administrators manage orders, products, and business analytics.
-            Be concise and helpful."""}
-        ]
+        # Build system prompt based on agent type
+        system_prompts = {
+            "admin_assistant": """You are an AI assistant for the 365 Weapons admin dashboard.
+You help administrators manage orders, products, partners, and business operations.
+Be concise, professional, and helpful. Provide actionable insights when possible.""",
 
-        for msg in state.messages:
-            messages.append({
-                "role": msg.get("role", "user"),
-                "content": msg.get("content", "")
-            })
+            "order_processor": """You are an order processing assistant for 365 Weapons.
+Help analyze orders, suggest status updates, identify issues, and provide shipping recommendations.
+Focus on efficiency and accuracy.""",
 
-        response = openai_client.chat.completions.create(
-            model="gpt-4-turbo-preview",
-            messages=messages,
-            max_tokens=1000
+            "analytics": """You are a business analytics assistant for 365 Weapons.
+Analyze sales data, identify trends, provide insights on revenue, popular products, and partner performance.
+Present data clearly and suggest actionable improvements.""",
+
+            "products": """You are a product management assistant for 365 Weapons.
+Help with product descriptions, pricing suggestions, inventory management, and category organization.
+Understand firearm services like porting, optic cuts, and slide work."""
+        }
+
+        system_prompt = system_prompts.get(
+            request.agent_type,
+            "You are a helpful assistant for the 365 Weapons admin dashboard."
         )
 
-        assistant_message = response.choices[0].message.content
+        # Add context to system prompt if provided
+        if request.context:
+            context_str = json.dumps(request.context, indent=2)
+            system_prompt += f"\n\nCurrent context:\n{context_str}"
 
-        state.messages.append({
-            "id": str(uuid.uuid4()),
-            "role": "assistant",
-            "content": assistant_message,
-            "agent_name": "admin_assistant",
-            "timestamp": datetime.utcnow().isoformat()
-        })
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": request.message}
+        ]
 
-        state.result = assistant_message
-        state.current_agent = "admin_assistant"
-        state.is_complete = True
+        response = await call_openrouter(
+            messages=messages,
+            model=request.model,
+            max_tokens=1500,
+            temperature=0.7
+        )
+
+        return {
+            "status": "success",
+            "agent_type": request.agent_type,
+            "model": request.model,
+            "response": response
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================================================
+# OpenAI TTS Endpoints
+# ============================================================================
+
+@app.get("/openai/tts")
+async def tts_health():
+    """Health check for TTS service."""
+    return {
+        "status": "healthy" if OPENAI_API_KEY else "not_configured",
+        "service": "openai_tts",
+        "voices": ["alloy", "echo", "fable", "onyx", "nova", "shimmer"],
+        "models": ["tts-1", "tts-1-hd"]
+    }
+
+@app.post("/openai/tts")
+async def text_to_speech(
+    request: TTSRequest,
+    token: str = Depends(verify_token)
+):
+    """Convert text to speech using OpenAI TTS."""
+    if not openai_client:
+        raise HTTPException(status_code=500, detail="OpenAI client not configured")
+
+    try:
+        response = openai_client.audio.speech.create(
+            model=request.model,
+            voice=request.voice,
+            input=request.text,
+            speed=request.speed,
+            response_format=request.response_format
+        )
+
+        # Return audio as streaming response
+        content_types = {
+            "mp3": "audio/mpeg",
+            "opus": "audio/opus",
+            "aac": "audio/aac",
+            "flac": "audio/flac"
+        }
+
+        return StreamingResponse(
+            response.iter_bytes(),
+            media_type=content_types.get(request.response_format, "audio/mpeg"),
+            headers={
+                "Content-Disposition": f"attachment; filename=speech.{request.response_format}"
+            }
+        )
 
     except Exception as e:
-        state.error = str(e)
-        state.is_complete = True
+        raise HTTPException(status_code=500, detail=str(e))
 
-    return state
+@app.post("/openai/tts/base64")
+async def text_to_speech_base64(
+    request: TTSRequest,
+    token: str = Depends(verify_token)
+):
+    """Convert text to speech and return as base64."""
+    if not openai_client:
+        raise HTTPException(status_code=500, detail="OpenAI client not configured")
 
-async def run_order_processor(state: GraphState, config: Optional[Dict] = None) -> GraphState:
-    """Run the order processing graph."""
-    # Placeholder for order processing logic
-    state.result = "Order processing completed"
-    state.current_agent = "order_processor"
-    state.is_complete = True
-    return state
+    try:
+        response = openai_client.audio.speech.create(
+            model=request.model,
+            voice=request.voice,
+            input=request.text,
+            speed=request.speed,
+            response_format=request.response_format
+        )
 
-async def run_analytics_agent(state: GraphState, config: Optional[Dict] = None) -> GraphState:
-    """Run the analytics agent graph."""
-    # Placeholder for analytics logic
-    state.result = "Analytics processing completed"
-    state.current_agent = "analytics"
-    state.is_complete = True
-    return state
+        # Read all bytes and encode to base64
+        audio_bytes = response.read()
+        audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+
+        return {
+            "status": "success",
+            "format": request.response_format,
+            "voice": request.voice,
+            "audio_base64": audio_base64
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================================================
+# OpenAI Whisper Endpoints
+# ============================================================================
+
+@app.get("/openai/whisper")
+async def whisper_health():
+    """Health check for Whisper service."""
+    return {
+        "status": "healthy" if OPENAI_API_KEY else "not_configured",
+        "service": "openai_whisper",
+        "models": ["whisper-1"],
+        "supported_formats": ["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"]
+    }
+
+@app.post("/openai/whisper/transcribe")
+async def transcribe_audio(
+    file: UploadFile = File(...),
+    language: Optional[str] = None,
+    token: str = Depends(verify_token)
+):
+    """Transcribe audio to text using OpenAI Whisper."""
+    if not openai_client:
+        raise HTTPException(status_code=500, detail="OpenAI client not configured")
+
+    try:
+        # Read the uploaded file
+        audio_content = await file.read()
+
+        # Create a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=f".{file.filename.split('.')[-1]}") as tmp:
+            tmp.write(audio_content)
+            tmp_path = tmp.name
+
+        try:
+            # Transcribe
+            with open(tmp_path, "rb") as audio_file:
+                kwargs = {"model": "whisper-1", "file": audio_file}
+                if language:
+                    kwargs["language"] = language
+
+                transcript = openai_client.audio.transcriptions.create(**kwargs)
+
+            return {
+                "status": "success",
+                "text": transcript.text,
+                "filename": file.filename
+            }
+
+        finally:
+            # Clean up temp file
+            os.unlink(tmp_path)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/openai/whisper/transcribe-base64")
+async def transcribe_audio_base64(
+    audio_base64: str = None,
+    filename: str = "audio.mp3",
+    language: Optional[str] = None,
+    token: str = Depends(verify_token)
+):
+    """Transcribe base64-encoded audio to text."""
+    if not openai_client:
+        raise HTTPException(status_code=500, detail="OpenAI client not configured")
+
+    if not audio_base64:
+        raise HTTPException(status_code=400, detail="audio_base64 is required")
+
+    try:
+        # Decode base64
+        audio_bytes = base64.b64decode(audio_base64)
+
+        # Get file extension
+        ext = filename.split('.')[-1] if '.' in filename else 'mp3'
+
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=f".{ext}") as tmp:
+            tmp.write(audio_bytes)
+            tmp_path = tmp.name
+
+        try:
+            with open(tmp_path, "rb") as audio_file:
+                kwargs = {"model": "whisper-1", "file": audio_file}
+                if language:
+                    kwargs["language"] = language
+
+                transcript = openai_client.audio.transcriptions.create(**kwargs)
+
+            return {
+                "status": "success",
+                "text": transcript.text
+            }
+
+        finally:
+            os.unlink(tmp_path)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ============================================================================
 # Root Endpoint
@@ -523,12 +738,18 @@ async def root():
     """API root endpoint."""
     return {
         "service": "365 Weapons Admin API",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "endpoints": {
-            "lancedb": "/lancedb",
-            "langgraph": "/langgraph"
+            "lancedb": "/lancedb - Vector search",
+            "openrouter": "/openrouter - AI chat (Claude, GPT, etc.)",
+            "tts": "/openai/tts - Text to speech",
+            "whisper": "/openai/whisper - Speech to text"
         },
-        "status": "healthy"
+        "status": {
+            "lancedb": "healthy" if db else "not_initialized",
+            "openai": "configured" if OPENAI_API_KEY else "not_configured",
+            "openrouter": "configured" if OPENROUTER_API_KEY else "not_configured"
+        }
     }
 
 # ============================================================================
