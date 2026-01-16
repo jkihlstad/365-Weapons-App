@@ -142,51 +142,16 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal)
 
-                    // Auto Mode Time Settings
-                    if appearanceManager.appearanceMode == .auto {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Auto Mode Schedule")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-
-                            HStack {
-                                Image(systemName: "sun.max.fill")
-                                    .foregroundColor(.yellow)
-                                Text("Light mode starts")
-                                Spacer()
-                                Picker("", selection: $appearanceManager.autoLightStartHour) {
-                                    ForEach(0..<24, id: \.self) { hour in
-                                        Text(formatHour(hour)).tag(hour)
-                                    }
-                                }
-                                .pickerStyle(.menu)
-                                .tint(.orange)
-                            }
-
-                            HStack {
-                                Image(systemName: "moon.fill")
-                                    .foregroundColor(.indigo)
-                                Text("Dark mode starts")
-                                Spacer()
-                                Picker("", selection: $appearanceManager.autoDarkStartHour) {
-                                    ForEach(0..<24, id: \.self) { hour in
-                                        Text(formatHour(hour)).tag(hour)
-                                    }
-                                }
-                                .pickerStyle(.menu)
-                                .tint(.orange)
-                            }
-
-                            // Current status
-                            HStack {
-                                Image(systemName: appearanceManager.isDarkMode ? "moon.fill" : "sun.max.fill")
-                                    .foregroundColor(appearanceManager.isDarkMode ? .indigo : .yellow)
-                                Text("Currently: \(appearanceManager.isDarkMode ? "Dark" : "Light") mode")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                            }
-                            .padding(.top, 4)
+                    // System mode info
+                    if appearanceManager.appearanceMode == .system {
+                        HStack {
+                            Image(systemName: appearanceManager.isDarkMode ? "moon.fill" : "sun.max.fill")
+                                .foregroundColor(appearanceManager.isDarkMode ? .indigo : .yellow)
+                            Text("Following system: \(appearanceManager.isDarkMode ? "Dark" : "Light") mode")
+                                .font(.caption)
+                                .foregroundColor(Color.appTextSecondary)
                         }
+                        .padding(.horizontal)
                     }
 
                     Toggle("Haptic Feedback", isOn: $hapticFeedback)
@@ -267,18 +232,6 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Helper Functions
-
-    private func formatHour(_ hour: Int) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h a"
-        var components = DateComponents()
-        components.hour = hour
-        if let date = Calendar.current.date(from: components) {
-            return formatter.string(from: date)
-        }
-        return "\(hour):00"
-    }
 }
 
 // MARK: - Cache Management View

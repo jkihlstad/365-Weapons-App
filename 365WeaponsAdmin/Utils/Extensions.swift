@@ -93,15 +93,84 @@ extension String {
     }
 }
 
-// MARK: - Color Extensions
+// MARK: - Theme Color Extensions
+// All colors are from Assets.xcassets with light/dark variants
 extension Color {
-    static let appPrimary = Color.orange
-    static let appSecondary = Color.red
-    static let appBackground = Color.black
-    static let appCardBackground = Color.white.opacity(0.05)
-    static let appTextPrimary = Color.white
-    static let appTextSecondary = Color.gray
+    // MARK: - Backgrounds
 
+    /// Main app background - pure black in dark mode, white in light mode
+    static var appBackground: Color {
+        Color("AppBackground")
+    }
+
+    /// Card/surface background - subtle in dark mode, white in light mode
+    static var appSurface: Color {
+        Color("AppSurface")
+    }
+
+    /// Secondary surface for nested cards
+    static var appSurface2: Color {
+        Color("AppSurface2")
+    }
+
+    /// Legacy alias for card background
+    static var appCardBackground: Color {
+        appSurface
+    }
+
+    // MARK: - Text Colors
+
+    /// Primary text color
+    static var appTextPrimary: Color {
+        Color("AppTextPrimary")
+    }
+
+    /// Secondary text color (for subtitles, captions)
+    static var appTextSecondary: Color {
+        Color("AppTextSecondary")
+    }
+
+    // MARK: - Border & Separator
+
+    /// Border and separator color
+    static var appBorder: Color {
+        Color("AppBorder")
+    }
+
+    // MARK: - Accent Colors
+
+    /// Primary accent color - red in light mode, orange in dark mode
+    static var appAccent: Color {
+        Color("AppAccent")
+    }
+
+    /// Accent background for highlighted areas
+    static var appAccentBackground: Color {
+        Color("AppAccentBackground")
+    }
+
+    /// Legacy aliases
+    static var appPrimary: Color { appAccent }
+    static var appSecondary: Color { Color("AppDanger") }
+
+    // MARK: - Status Colors
+
+    /// Danger/error color (red)
+    static var appDanger: Color {
+        Color("AppDanger")
+    }
+
+    /// Success color (green)
+    static var appSuccess: Color {
+        Color("AppSuccess")
+    }
+
+    /// Warning color (orange)
+    static var appWarning: Color {
+        Color("AppWarning")
+    }
+
+    // MARK: - Hex Initializer
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
@@ -124,6 +193,29 @@ extension Color {
             blue: Double(b) / 255,
             opacity: Double(a) / 255
         )
+    }
+}
+
+// MARK: - UIColor Extension for UIKit compatibility
+extension UIColor {
+    static var appBackground: UIColor {
+        UIColor(named: "AppBackground") ?? .systemBackground
+    }
+
+    static var appSurface: UIColor {
+        UIColor(named: "AppSurface") ?? .secondarySystemBackground
+    }
+
+    static var appTextPrimary: UIColor {
+        UIColor(named: "AppTextPrimary") ?? .label
+    }
+
+    static var appTextSecondary: UIColor {
+        UIColor(named: "AppTextSecondary") ?? .secondaryLabel
+    }
+
+    static var appAccent: UIColor {
+        UIColor(named: "AppAccent") ?? .orange
     }
 }
 

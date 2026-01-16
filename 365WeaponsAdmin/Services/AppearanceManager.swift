@@ -2,7 +2,7 @@
 //  AppearanceManager.swift
 //  365WeaponsAdmin
 //
-//  Manages app appearance (light/dark mode) with auto-switching support
+//  Manages app appearance (light/dark/system mode) properly using SwiftUI best practices
 //
 
 import SwiftUI
@@ -11,33 +11,34 @@ import Combine
 // MARK: - Appearance Mode
 
 enum AppearanceMode: String, CaseIterable, Identifiable {
+    case system = "system"
     case light = "light"
     case dark = "dark"
-    case auto = "auto"
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
+        case .system: return "System"
         case .light: return "Light"
         case .dark: return "Dark"
-        case .auto: return "Auto"
         }
     }
 
     var icon: String {
         switch self {
+        case .system: return "circle.lefthalf.filled"
         case .light: return "sun.max.fill"
         case .dark: return "moon.fill"
-        case .auto: return "circle.lefthalf.filled"
         }
     }
 
-    var description: String {
+    /// Returns the ColorScheme to use, or nil for system default
+    var colorScheme: ColorScheme? {
         switch self {
-        case .light: return "Always use light mode"
-        case .dark: return "Always use dark mode"
-        case .auto: return "Switch automatically based on time"
+        case .system: return nil
+        case .light: return .light
+        case .dark: return .dark
         }
     }
 }
@@ -53,229 +54,164 @@ class AppearanceManager: ObservableObject {
     @Published var appearanceMode: AppearanceMode {
         didSet {
             UserDefaults.standard.set(appearanceMode.rawValue, forKey: "appearanceMode")
-            updateColorScheme()
+            updateUIKitAppearance()
         }
     }
 
-    @Published var currentColorScheme: ColorScheme = .dark
+    // MARK: - Computed Properties
 
-    /// Hours for auto mode (24-hour format)
-    @Published var autoLightStartHour: Int {
-        didSet {
-            UserDefaults.standard.set(autoLightStartHour, forKey: "autoLightStartHour")
-            updateColorScheme()
-        }
+    /// The color scheme to apply, or nil for system
+    var preferredColorScheme: ColorScheme? {
+        appearanceMode.colorScheme
     }
 
-    @Published var autoDarkStartHour: Int {
-        didSet {
-            UserDefaults.standard.set(autoDarkStartHour, forKey: "autoDarkStartHour")
-            updateColorScheme()
+    /// Whether currently displaying dark mode (considers system setting when in system mode)
+    var isDarkMode: Bool {
+        switch appearanceMode {
+        case .dark:
+            return true
+        case .light:
+            return false
+        case .system:
+            // Check the current trait collection
+            return UITraitCollection.current.userInterfaceStyle == .dark
         }
     }
-
-    // MARK: - Private Properties
-
-    private var timer: Timer?
-    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
 
     private init() {
-        // FORCE dark mode - ignore saved preferences
-        self.appearanceMode = .dark
-        self.currentColorScheme = .dark
+        // Load saved preference, default to system
+        let savedMode = UserDefaults.standard.string(forKey: "appearanceMode") ?? "system"
+        self.appearanceMode = AppearanceMode(rawValue: savedMode) ?? .system
 
-        // Default: Light mode from 7 AM to 7 PM (unused since dark mode is forced)
-        self.autoLightStartHour = UserDefaults.standard.object(forKey: "autoLightStartHour") as? Int ?? 7
-        self.autoDarkStartHour = UserDefaults.standard.object(forKey: "autoDarkStartHour") as? Int ?? 19
+        // Set up UIKit navigation bar appearance
+        updateUIKitAppearance()
 
-        // No need for timer since dark mode is forced
+        // Listen for trait collection changes to update isDarkMode when in system mode
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(traitCollectionDidChange),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
-    deinit {
-        timer?.invalidate()
-    }
+    // MARK: - UIKit Appearance Setup
 
-    // MARK: - Public Methods
+    /// Configure UIKit appearances to match theme
+    private func updateUIKitAppearance() {
+        // Get colors from named assets with fallbacks
+        let backgroundColor = UIColor(named: "AppBackground") ?? .systemBackground
+        let textColor = UIColor(named: "AppTextPrimary") ?? .label
+        let accentColor = UIColor(named: "AppAccent") ?? .orange
 
-    /// Force update the color scheme - ALWAYS dark mode
-    func updateColorScheme() {
-        currentColorScheme = .dark  // Force dark mode always
-    }
+        // Navigation bar appearance
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.configureWithOpaqueBackground()
+        navBarAppearance.backgroundColor = backgroundColor
+        navBarAppearance.titleTextAttributes = [.foregroundColor: textColor]
+        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: textColor]
 
-    /// Check if currently in dark mode - FORCED to always be dark
-    var isDarkMode: Bool {
-        true  // Force dark mode always
-    }
+        UINavigationBar.appearance().standardAppearance = navBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+        UINavigationBar.appearance().compactAppearance = navBarAppearance
+        UINavigationBar.appearance().tintColor = accentColor
 
-    // MARK: - Private Methods
+        // Tab bar appearance
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithOpaqueBackground()
+        tabBarAppearance.backgroundColor = backgroundColor
 
-    private func calculateAutoColorScheme() -> ColorScheme {
-        let calendar = Calendar.current
-        let currentHour = calendar.component(.hour, from: Date())
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
 
-        // Check if current hour falls within light mode hours
-        if autoLightStartHour < autoDarkStartHour {
-            // Normal case: light during day (e.g., 7 AM to 7 PM)
-            if currentHour >= autoLightStartHour && currentHour < autoDarkStartHour {
-                return .light
-            } else {
-                return .dark
-            }
-        } else {
-            // Inverted case: light during night (unlikely but handle it)
-            if currentHour >= autoLightStartHour || currentHour < autoDarkStartHour {
-                return .light
-            } else {
-                return .dark
-            }
-        }
-    }
+        // Table view appearance
+        UITableView.appearance().backgroundColor = .clear
 
-    private func startAutoModeTimer() {
-        // Check every minute for auto mode changes
-        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                if self?.appearanceMode == .auto {
-                    self?.updateColorScheme()
+        // Force refresh windows
+        for scene in UIApplication.shared.connectedScenes {
+            if let windowScene = scene as? UIWindowScene {
+                for window in windowScene.windows {
+                    // Apply the override if not using system
+                    if let scheme = appearanceMode.colorScheme {
+                        window.overrideUserInterfaceStyle = scheme == .dark ? .dark : .light
+                    } else {
+                        window.overrideUserInterfaceStyle = .unspecified
+                    }
                 }
             }
         }
     }
-}
 
-// MARK: - Theme Colors
-
-struct Theme {
-    let colorScheme: ColorScheme
-
-    init(_ colorScheme: ColorScheme) {
-        self.colorScheme = colorScheme
+    @objc private func traitCollectionDidChange() {
+        // Trigger a refresh when system appearance changes (only matters in system mode)
+        if appearanceMode == .system {
+            objectWillChange.send()
+        }
     }
 
-    var isDark: Bool {
-        colorScheme == .dark
-    }
+    // MARK: - Public Methods
 
-    // MARK: - Background Colors
-
-    var background: Color {
-        isDark ? Color.black : Color(UIColor.systemBackground)
-    }
-
-    var secondaryBackground: Color {
-        isDark ? Color.white.opacity(0.05) : Color(UIColor.secondarySystemBackground)
-    }
-
-    var tertiaryBackground: Color {
-        isDark ? Color.white.opacity(0.1) : Color(UIColor.tertiarySystemBackground)
-    }
-
-    var cardBackground: Color {
-        isDark ? Color.white.opacity(0.05) : Color.white
-    }
-
-    // MARK: - Text Colors
-
-    var primaryText: Color {
-        isDark ? Color.white : Color.black
-    }
-
-    var secondaryText: Color {
-        isDark ? Color.white.opacity(0.7) : Color(UIColor.secondaryLabel)
-    }
-
-    var tertiaryText: Color {
-        isDark ? Color.gray : Color(UIColor.tertiaryLabel)
-    }
-
-    // MARK: - Accent Colors
-
-    var accent: Color {
-        isDark ? .orange : .red
-    }
-
-    var accentSecondary: Color {
-        isDark ? .red : .orange
-    }
-
-    var accentBackground: Color {
-        isDark ? Color.orange.opacity(0.2) : Color.red.opacity(0.15)
-    }
-
-    // MARK: - Status Colors
-
-    var success: Color {
-        .green
-    }
-
-    var warning: Color {
-        .orange
-    }
-
-    var error: Color {
-        .red
-    }
-
-    var info: Color {
-        .blue
-    }
-
-    // MARK: - Separator
-
-    var separator: Color {
-        isDark ? Color.white.opacity(0.1) : Color(UIColor.separator)
-    }
-
-    // MARK: - Form Colors
-
-    var inputBackground: Color {
-        isDark ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground)
-    }
-
-    var inputBorder: Color {
-        isDark ? Color.white.opacity(0.2) : Color(UIColor.separator)
-    }
-
-    // MARK: - Navigation Bar
-
-    var navBarBackground: Color {
-        isDark ? Color.black : Color(UIColor.systemBackground)
-    }
-
-    // MARK: - Tab Bar
-
-    var tabBarBackground: Color {
-        isDark ? Color.black.opacity(0.9) : Color(UIColor.systemBackground).opacity(0.9)
-    }
-
-    var tabBarSelectedTint: Color {
-        accent
-    }
-
-    var tabBarUnselectedTint: Color {
-        isDark ? .gray : Color(UIColor.secondaryLabel)
+    func setMode(_ mode: AppearanceMode) {
+        appearanceMode = mode
     }
 }
 
-// MARK: - Environment Key
+// MARK: - View Modifier for Theme Root
 
-struct ThemeKey: EnvironmentKey {
-    static let defaultValue = Theme(.dark)
-}
+/// Apply this modifier ONLY at the root of the app (WindowGroup)
+struct ThemeRootModifier: ViewModifier {
+    @ObservedObject var appearanceManager = AppearanceManager.shared
 
-extension EnvironmentValues {
-    var theme: Theme {
-        get { self[ThemeKey.self] }
-        set { self[ThemeKey.self] = newValue }
+    func body(content: Content) -> some View {
+        content
+            .preferredColorScheme(appearanceManager.preferredColorScheme)
+            .transaction { transaction in
+                // Disable animations on color scheme changes to prevent flashing
+                transaction.animation = nil
+            }
     }
 }
-
-// MARK: - View Extension
 
 extension View {
-    func themed(_ theme: Theme) -> some View {
-        self.environment(\.theme, theme)
+    /// Apply theme at root level only
+    func themeRoot() -> some View {
+        modifier(ThemeRootModifier())
+    }
+}
+
+// MARK: - View Modifier for Screen Background
+
+/// Apply this modifier to every screen's root view
+struct ThemedBackgroundModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background(Color.appBackground.ignoresSafeArea())
+    }
+}
+
+extension View {
+    /// Apply themed background to screen
+    func themedBackground() -> some View {
+        modifier(ThemedBackgroundModifier())
+    }
+}
+
+// MARK: - View Modifier for Lists
+
+/// Apply this modifier to Lists to fix UIKit bleed-through
+struct ThemedListModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .scrollContentBackground(.hidden)
+            .background(Color.appBackground)
+    }
+}
+
+extension View {
+    /// Apply themed styling to Lists
+    func themedList() -> some View {
+        modifier(ThemedListModifier())
     }
 }

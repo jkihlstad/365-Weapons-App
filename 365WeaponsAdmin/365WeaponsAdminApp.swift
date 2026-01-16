@@ -40,12 +40,12 @@ struct WeaponsAdminApp: App {
                 } else {
                     // Show loading screen while initializing
                     ZStack {
-                        Color.black.ignoresSafeArea()
+                        Color.appBackground.ignoresSafeArea()
                         VStack(spacing: 16) {
                             ProgressView()
-                                .tint(.orange)
+                                .tint(Color.appAccent)
                             Text("Initializing...")
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                         }
                     }
                 }
@@ -55,7 +55,7 @@ struct WeaponsAdminApp: App {
             .environmentObject(appState)
             .environmentObject(configManager)
             .environmentObject(appearanceManager)
-            .preferredColorScheme(appearanceManager.currentColorScheme)
+            .themeRoot()
             .task {
                 await initializeApp()
             }
@@ -263,7 +263,7 @@ struct APISetupView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(canSave ? Color.orange : Color.gray)
+                        .background(canSave ? Color.appAccent : Color.gray)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                     }
@@ -284,7 +284,7 @@ struct APISetupView: View {
                     Spacer(minLength: 40)
                 }
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -391,17 +391,17 @@ struct APIKeyInputField: View {
                 }
             }
             .padding()
-            .background(Color.white.opacity(0.1))
+            .background(Color.appSurface2)
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(errorMessage != nil ? Color.red : Color.clear, lineWidth: 1)
+                    .stroke(errorMessage != nil ? Color.appDanger : Color.clear, lineWidth: 1)
             )
 
             if let error = errorMessage {
                 Text(error)
                     .font(.caption)
-                    .foregroundColor(.red)
+                    .foregroundColor(Color.appDanger)
             }
 
             if let url = helpURL {
@@ -411,7 +411,7 @@ struct APIKeyInputField: View {
                         Text("Get API Key")
                     }
                     .font(.caption)
-                    .foregroundColor(.orange)
+                    .foregroundColor(Color.appAccent)
                 }
             }
         }
