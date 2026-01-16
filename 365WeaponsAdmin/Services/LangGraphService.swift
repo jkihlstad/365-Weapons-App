@@ -10,7 +10,7 @@ import Combine
 
 // MARK: - LangGraph Configuration
 struct LangGraphConfig {
-    static var serverEndpoint: String = "https://api.365weapons.com/langgraph"
+    static var serverEndpoint: String = "https://365-weapons-ios-app-production.up.railway.app/openrouter"
     static let defaultTimeout: TimeInterval = 120
 }
 

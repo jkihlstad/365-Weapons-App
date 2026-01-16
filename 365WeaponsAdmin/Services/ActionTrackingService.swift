@@ -11,7 +11,7 @@ import SwiftUI
 
 // MARK: - Action Tracking Configuration
 struct ActionTrackingConfig {
-    static var websocketURL = "wss://api.365weapons.com/actions/stream"
+    static var websocketURL = "wss://365-weapons-ios-app-production.up.railway.app/actions/stream"
     static var pollingInterval: TimeInterval = 5.0
     static var maxActionsBuffer = 100
 }

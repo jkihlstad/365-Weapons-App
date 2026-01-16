@@ -11,7 +11,7 @@ import CryptoKit
 
 // MARK: - Webhook Service Configuration
 struct WebhookServiceConfig {
-    static let apiBaseURL = "https://api.365weapons.com/webhooks"
+    static let apiBaseURL = "https://365-weapons-ios-app-production.up.railway.app/webhooks"
     static let testTimeout: TimeInterval = 30
     static let maxDeliveryHistoryItems = 100
 }

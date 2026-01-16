@@ -11,7 +11,7 @@ import Combine
 // MARK: - LanceDB Configuration
 struct LanceDBConfig {
     // LanceDB server endpoint (using LanceDB Cloud or self-hosted)
-    static var serverEndpoint: String = "https://api.365weapons.com/lancedb"
+    static var serverEndpoint: String = "https://365-weapons-ios-app-production.up.railway.app/lancedb"
 
     // Embedding model configuration
     static let embeddingModel = "text-embedding-3-small"

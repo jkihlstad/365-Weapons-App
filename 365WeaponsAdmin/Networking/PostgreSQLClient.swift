@@ -18,7 +18,7 @@ struct PostgreSQLConfig {
     static var password: String = ""
 
     // API endpoint for PostgreSQL proxy (since direct connections aren't possible from iOS)
-    static var proxyEndpoint: String = "https://api.365weapons.com/db"
+    static var proxyEndpoint: String = "https://365-weapons-ios-app-production.up.railway.app/db"
 }
 
 // MARK: - PostgreSQL Client
