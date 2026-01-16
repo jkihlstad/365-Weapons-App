@@ -2,7 +2,7 @@
 
 ## TestFlight Deployment
 
-- **Current Version**: 1.4
+- **Current Version**: 1.5
 - When pushing a new version to TestFlight, increment the version by 0.1 (e.g., 1.2 → 1.3 → 1.4)
 - Always increment the build number as well (use `agvtool new-version -all <number>`)
 
