@@ -17,9 +17,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Make start script executable
-RUN chmod +x start.sh
-
 # Create data directory for LanceDB
 RUN mkdir -p /app/lancedb_data
 
@@ -29,5 +26,5 @@ ENV LANCEDB_PATH=/app/lancedb_data
 # Expose port
 EXPOSE 8000
 
-# Run the application via start script
-CMD ["./start.sh"]
+# Run the application on port 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
