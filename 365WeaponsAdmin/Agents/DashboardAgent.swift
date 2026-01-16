@@ -333,12 +333,12 @@ class DashboardAgent: Agent, ObservableObject {
         for order in completedOrders {
             if let serviceType = order.serviceType,
                let total = order.totals?.total {
-                byService[serviceType, default: 0] += Double(total) / 100.0
+                byService[serviceType, default: 0] += total
             }
         }
 
         // Calculate averages
-        let averageOrderValue = completedOrders.isEmpty ? 0 : Double(totalRevenue) / Double(completedOrders.count) / 100.0
+        let averageOrderValue = completedOrders.isEmpty ? 0 : totalRevenue / Double(completedOrders.count)
 
         return RevenueBreakdown(
             total: stats.totalRevenue,
@@ -399,7 +399,7 @@ class DashboardAgent: Agent, ObservableObject {
             let partnerOrders = orders.filter { $0.partnerStoreId == partner.id }
             let partnerCommissions = commissions.filter { $0.partnerStoreId == partner.id }
 
-            let totalRevenue = partnerOrders.compactMap { $0.totals?.total }.reduce(0) { $0 + Double($1) / 100.0 }
+            let totalRevenue = partnerOrders.compactMap { $0.totals?.total }.reduce(0, +)
             let totalCommissions = partnerCommissions.reduce(0) { $0 + $1.commissionAmount }
             let pendingCommissions = partnerCommissions.filter { $0.status == .pending || $0.status == .eligible }.reduce(0) { $0 + $1.commissionAmount }
 

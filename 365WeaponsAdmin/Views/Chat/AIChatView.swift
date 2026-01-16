@@ -200,6 +200,44 @@ struct AIChatView: View {
 struct MessageBubble: View {
     let message: ChatMessage
 
+    /// Strip markdown formatting from text for cleaner display
+    private func stripMarkdown(_ text: String) -> String {
+        var result = text
+
+        // Remove bold (**text** or __text__)
+        result = result.replacingOccurrences(of: "\\*\\*(.+?)\\*\\*", with: "$1", options: .regularExpression)
+        result = result.replacingOccurrences(of: "__(.+?)__", with: "$1", options: .regularExpression)
+
+        // Remove italic (*text* or _text_)
+        result = result.replacingOccurrences(of: "\\*(.+?)\\*", with: "$1", options: .regularExpression)
+        result = result.replacingOccurrences(of: "(?<!_)_([^_]+)_(?!_)", with: "$1", options: .regularExpression)
+
+        // Remove headers (# Header)
+        result = result.replacingOccurrences(of: "^#{1,6}\\s*", with: "", options: .regularExpression)
+
+        // Remove code blocks (```code```)
+        result = result.replacingOccurrences(of: "```[\\s\\S]*?```", with: "", options: .regularExpression)
+
+        // Remove inline code (`code`)
+        result = result.replacingOccurrences(of: "`([^`]+)`", with: "$1", options: .regularExpression)
+
+        // Remove bullet points (- item or * item) at start of lines
+        result = result.replacingOccurrences(of: "(?m)^[\\-\\*]\\s+", with: "• ", options: .regularExpression)
+
+        // Clean up multiple newlines
+        result = result.replacingOccurrences(of: "\n{3,}", with: "\n\n", options: .regularExpression)
+
+        return result.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Get display text - strip markdown for assistant messages
+    private var displayText: String {
+        if message.role == .assistant {
+            return stripMarkdown(message.content)
+        }
+        return message.content
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             if message.role == .assistant {
@@ -221,7 +259,7 @@ struct MessageBubble: View {
             }
 
             VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 4) {
-                Text(message.content)
+                Text(displayText)
                     .font(.body)
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)

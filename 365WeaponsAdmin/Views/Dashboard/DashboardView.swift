@@ -180,6 +180,13 @@ struct DashboardView: View {
                 }
             }
         } catch {
+            // Ignore cancelled request errors (e.g., when view refreshes)
+            let nsError = error as NSError
+            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                print("Request cancelled (normal during view refresh)")
+                return
+            }
+
             let appError = AppError.from(error)
 
             await MainActor.run {

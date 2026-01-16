@@ -48,6 +48,14 @@ struct Product: Codable, Identifiable, Hashable {
     }
 }
 
+// MARK: - Order Item (for legacy orders)
+struct OrderItem: Codable {
+    let productId: String
+    let title: String
+    let price: Double
+    let quantity: Int
+}
+
 // MARK: - Order
 struct Order: Codable, Identifiable {
     let id: String
@@ -65,16 +73,174 @@ struct Order: Codable, Identifiable {
     let createdAt: Date
     let paidAt: Date?
 
+    // Legacy fields for product orders
+    let userId: String?
+    let items: [OrderItem]?
+    let total: Double?
+
+    // Additional optional fields that Convex may return
+    let customerPhone: String?
+    let returnShippingAddressType: String?
+    let selectedOptions: AnyCodable?
+    let stripeCustomerId: String?
+    let stripePaymentIntentId: String?
+    let stripeSessionId: String?
+    let notes: String?
+    let trackingNumber: String?
+    let completedAt: Date?
+    let cancelledAt: Date?
+
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case orderNumber, placedBy, partnerStoreId, partnerCodeUsed
         case serviceType, status, totals, userEmail, endCustomerInfo
         case billingAddress, returnShippingAddressSnapshot, createdAt, paidAt
+        case userId, items, total
+        case customerPhone, returnShippingAddressType, selectedOptions
+        case stripeCustomerId, stripePaymentIntentId, stripeSessionId
+        case notes, trackingNumber, completedAt, cancelledAt
+    }
+
+    // Custom decoder to handle missing/extra fields gracefully
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        id = try container.decode(String.self, forKey: .id)
+        orderNumber = try container.decode(String.self, forKey: .orderNumber)
+        placedBy = try container.decode(OrderPlacedBy.self, forKey: .placedBy)
+        partnerStoreId = try container.decodeIfPresent(String.self, forKey: .partnerStoreId)
+        partnerCodeUsed = try container.decodeIfPresent(String.self, forKey: .partnerCodeUsed)
+        serviceType = try container.decodeIfPresent(ServiceType.self, forKey: .serviceType)
+
+        // Decode status with fallback for unknown values
+        if let statusValue = try? container.decode(OrderStatus.self, forKey: .status) {
+            status = statusValue
+        } else {
+            let statusString = try container.decode(String.self, forKey: .status)
+            status = OrderStatus(rawValue: statusString) ?? .pending
+        }
+
+        totals = try container.decodeIfPresent(OrderTotals.self, forKey: .totals)
+        userEmail = try container.decodeIfPresent(String.self, forKey: .userEmail)
+        endCustomerInfo = try container.decodeIfPresent(CustomerInfo.self, forKey: .endCustomerInfo)
+        billingAddress = try container.decodeIfPresent(Address.self, forKey: .billingAddress)
+        returnShippingAddressSnapshot = try container.decodeIfPresent(Address.self, forKey: .returnShippingAddressSnapshot)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        paidAt = try container.decodeIfPresent(Date.self, forKey: .paidAt)
+
+        // Legacy fields
+        userId = try container.decodeIfPresent(String.self, forKey: .userId)
+        items = try container.decodeIfPresent([OrderItem].self, forKey: .items)
+        total = try container.decodeIfPresent(Double.self, forKey: .total)
+
+        // Additional optional fields
+        customerPhone = try container.decodeIfPresent(String.self, forKey: .customerPhone)
+        returnShippingAddressType = try container.decodeIfPresent(String.self, forKey: .returnShippingAddressType)
+        selectedOptions = try container.decodeIfPresent(AnyCodable.self, forKey: .selectedOptions)
+        stripeCustomerId = try container.decodeIfPresent(String.self, forKey: .stripeCustomerId)
+        stripePaymentIntentId = try container.decodeIfPresent(String.self, forKey: .stripePaymentIntentId)
+        stripeSessionId = try container.decodeIfPresent(String.self, forKey: .stripeSessionId)
+        notes = try container.decodeIfPresent(String.self, forKey: .notes)
+        trackingNumber = try container.decodeIfPresent(String.self, forKey: .trackingNumber)
+        completedAt = try container.decodeIfPresent(Date.self, forKey: .completedAt)
+        cancelledAt = try container.decodeIfPresent(Date.self, forKey: .cancelledAt)
+    }
+
+    // Manual initializer for mock data
+    init(
+        id: String,
+        orderNumber: String,
+        placedBy: OrderPlacedBy,
+        partnerStoreId: String? = nil,
+        partnerCodeUsed: String? = nil,
+        serviceType: ServiceType? = nil,
+        status: OrderStatus,
+        totals: OrderTotals? = nil,
+        userEmail: String? = nil,
+        endCustomerInfo: CustomerInfo? = nil,
+        billingAddress: Address? = nil,
+        returnShippingAddressSnapshot: Address? = nil,
+        createdAt: Date,
+        paidAt: Date? = nil,
+        userId: String? = nil,
+        items: [OrderItem]? = nil,
+        total: Double? = nil,
+        customerPhone: String? = nil,
+        returnShippingAddressType: String? = nil,
+        selectedOptions: AnyCodable? = nil,
+        stripeCustomerId: String? = nil,
+        stripePaymentIntentId: String? = nil,
+        stripeSessionId: String? = nil,
+        notes: String? = nil,
+        trackingNumber: String? = nil,
+        completedAt: Date? = nil,
+        cancelledAt: Date? = nil
+    ) {
+        self.id = id
+        self.orderNumber = orderNumber
+        self.placedBy = placedBy
+        self.partnerStoreId = partnerStoreId
+        self.partnerCodeUsed = partnerCodeUsed
+        self.serviceType = serviceType
+        self.status = status
+        self.totals = totals
+        self.userEmail = userEmail
+        self.endCustomerInfo = endCustomerInfo
+        self.billingAddress = billingAddress
+        self.returnShippingAddressSnapshot = returnShippingAddressSnapshot
+        self.createdAt = createdAt
+        self.paidAt = paidAt
+        self.userId = userId
+        self.items = items
+        self.total = total
+        self.customerPhone = customerPhone
+        self.returnShippingAddressType = returnShippingAddressType
+        self.selectedOptions = selectedOptions
+        self.stripeCustomerId = stripeCustomerId
+        self.stripePaymentIntentId = stripePaymentIntentId
+        self.stripeSessionId = stripeSessionId
+        self.notes = notes
+        self.trackingNumber = trackingNumber
+        self.completedAt = completedAt
+        self.cancelledAt = cancelledAt
+    }
+
+    // Custom encoder
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(id, forKey: .id)
+        try container.encode(orderNumber, forKey: .orderNumber)
+        try container.encode(placedBy, forKey: .placedBy)
+        try container.encodeIfPresent(partnerStoreId, forKey: .partnerStoreId)
+        try container.encodeIfPresent(partnerCodeUsed, forKey: .partnerCodeUsed)
+        try container.encodeIfPresent(serviceType, forKey: .serviceType)
+        try container.encode(status, forKey: .status)
+        try container.encodeIfPresent(totals, forKey: .totals)
+        try container.encodeIfPresent(userEmail, forKey: .userEmail)
+        try container.encodeIfPresent(endCustomerInfo, forKey: .endCustomerInfo)
+        try container.encodeIfPresent(billingAddress, forKey: .billingAddress)
+        try container.encodeIfPresent(returnShippingAddressSnapshot, forKey: .returnShippingAddressSnapshot)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encodeIfPresent(paidAt, forKey: .paidAt)
+        try container.encodeIfPresent(userId, forKey: .userId)
+        try container.encodeIfPresent(items, forKey: .items)
+        try container.encodeIfPresent(total, forKey: .total)
+        try container.encodeIfPresent(customerPhone, forKey: .customerPhone)
+        try container.encodeIfPresent(returnShippingAddressType, forKey: .returnShippingAddressType)
+        try container.encodeIfPresent(selectedOptions, forKey: .selectedOptions)
+        try container.encodeIfPresent(stripeCustomerId, forKey: .stripeCustomerId)
+        try container.encodeIfPresent(stripePaymentIntentId, forKey: .stripePaymentIntentId)
+        try container.encodeIfPresent(stripeSessionId, forKey: .stripeSessionId)
+        try container.encodeIfPresent(notes, forKey: .notes)
+        try container.encodeIfPresent(trackingNumber, forKey: .trackingNumber)
+        try container.encodeIfPresent(completedAt, forKey: .completedAt)
+        try container.encodeIfPresent(cancelledAt, forKey: .cancelledAt)
     }
 
     var formattedTotal: String {
         guard let total = totals?.total else { return "$0.00" }
-        return String(format: "$%.2f", Double(total) / 100.0)
+        return String(format: "$%.2f", total)
     }
 
     var customerEmail: String {
@@ -91,6 +257,8 @@ enum ServiceType: String, Codable, CaseIterable {
     case porting = "PORTING"
     case opticCut = "OPTIC_CUT"
     case slideEngraving = "SLIDE_ENGRAVING"
+    case slidePolishing = "SLIDE_POLISHING"
+    case otherService = "OTHER_SERVICE"
     case other = "OTHER"
 
     var displayName: String {
@@ -98,6 +266,8 @@ enum ServiceType: String, Codable, CaseIterable {
         case .porting: return "Porting"
         case .opticCut: return "Optic Cut"
         case .slideEngraving: return "Slide Engraving"
+        case .slidePolishing: return "Slide Polishing"
+        case .otherService: return "Other Service"
         case .other: return "Other"
         }
     }
@@ -107,12 +277,15 @@ enum ServiceType: String, Codable, CaseIterable {
         case .porting: return "wrench.and.screwdriver"
         case .opticCut: return "scope"
         case .slideEngraving: return "pencil.and.scribble"
+        case .slidePolishing: return "sparkles"
+        case .otherService: return "wrench"
         case .other: return "cube"
         }
     }
 }
 
 enum OrderStatus: String, Codable, CaseIterable {
+    case pending = "pending"
     case awaitingPayment = "AWAITING_PAYMENT"
     case awaitingShipment = "AWAITING_SHIPMENT"
     case inProgress = "IN_PROGRESS"
@@ -121,6 +294,7 @@ enum OrderStatus: String, Codable, CaseIterable {
 
     var displayName: String {
         switch self {
+        case .pending: return "Pending"
         case .awaitingPayment: return "Awaiting Payment"
         case .awaitingShipment: return "Awaiting Shipment"
         case .inProgress: return "In Progress"
@@ -131,6 +305,7 @@ enum OrderStatus: String, Codable, CaseIterable {
 
     var color: String {
         switch self {
+        case .pending: return "yellow"
         case .awaitingPayment: return "orange"
         case .awaitingShipment: return "blue"
         case .inProgress: return "purple"
@@ -141,11 +316,11 @@ enum OrderStatus: String, Codable, CaseIterable {
 }
 
 struct OrderTotals: Codable {
-    let subtotal: Int
-    let discountAmount: Int?
-    let tax: Int?
-    let shipping: Int?
-    let total: Int
+    let subtotal: Double
+    let discountAmount: Double?
+    let tax: Double?
+    let shipping: Double?
+    let total: Double
 }
 
 struct CustomerInfo: Codable {
@@ -155,17 +330,73 @@ struct CustomerInfo: Codable {
 }
 
 struct Address: Codable {
+    // Fields for billingAddress format
+    let addressLine1: String?
+    let addressLine2: String?
+    let fullName: String?
+    let email: String?
+    let phone: String?
+    let zipCode: String?
+
+    // Fields for returnShippingAddressSnapshot format
     let street: String?
+    let name: String?
+    let zip: String?
+
+    // Common fields
     let city: String?
     let state: String?
-    let zip: String?
     let country: String?
 
+    // Computed property to get the street address regardless of format
+    var streetAddress: String? {
+        addressLine1 ?? street
+    }
+
+    // Computed property to get the zip code regardless of format
+    var postalCode: String? {
+        zipCode ?? zip
+    }
+
+    // Computed property to get the contact name regardless of format
+    var contactName: String? {
+        fullName ?? name
+    }
+
     var formatted: String {
-        [street, city, state, zip, country]
+        [streetAddress, city, state, postalCode, country]
             .compactMap { $0 }
             .filter { !$0.isEmpty }
             .joined(separator: ", ")
+    }
+
+    // Custom initializer with defaults
+    init(
+        addressLine1: String? = nil,
+        addressLine2: String? = nil,
+        fullName: String? = nil,
+        email: String? = nil,
+        phone: String? = nil,
+        zipCode: String? = nil,
+        street: String? = nil,
+        name: String? = nil,
+        zip: String? = nil,
+        city: String? = nil,
+        state: String? = nil,
+        country: String? = nil
+    ) {
+        self.addressLine1 = addressLine1
+        self.addressLine2 = addressLine2
+        self.fullName = fullName
+        self.email = email
+        self.phone = phone
+        self.zipCode = zipCode
+        self.street = street
+        self.name = name
+        self.zip = zip
+        self.city = city
+        self.state = state
+        self.country = country
     }
 }
 
@@ -503,3 +734,4 @@ struct UpdateOrderStatusRequest: Codable {
     let orderId: String
     let status: String
 }
+

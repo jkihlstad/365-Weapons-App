@@ -491,6 +491,7 @@ struct StatusMetricCard: View {
 
     var color: Color {
         switch status {
+        case .pending: return .yellow
         case .awaitingPayment: return .orange
         case .awaitingShipment: return .blue
         case .inProgress: return .purple
@@ -608,7 +609,7 @@ class AnalyticsViewModel: ObservableObject {
             let completedOrders = orders.filter { $0.status == .completed }
             if !completedOrders.isEmpty {
                 let total = completedOrders.compactMap { $0.totals?.total }.reduce(0, +)
-                averageOrderValue = Double(total) / Double(completedOrders.count) / 100.0
+                averageOrderValue = total / Double(completedOrders.count)
             }
 
             // Service breakdown
@@ -616,7 +617,7 @@ class AnalyticsViewModel: ObservableObject {
             for order in completedOrders {
                 if let serviceType = order.serviceType,
                    let total = order.totals?.total {
-                    breakdown[serviceType, default: 0] += Double(total) / 100.0
+                    breakdown[serviceType, default: 0] += total
                 }
             }
             serviceBreakdown = breakdown.map { ServiceBreakdown(serviceType: $0.key, count: 0, revenue: $0.value) }
@@ -682,7 +683,7 @@ class AnalyticsViewModel: ObservableObject {
             let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart)!
 
             let dayOrders = orders.filter { $0.createdAt >= dayStart && $0.createdAt < dayEnd }
-            let dayRevenue = dayOrders.compactMap { $0.totals?.total }.reduce(0) { $0 + Double($1) / 100.0 }
+            let dayRevenue = dayOrders.compactMap { $0.totals?.total }.reduce(0, +)
 
             dataPoints.append(RevenueDataPoint(date: date, revenue: dayRevenue, orders: dayOrders.count))
         }

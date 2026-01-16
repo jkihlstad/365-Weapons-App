@@ -10,6 +10,7 @@ import SwiftUI
 struct ProductsView: View {
     @StateObject private var viewModel = ProductsViewModel()
     @State private var showCreateProduct = false
+    @State private var showEnhancedCreate = false
 
     var body: some View {
         NavigationStack {
@@ -45,7 +46,19 @@ struct ProductsView: View {
                         Image(systemName: viewModel.displayMode.icon)
                     }
 
-                    Button(action: { showCreateProduct = true }) {
+                    Menu {
+                        Button {
+                            showEnhancedCreate = true
+                        } label: {
+                            Label("Full Product (Recommended)", systemImage: "cube.box.fill")
+                        }
+
+                        Button {
+                            showCreateProduct = true
+                        } label: {
+                            Label("Quick Product", systemImage: "bolt")
+                        }
+                    } label: {
                         Image(systemName: "plus")
                     }
 
@@ -59,6 +72,12 @@ struct ProductsView: View {
             }
             .sheet(isPresented: $showCreateProduct) {
                 CreateProductView(viewModel: viewModel)
+            }
+            .fullScreenCover(isPresented: $showEnhancedCreate) {
+                CreateEnhancedProductView()
+                    .onDisappear {
+                        viewModel.refresh()
+                    }
             }
             .sheet(item: $viewModel.selectedProduct) { product in
                 ProductDetailView(product: product, viewModel: viewModel)
@@ -141,29 +160,70 @@ struct ProductsView: View {
 struct ProductGridCard: View {
     let product: Product
 
+    /// Construct full image URL from relative path
+    private var imageURL: URL? {
+        let baseURL = "https://365weapons.com"
+        let imagePath = product.image
+        // Handle relative paths
+        if imagePath.starts(with: "/") {
+            return URL(string: baseURL + imagePath)
+        } else if imagePath.starts(with: "http") {
+            return URL(string: imagePath)
+        }
+        return URL(string: baseURL + "/" + imagePath)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Image placeholder
-            ZStack {
-                Rectangle()
-                    .fill(Color.white.opacity(0.1))
+            // Product image - fixed square size
+            GeometryReader { geometry in
+                ZStack {
+                    Rectangle()
+                        .fill(Color.white.opacity(0.1))
 
-                Image(systemName: "cube.box.fill")
-                    .font(.largeTitle)
-                    .foregroundColor(.gray)
+                    if let url = imageURL {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: geometry.size.width, height: geometry.size.width)
+                                    .clipped()
+                            case .failure:
+                                Image(systemName: "cube.box.fill")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.gray)
+                            @unknown default:
+                                Image(systemName: "cube.box.fill")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                    } else {
+                        Image(systemName: "cube.box.fill")
+                            .font(.largeTitle)
+                            .foregroundColor(.gray)
+                    }
+                }
+                .frame(width: geometry.size.width, height: geometry.size.width)
+                .cornerRadius(12)
             }
             .aspectRatio(1, contentMode: .fit)
-            .cornerRadius(12)
 
-            // Product info
+            // Product info - fixed height for uniformity
             VStack(alignment: .leading, spacing: 4) {
                 Text(product.title)
                     .font(.subheadline.weight(.medium))
                     .lineLimit(2)
+                    .frame(height: 40, alignment: .topLeading)
 
                 Text(product.category)
                     .font(.caption)
                     .foregroundColor(.gray)
+                    .lineLimit(1)
 
                 HStack {
                     Text(product.formattedPrice)
@@ -177,6 +237,7 @@ struct ProductGridCard: View {
                         .frame(width: 8, height: 8)
                 }
             }
+            .frame(height: 80)
         }
         .padding()
         .background(Color.white.opacity(0.05))
@@ -188,17 +249,52 @@ struct ProductGridCard: View {
 struct ProductListCard: View {
     let product: Product
 
+    /// Construct full image URL from relative path
+    private var imageURL: URL? {
+        let baseURL = "https://365weapons.com"
+        let imagePath = product.image
+        if imagePath.starts(with: "/") {
+            return URL(string: baseURL + imagePath)
+        } else if imagePath.starts(with: "http") {
+            return URL(string: imagePath)
+        }
+        return URL(string: baseURL + "/" + imagePath)
+    }
+
     var body: some View {
         HStack(spacing: 16) {
-            // Image placeholder
+            // Product image - fixed 60x60 size
             ZStack {
                 Rectangle()
                     .fill(Color.white.opacity(0.1))
 
-                Image(systemName: "cube.box.fill")
-                    .foregroundColor(.gray)
+                if let url = imageURL {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .scaleEffect(0.5)
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 60, height: 60)
+                                .clipped()
+                        case .failure:
+                            Image(systemName: "cube.box.fill")
+                                .foregroundColor(.gray)
+                        @unknown default:
+                            Image(systemName: "cube.box.fill")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                } else {
+                    Image(systemName: "cube.box.fill")
+                        .foregroundColor(.gray)
+                }
             }
             .frame(width: 60, height: 60)
+            .clipped()
             .cornerRadius(8)
 
             // Product info
@@ -231,6 +327,7 @@ struct ProductListCard: View {
                 .foregroundColor(.green)
         }
         .padding()
+        .frame(height: 80)
         .background(Color.white.opacity(0.05))
         .cornerRadius(12)
     }
@@ -359,6 +456,18 @@ struct ProductDetailView: View {
     @State private var editedPrice: String
     @State private var editedInStock: Bool
 
+    /// Construct full image URL from relative path
+    private var imageURL: URL? {
+        let baseURL = "https://365weapons.com"
+        let imagePath = product.image
+        if imagePath.starts(with: "/") {
+            return URL(string: baseURL + imagePath)
+        } else if imagePath.starts(with: "http") {
+            return URL(string: imagePath)
+        }
+        return URL(string: baseURL + "/" + imagePath)
+    }
+
     init(product: Product, viewModel: ProductsViewModel) {
         self.product = product
         self.viewModel = viewModel
@@ -377,11 +486,33 @@ struct ProductDetailView: View {
                         Rectangle()
                             .fill(Color.white.opacity(0.1))
 
-                        Image(systemName: "cube.box.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(.gray)
+                        if let url = imageURL {
+                            AsyncImage(url: url) { phase in
+                                switch phase {
+                                case .empty:
+                                    ProgressView()
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                case .failure:
+                                    Image(systemName: "cube.box.fill")
+                                        .font(.system(size: 60))
+                                        .foregroundColor(.gray)
+                                @unknown default:
+                                    Image(systemName: "cube.box.fill")
+                                        .font(.system(size: 60))
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                        } else {
+                            Image(systemName: "cube.box.fill")
+                                .font(.system(size: 60))
+                                .foregroundColor(.gray)
+                        }
                     }
                     .aspectRatio(16/9, contentMode: .fit)
+                    .clipped()
                     .cornerRadius(16)
 
                     // Product info

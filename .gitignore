@@ -96,3 +96,6 @@ coverage/
 
 # Separate repositories
 365Weapons Website/
+
+# API Keys (use DefaultKeys.example.swift as template)
+365WeaponsAdmin/Config/DefaultKeys.swift

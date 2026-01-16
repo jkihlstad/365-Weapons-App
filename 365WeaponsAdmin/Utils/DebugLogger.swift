@@ -81,6 +81,7 @@ enum DebugCategory: String, CaseIterable {
     case clerk = "Clerk"
     case chat = "Chat"
     case network = "Network"
+    case agent = "Agent"
 }
 
 // MARK: - Debug Level

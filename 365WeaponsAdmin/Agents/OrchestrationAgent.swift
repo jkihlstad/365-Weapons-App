@@ -85,9 +85,14 @@ class OrchestrationAgent: ObservableObject {
     lazy var dashboardAgent = DashboardAgent()
     lazy var productsAgent = ProductsAgent()
     lazy var chatAgent = ChatAgent()
+    lazy var vendorAgent = VendorAgent()
+    lazy var customerAgent = CustomerAgent()
+    lazy var orderAgent = OrderAgent()
+    lazy var inquiryAgent = InquiryAgent()
+    lazy var commissionAgent = CommissionAgent()
 
     private var allAgents: [Agent] {
-        [dashboardAgent, productsAgent, chatAgent]
+        [dashboardAgent, productsAgent, chatAgent, vendorAgent, customerAgent, orderAgent, inquiryAgent, commissionAgent]
     }
 
     // MARK: - Dependencies
@@ -244,13 +249,18 @@ class OrchestrationAgent: ObservableObject {
         Analyze the following user request and determine which agent should handle it.
 
         Available agents:
-        1. dashboard - Analytics, statistics, revenue, orders, business insights, charts, graphs
+        1. dashboard - Analytics, statistics, revenue, business insights, charts, graphs, overall metrics
         2. products - Product management, inventory, catalog, creating/updating products, stock
-        3. chat - General questions, help, conversational AI, anything not specific to above
+        3. vendor - Vendor/partner management, partner details, partner settings, FFL dealers
+        4. customer - Customer management, contact lists, newsletter subscribers, customer info
+        5. order - Order management, order status, shipping, tracking, bulk order operations
+        6. inquiry - Service inquiries, quotes, pricing requests, inquiry status
+        7. commission - Partner commissions, payouts, commission reports, payment processing
+        8. chat - General questions, help, conversational AI, anything not specific to above
 
         User request: "\(input.message)"
 
-        Respond with ONLY one word: "dashboard", "products", or "chat"
+        Respond with ONLY one word from: "dashboard", "products", "vendor", "customer", "order", "inquiry", "commission", or "chat"
         """
 
         let response = try await openRouter.chat(
@@ -270,6 +280,16 @@ class OrchestrationAgent: ObservableObject {
             return dashboardAgent
         case let name where name.contains("product"):
             return productsAgent
+        case let name where name.contains("vendor"):
+            return vendorAgent
+        case let name where name.contains("customer"):
+            return customerAgent
+        case let name where name.contains("order"):
+            return orderAgent
+        case let name where name.contains("inquiry"):
+            return inquiryAgent
+        case let name where name.contains("commission"):
+            return commissionAgent
         default:
             return chatAgent
         }

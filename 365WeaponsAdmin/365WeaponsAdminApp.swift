@@ -80,13 +80,43 @@ struct WeaponsAdminApp: App {
             configManager.refreshStatus()
         }
 
-        // Check if we need first-run setup
-        if configManager.needsFirstRunSetup && !configManager.isFullyConfigured {
-            showSetupSheet = true
-        } else {
-            // Configure API clients with stored keys
-            await configureAPIClients()
-            isInitialized = true
+        // Auto-configure default keys if not already set
+        await autoConfigureDefaultKeys()
+
+        // Configure API clients with stored keys
+        await configureAPIClients()
+        isInitialized = true
+    }
+
+    /// Auto-configures default API keys if not already set
+    private func autoConfigureDefaultKeys() async {
+        // Default API keys from DefaultKeys.swift (gitignored)
+        // Users can change these in Settings if needed
+        let defaultKeys: [(APIKeyType, String)] = [
+            (.openRouter, DefaultKeys.openRouterAPIKey),
+            (.openAI, DefaultKeys.openAIAPIKey),
+            (.backendAuth, DefaultKeys.backendAuthToken),
+            (.convex, DefaultKeys.convexDeploymentURL)
+        ]
+
+        for (keyType, defaultValue) in defaultKeys {
+            // Only set if not already configured and default is not empty
+            if configManager.getAPIKey(for: keyType) == nil && !defaultValue.isEmpty {
+                try? configManager.setAPIKey(defaultValue, for: keyType)
+            }
+        }
+
+        // Clerk key (optional)
+        if !DefaultKeys.clerkPublishableKey.isEmpty {
+            if configManager.getAPIKey(for: .clerk) == nil {
+                try? configManager.setAPIKey(DefaultKeys.clerkPublishableKey, for: .clerk)
+            }
+        }
+
+        // Mark first-run setup as complete
+        await MainActor.run {
+            configManager.completeFirstRunSetup()
+            configManager.refreshStatus()
         }
     }
 

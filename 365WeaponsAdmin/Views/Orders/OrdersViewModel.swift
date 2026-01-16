@@ -20,6 +20,12 @@ class OrdersViewModel: ObservableObject {
     @Published var selectedStatus: OrderStatus?
     @Published var selectedOrder: Order?
 
+    // MARK: - Multi-Select Properties
+    @Published var isSelectionMode: Bool = false
+    @Published var selectedOrderIds: Set<String> = []
+    @Published var isBulkOperationInProgress: Bool = false
+    @Published var bulkOperationResult: BulkOperationResult?
+
     // MARK: - Pagination
     @Published var currentPage: Int = 0
     @Published var hasMorePages: Bool = true
@@ -75,6 +81,24 @@ class OrdersViewModel: ObservableObject {
 
     var errorMessage: String {
         error?.localizedDescription ?? ""
+    }
+
+    // MARK: - Multi-Select Computed Properties
+    var selectedOrdersCount: Int {
+        selectedOrderIds.count
+    }
+
+    var hasSelection: Bool {
+        !selectedOrderIds.isEmpty
+    }
+
+    var allFilteredSelected: Bool {
+        let filteredIds = Set(filteredOrders.map { $0.id })
+        return !filteredIds.isEmpty && filteredIds.isSubset(of: selectedOrderIds)
+    }
+
+    var selectedOrders: [Order] {
+        orders.filter { selectedOrderIds.contains($0.id) }
     }
 
     // MARK: - Dependencies
@@ -162,11 +186,17 @@ class OrdersViewModel: ObservableObject {
             self.lastCacheUpdate = Date()
 
         } catch let fetchError {
-            self.error = OrdersError.loadFailed(fetchError.localizedDescription)
-            print("Orders load error: \(fetchError)")
+            // Ignore cancelled request errors (e.g., when view refreshes)
+            let nsError = fetchError as NSError
+            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                print("Request cancelled (normal during view refresh)")
+            } else {
+                self.error = OrdersError.loadFailed(fetchError.localizedDescription)
+                print("Orders load error: \(fetchError)")
 
-            // Fall back to cached data
-            await loadCachedOrders()
+                // Fall back to cached data
+                await loadCachedOrders()
+            }
         }
 
         isLoading = false
@@ -196,7 +226,11 @@ class OrdersViewModel: ObservableObject {
             currentPage += 1
 
         } catch let fetchError {
-            self.error = OrdersError.loadFailed(fetchError.localizedDescription)
+            // Ignore cancelled request errors
+            let nsError = fetchError as NSError
+            if nsError.domain != NSURLErrorDomain || nsError.code != NSURLErrorCancelled {
+                self.error = OrdersError.loadFailed(fetchError.localizedDescription)
+            }
         }
 
         isLoadingMore = false
@@ -403,11 +437,11 @@ class OrdersViewModel: ObservableObject {
         let totalRevenue = orders
             .filter { $0.status == .completed }
             .compactMap { $0.totals?.total }
-            .reduce(0) { $0 + Double($1) / 100.0 }
+            .reduce(0, +)
 
         let averageOrderValue = orders.isEmpty ? 0.0 :
             orders.compactMap { $0.totals?.total }
-                .reduce(0) { $0 + Double($1) / 100.0 } / Double(orders.count)
+                .reduce(0, +) / Double(orders.count)
 
         let partnerOrders = orders.filter { $0.placedBy == .partner }.count
         let directOrders = orders.filter { $0.placedBy == .customer }.count
@@ -437,6 +471,122 @@ class OrdersViewModel: ObservableObject {
         let cutoffDate = Calendar.current.date(byAdding: .day, value: -days, to: Date())!
         return orders.filter { $0.createdAt >= cutoffDate }
     }
+
+    // MARK: - Multi-Select Operations
+
+    /// Toggle selection mode
+    func toggleSelectionMode() {
+        isSelectionMode.toggle()
+        if !isSelectionMode {
+            clearSelection()
+        }
+    }
+
+    /// Toggle selection for a specific order
+    func toggleSelection(orderId: String) {
+        if selectedOrderIds.contains(orderId) {
+            selectedOrderIds.remove(orderId)
+        } else {
+            selectedOrderIds.insert(orderId)
+        }
+    }
+
+    /// Check if an order is selected
+    func isSelected(orderId: String) -> Bool {
+        selectedOrderIds.contains(orderId)
+    }
+
+    /// Select all filtered orders
+    func selectAll() {
+        selectedOrderIds = Set(filteredOrders.map { $0.id })
+    }
+
+    /// Clear all selections
+    func clearSelection() {
+        selectedOrderIds.removeAll()
+    }
+
+    /// Bulk update status for selected orders
+    func bulkUpdateStatus(to status: OrderStatus) async {
+        guard !selectedOrderIds.isEmpty else { return }
+
+        isBulkOperationInProgress = true
+        var successCount = 0
+        var failedIds: [String] = []
+
+        for orderId in selectedOrderIds {
+            do {
+                let success = try await convex.updateOrderStatus(orderId: orderId, status: status.rawValue)
+                if success {
+                    successCount += 1
+                } else {
+                    failedIds.append(orderId)
+                }
+            } catch {
+                failedIds.append(orderId)
+                print("Bulk update failed for order \(orderId): \(error)")
+            }
+        }
+
+        bulkOperationResult = BulkOperationResult(
+            successCount: successCount,
+            failedCount: failedIds.count,
+            failedIds: failedIds,
+            message: "Updated \(successCount) of \(selectedOrderIds.count) orders to \(status.displayName)"
+        )
+
+        // Refresh orders after bulk operation
+        await refreshOrders()
+        clearSelection()
+        isSelectionMode = false
+        isBulkOperationInProgress = false
+    }
+
+    /// Bulk delete selected orders (placeholder - needs Convex mutation)
+    func bulkDelete() async {
+        guard !selectedOrderIds.isEmpty else { return }
+
+        isBulkOperationInProgress = true
+
+        // Note: This would need a Convex mutation for bulk deletion
+        bulkOperationResult = BulkOperationResult(
+            successCount: 0,
+            failedCount: selectedOrderIds.count,
+            failedIds: Array(selectedOrderIds),
+            message: "Bulk deletion not yet implemented on the server"
+        )
+
+        isBulkOperationInProgress = false
+    }
+
+    /// Export selected orders to CSV format
+    func exportSelectedToCSV() -> String {
+        let ordersToExport = selectedOrderIds.isEmpty ? filteredOrders : selectedOrders
+
+        var csv = "Order Number,Date,Customer Email,Status,Service Type,Total,Placed By,Partner Code\n"
+
+        for order in ordersToExport {
+            let row = [
+                order.orderNumber,
+                order.createdAt.formatted(date: .numeric, time: .omitted),
+                order.customerEmail,
+                order.status.displayName,
+                order.serviceType?.displayName ?? "N/A",
+                order.formattedTotal,
+                order.placedBy == .partner ? "Partner" : "Customer",
+                order.partnerCodeUsed ?? ""
+            ].map { "\"\($0)\"" }.joined(separator: ",")
+
+            csv += row + "\n"
+        }
+
+        return csv
+    }
+
+    /// Clear bulk operation result
+    func clearBulkResult() {
+        bulkOperationResult = nil
+    }
 }
 
 // MARK: - Order Statistics
@@ -461,6 +611,19 @@ struct OrderStatistics {
     var partnerOrderPercentage: Double {
         guard totalOrders > 0 else { return 0 }
         return Double(partnerOrders) / Double(totalOrders) * 100
+    }
+}
+
+// MARK: - Bulk Operation Result
+struct BulkOperationResult: Identifiable {
+    let id = UUID()
+    let successCount: Int
+    let failedCount: Int
+    let failedIds: [String]
+    let message: String
+
+    var isSuccess: Bool {
+        failedCount == 0
     }
 }
 

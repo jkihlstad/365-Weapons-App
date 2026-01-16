@@ -8,10 +8,11 @@
 
 import Foundation
 import Combine
+import UIKit
 
 // MARK: - Convex Configuration
 struct ConvexConfig {
-    static let deploymentURL = "https://guiding-oriole-926.convex.cloud"
+    static let deploymentURL = "https://clean-seahorse-363.convex.cloud"
     static let httpEndpoint = "\(deploymentURL)/api"
 
     // Function endpoints
@@ -102,6 +103,11 @@ class ConvexClient: ObservableObject {
 
     /// Test connection to Convex backend
     private func ping() async throws -> Bool {
+        // When using mock data, always return true (simulated connected state)
+        if useMockData {
+            return true
+        }
+
         // Perform a lightweight query to test connectivity
         let url = URL(string: ConvexConfig.queryEndpoint)!
         var request = URLRequest(url: url)
@@ -488,9 +494,17 @@ class ConvexClient: ObservableObject {
         }
     }
 
+    // MARK: - Mock Data Flag
+
+    /// When true, returns mock data instead of calling Convex (useful when backend is not deployed)
+    @Published var useMockData: Bool = false
+
     // MARK: - Convenience Methods for Common Queries
 
     func fetchProducts(category: String? = nil) async throws -> [Product] {
+        if useMockData {
+            return MockData.products
+        }
         if let category = category {
             return try await query("products:list", args: ["category": category])
         }
@@ -498,6 +512,9 @@ class ConvexClient: ObservableObject {
     }
 
     func fetchOrders(userId: String? = nil, status: String? = nil, limit: Int = 50) async throws -> [Order] {
+        if useMockData {
+            return MockData.orders
+        }
         if let userId = userId {
             return try await query("orders:getByUser", args: ["userId": userId])
         }
@@ -505,18 +522,51 @@ class ConvexClient: ObservableObject {
     }
 
     func fetchPartners() async throws -> [PartnerStore] {
+        if useMockData {
+            return MockData.partners
+        }
         return try await query("partnerStores:list")
     }
 
     func fetchCommissions(status: String? = nil) async throws -> [Commission] {
+        if useMockData {
+            return MockData.commissions
+        }
         return try await query("commissions:listAll")
     }
 
     func fetchInquiries(status: String? = nil) async throws -> [ServiceInquiry] {
+        if useMockData {
+            return MockData.inquiries
+        }
         if let status = status {
             return try await query("serviceInquiries:getByStatus", args: ["status": status])
         }
         return try await query("serviceInquiries:list")
+    }
+
+    /// Update inquiry status
+    func updateInquiryStatus(inquiryId: String, status: String) async throws -> Bool {
+        return try await mutation("serviceInquiries:updateStatus", args: [
+            "inquiryId": inquiryId,
+            "status": status
+        ])
+    }
+
+    /// Update inquiry quoted amount
+    func updateInquiryQuote(inquiryId: String, amount: Double) async throws -> Bool {
+        return try await mutation("serviceInquiries:updateQuote", args: [
+            "inquiryId": inquiryId,
+            "quotedAmount": amount
+        ])
+    }
+
+    /// Update inquiry admin notes
+    func updateInquiryNotes(inquiryId: String, notes: String) async throws -> Bool {
+        return try await mutation("serviceInquiries:updateNotes", args: [
+            "inquiryId": inquiryId,
+            "adminNotes": notes
+        ])
     }
 
     func createProduct(_ product: CreateProductRequest) async throws -> String {
@@ -548,6 +598,10 @@ class ConvexClient: ObservableObject {
     }
 
     func fetchDashboardStats() async throws -> DashboardStats {
+        if useMockData {
+            return MockData.dashboardStats
+        }
+
         // Aggregate queries for dashboard - using all available backend functions
         async let products: [Product] = query("products:listAll")
         async let orders: [Order] = query("orders:listAll")
@@ -561,9 +615,9 @@ class ConvexClient: ObservableObject {
         let totalRevenue = ordersList
             .filter { $0.status == .completed }
             .compactMap { $0.totals?.total }
-            .reduce(0) { $0 + Double($1) / 100.0 }
+            .reduce(0, +)
 
-        let pendingOrders = ordersList.filter { $0.status == .awaitingShipment || $0.status == .inProgress }.count
+        let pendingOrders = ordersList.filter { $0.status == .awaitingShipment || $0.status == .inProgress || $0.status == .pending }.count
         let pendingInquiries = inquiriesList.filter { $0.status == .new || $0.status == .reviewed }.count
         let eligibleCommissions = commissionsList
             .filter { $0.status == .eligible }
@@ -581,6 +635,553 @@ class ConvexClient: ObservableObject {
             orderGrowth: 8.3            // Would need historical data
         )
     }
+
+    // MARK: - Enhanced Product Methods (File Upload & Create)
+
+    /// Generate a pre-signed upload URL for Convex Storage
+    func generateUploadUrl() async throws -> String {
+        return try await mutation("products:generateUploadUrl")
+    }
+
+    /// Upload file data to Convex Storage
+    /// - Parameters:
+    ///   - data: The file data to upload
+    ///   - uploadUrl: The pre-signed URL from generateUploadUrl
+    /// - Returns: The storage ID for the uploaded file
+    func uploadFile(data: Data, uploadUrl: String) async throws -> String {
+        guard let url = URL(string: uploadUrl) else {
+            throw AppError.invalidInput("Invalid upload URL")
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+        request.httpBody = data
+
+        let (responseData, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw AppError.invalidResponse
+        }
+
+        guard httpResponse.statusCode == 200 else {
+            let errorMessage = String(data: responseData, encoding: .utf8) ?? "Unknown error"
+            throw AppError.networkRequestFailed(statusCode: httpResponse.statusCode, message: errorMessage)
+        }
+
+        // Parse the storage ID from response
+        struct UploadResponse: Decodable {
+            let storageId: String
+        }
+
+        let uploadResponse = try JSONDecoder().decode(UploadResponse.self, from: responseData)
+        return uploadResponse.storageId
+    }
+
+    /// Get the public URL for a storage ID
+    func getStorageUrl(storageId: String) async throws -> String? {
+        return try await mutation("products:getStorageUrl", args: ["storageId": storageId])
+    }
+
+    /// Upload an image and return its storage URL
+    /// - Parameter image: UIImage to upload
+    /// - Returns: The public URL for the uploaded image
+    func uploadImage(_ image: UIImage, quality: CGFloat = 0.8) async throws -> String {
+        guard let data = image.jpegData(compressionQuality: quality) else {
+            throw AppError.invalidInput("Failed to convert image to JPEG data")
+        }
+
+        // Get upload URL
+        let uploadUrl = try await generateUploadUrl()
+
+        // Upload the file
+        let storageId = try await uploadFile(data: data, uploadUrl: uploadUrl)
+
+        // Get the public URL
+        guard let publicUrl = try await getStorageUrl(storageId: storageId) else {
+            throw AppError.convexDataNotFound(entity: "Storage URL")
+        }
+
+        return publicUrl
+    }
+
+    // MARK: - Newsletter & Contact Methods
+
+    /// Fetch all newsletter subscribers
+    func fetchNewsletterSubscribers() async throws -> [NewsletterSubscriber] {
+        if useMockData {
+            return MockData.newsletterSubscribers
+        }
+        return try await query("newsletter:list")
+    }
+
+    /// Fetch all contact form submissions
+    func fetchContactSubmissions() async throws -> [ContactSubmission] {
+        if useMockData {
+            return MockData.contactSubmissions
+        }
+        return try await query("contacts:list")
+    }
+
+    /// Fetch discount codes for a partner store
+    func fetchDiscountCodes(partnerStoreId: String) async throws -> [DiscountCode] {
+        if useMockData {
+            return MockData.discountCodes.filter { $0.partnerStoreId == partnerStoreId }
+        }
+        return try await query("discountCodes:getByPartner", args: ["partnerStoreId": partnerStoreId])
+    }
+
+    /// Fetch all discount codes
+    func fetchAllDiscountCodes() async throws -> [DiscountCode] {
+        if useMockData {
+            return MockData.discountCodes
+        }
+        return try await query("discountCodes:list")
+    }
+
+    // MARK: - Bulk Order Operations
+
+    /// Bulk update order status
+    func bulkUpdateOrderStatus(orderIds: [String], status: String) async throws -> BulkOperationResponse {
+        if useMockData {
+            return BulkOperationResponse(success: true, updatedCount: orderIds.count, failedIds: [])
+        }
+        return try await mutation("orders:bulkUpdateStatus", args: [
+            "orderIds": orderIds,
+            "status": status
+        ])
+    }
+
+    /// Bulk assign orders to partner
+    func bulkAssignOrdersToPartner(orderIds: [String], partnerId: String) async throws -> BulkOperationResponse {
+        if useMockData {
+            return BulkOperationResponse(success: true, updatedCount: orderIds.count, failedIds: [])
+        }
+        return try await mutation("orders:bulkAssignPartner", args: [
+            "orderIds": orderIds,
+            "partnerId": partnerId
+        ])
+    }
+
+    /// Bulk delete orders
+    func bulkDeleteOrders(orderIds: [String]) async throws -> BulkOperationResponse {
+        if useMockData {
+            return BulkOperationResponse(success: true, updatedCount: orderIds.count, failedIds: [])
+        }
+        return try await mutation("orders:bulkDelete", args: [
+            "orderIds": orderIds
+        ])
+    }
+
+    /// Fetch orders for a specific customer by email
+    func fetchOrdersByEmail(email: String) async throws -> [Order] {
+        if useMockData {
+            return MockData.orders.filter { $0.userEmail == email || $0.endCustomerInfo?.email == email }
+        }
+        return try await query("orders:getByEmail", args: ["email": email])
+    }
+
+    /// Fetch inquiries for a specific customer by email
+    func fetchInquiriesByEmail(email: String) async throws -> [ServiceInquiry] {
+        if useMockData {
+            return MockData.inquiries.filter { $0.customerEmail == email }
+        }
+        return try await query("serviceInquiries:getByEmail", args: ["email": email])
+    }
+
+    /// Fetch vendor/partner details by ID
+    func fetchPartnerDetails(partnerId: String) async throws -> PartnerStore? {
+        if useMockData {
+            return MockData.partners.first { $0.id == partnerId }
+        }
+        return try await query("partnerStores:getById", args: ["partnerId": partnerId])
+    }
+
+    /// Fetch orders for a specific partner
+    func fetchPartnerOrders(partnerId: String) async throws -> [Order] {
+        if useMockData {
+            return MockData.orders.filter { $0.partnerStoreId == partnerId }
+        }
+        return try await query("orders:getByPartner", args: ["partnerId": partnerId])
+    }
+
+    /// Fetch commissions for a specific partner
+    func fetchPartnerCommissions(partnerId: String) async throws -> [Commission] {
+        if useMockData {
+            return MockData.commissions.filter { $0.partnerStoreId == partnerId }
+        }
+        return try await query("commissions:getByPartner", args: ["partnerId": partnerId])
+    }
+
+    /// Update partner/vendor details
+    func updatePartner(partnerId: String, updates: [String: Any]) async throws -> Bool {
+        var args = updates
+        args["partnerId"] = partnerId
+        return try await mutation("partnerStores:update", args: args)
+    }
+
+    /// Create a new partner/vendor
+    func createPartner(_ request: CreateVendorRequest) async throws -> String {
+        let args: [String: Any] = [
+            "storeName": request.storeName,
+            "storeCode": request.storeCode,
+            "storeContactName": request.storeContactName,
+            "storeEmail": request.storeEmail,
+            "storePhone": request.storePhone,
+            "commissionType": request.commissionType,
+            "commissionValue": request.commissionValue,
+            "payoutMethod": request.payoutMethod,
+            "paypalEmail": request.paypalEmail ?? "",
+            "payoutHoldDays": request.payoutHoldDays
+        ]
+        return try await mutation("partnerStores:create", args: args)
+    }
+
+    // MARK: - Enhanced Product Methods (File Upload & Create)
+
+    /// Create an enhanced product with variants, add-ons, and multiple images
+    func createEnhancedProduct(_ draft: EnhancedProductDraft) async throws -> String {
+        // Build the args dictionary
+        var args: [String: Any] = [
+            "title": draft.title,
+            "description": draft.description,
+            "price": draft.basePrice,
+            "category": draft.category.rawValue,
+            "image": draft.primaryImageUrl ?? "",
+            "slug": draft.slug.isEmpty ? draft.autoSlug : draft.slug,
+            "inStock": draft.inStock,
+            "hasOptions": draft.hasOptions || !draft.variants.isEmpty,
+            "pagePlacement": draft.pagePlacement.rawValue
+        ]
+
+        if !draft.priceRange.isEmpty {
+            args["priceRange"] = draft.priceRange
+        } else if !draft.variants.isEmpty || !draft.addOns.isEmpty {
+            args["priceRange"] = draft.formattedPriceRange
+        }
+
+        if draft.includeShippingLabel {
+            args["includeShippingLabel"] = true
+        }
+
+        // Add additional images (excluding primary)
+        let additionalImages = draft.uploadedImageUrls
+        if !additionalImages.isEmpty {
+            args["images"] = additionalImages
+        }
+
+        // Add videos
+        if !draft.videos.isEmpty {
+            args["videos"] = draft.videos
+        }
+
+        // Add variants
+        if !draft.variants.isEmpty {
+            let variantsData: [[String: Any]] = draft.variants.map { variant in
+                let optionsData: [[String: Any]] = variant.options.map { option in
+                    [
+                        "id": option.id.uuidString,
+                        "label": option.label,
+                        "priceModifier": option.priceModifier
+                    ]
+                }
+                return [
+                    "id": variant.id.uuidString,
+                    "name": variant.name,
+                    "options": optionsData
+                ]
+            }
+            args["variants"] = variantsData
+        }
+
+        // Add add-ons
+        if !draft.addOns.isEmpty {
+            let addOnsData: [[String: Any]] = draft.addOns.map { addOn in
+                var data: [String: Any] = [
+                    "id": addOn.id.uuidString,
+                    "name": addOn.name,
+                    "price": addOn.price
+                ]
+                if let description = addOn.description {
+                    data["description"] = description
+                }
+                return data
+            }
+            args["addOns"] = addOnsData
+        }
+
+        // Add design reference
+        if !draft.designReference.isEmpty {
+            var designRefData: [String: Any] = [:]
+            if let imageUrl = draft.designReference.imageUrl {
+                designRefData["imageUrl"] = imageUrl
+            }
+            if let instructions = draft.designReference.instructions {
+                designRefData["instructions"] = instructions
+            }
+            args["designReference"] = designRefData
+        }
+
+        return try await mutation("products:createEnhanced", args: args)
+    }
+}
+
+// MARK: - Bulk Operation Response
+struct BulkOperationResponse: Codable {
+    let success: Bool
+    let updatedCount: Int
+    let failedIds: [String]
+}
+
+// MARK: - Mock Data for Development/Testing
+
+struct MockData {
+    static let dashboardStats = DashboardStats(
+        totalRevenue: 45678.90,
+        totalOrders: 156,
+        totalProducts: 24,
+        totalPartners: 8,
+        pendingOrders: 12,
+        pendingInquiries: 5,
+        eligibleCommissions: 2340.00,
+        revenueGrowth: 12.5,
+        orderGrowth: 8.3
+    )
+
+    static let products: [Product] = [
+        Product(
+            id: "prod_001",
+            title: "Custom Laser Engraving",
+            description: "Professional laser engraving for firearms",
+            price: 425.00,
+            priceRange: "$425.00+",
+            category: "Services",
+            image: "/images/products/engraving.webp",
+            inStock: true,
+            hasOptions: true,
+            createdAt: Date()
+        ),
+        Product(
+            id: "prod_002",
+            title: "Cerakote Coating",
+            description: "Premium Cerakote finish in various colors",
+            price: 350.00,
+            priceRange: "$350.00+",
+            category: "Services",
+            image: "/images/products/cerakote.webp",
+            inStock: true,
+            hasOptions: true,
+            createdAt: Date()
+        ),
+        Product(
+            id: "prod_003",
+            title: "Glock 19 Slide",
+            description: "Custom machined Glock 19 slide",
+            price: 299.00,
+            priceRange: nil,
+            category: "Slides",
+            image: "/images/products/glock19-slide.webp",
+            inStock: true,
+            hasOptions: false,
+            createdAt: Date()
+        )
+    ]
+
+    static let orders: [Order] = [
+        Order(
+            id: "order_001",
+            orderNumber: "365W-2024-0156",
+            placedBy: .customer,
+            serviceType: .slideEngraving,
+            status: .awaitingShipment,
+            totals: OrderTotals(subtotal: 425.0, discountAmount: nil, tax: 0, shipping: 0, total: 425.0),
+            userEmail: "customer@example.com",
+            endCustomerInfo: CustomerInfo(name: "John Smith", phone: nil, email: "customer@example.com"),
+            createdAt: Date(),
+            paidAt: Date()
+        ),
+        Order(
+            id: "order_002",
+            orderNumber: "365W-2024-0155",
+            placedBy: .partner,
+            partnerStoreId: "partner_001",
+            partnerCodeUsed: "PA001",
+            serviceType: .opticCut,
+            status: .inProgress,
+            totals: OrderTotals(subtotal: 350.0, discountAmount: nil, tax: 0, shipping: 0, total: 350.0),
+            userEmail: "partner@gunstore.com",
+            endCustomerInfo: CustomerInfo(name: "Gun Store LLC", phone: nil, email: "partner@gunstore.com"),
+            createdAt: Date().addingTimeInterval(-86400),
+            paidAt: Date().addingTimeInterval(-86400)
+        ),
+        Order(
+            id: "order_003",
+            orderNumber: "365W-2024-0154",
+            placedBy: .customer,
+            serviceType: .slideEngraving,
+            status: .completed,
+            totals: OrderTotals(subtotal: 525.0, discountAmount: nil, tax: 0, shipping: 0, total: 525.0),
+            userEmail: "another@example.com",
+            endCustomerInfo: CustomerInfo(name: "Jane Doe", phone: nil, email: "another@example.com"),
+            createdAt: Date().addingTimeInterval(-172800),
+            paidAt: Date().addingTimeInterval(-172800),
+            completedAt: Date().addingTimeInterval(-172800)
+        )
+    ]
+
+    static let partners: [PartnerStore] = [
+        PartnerStore(
+            id: "partner_001",
+            storeName: "Premium Arms",
+            storeCode: "PA001",
+            active: true,
+            storeContactName: "John Doe",
+            storePhone: "555-1234",
+            storeEmail: "john@premiumarms.com",
+            storeReturnAddress: nil,
+            commissionType: .percentage,
+            commissionValue: 15.0,
+            payoutMethod: "paypal",
+            paypalEmail: "payouts@premiumarms.com",
+            payoutHoldDays: 30,
+            onboardingComplete: true,
+            createdAt: Date()
+        ),
+        PartnerStore(
+            id: "partner_002",
+            storeName: "Tactical Outfitters",
+            storeCode: "TO002",
+            active: true,
+            storeContactName: "Jane Smith",
+            storePhone: "555-5678",
+            storeEmail: "jane@tacticaloutfitters.com",
+            storeReturnAddress: nil,
+            commissionType: .percentage,
+            commissionValue: 12.0,
+            payoutMethod: "paypal",
+            paypalEmail: "payouts@tacticaloutfitters.com",
+            payoutHoldDays: 30,
+            onboardingComplete: true,
+            createdAt: Date()
+        )
+    ]
+
+    static let commissions: [Commission] = [
+        Commission(
+            id: "comm_001",
+            partnerStoreId: "partner_001",
+            orderId: "order_002",
+            orderNumber: "365W-2024-0155",
+            placedBy: "partner",
+            serviceType: "cerakote",
+            commissionBaseAmount: 350.00,
+            commissionAmount: 52.50,
+            status: .eligible,
+            eligibleAt: Date(),
+            createdAt: Date(),
+            paidAt: nil
+        )
+    ]
+
+    static let inquiries: [ServiceInquiry] = [
+        ServiceInquiry(
+            id: "inq_001",
+            customerName: "Mike Johnson",
+            customerEmail: "mike@example.com",
+            customerPhone: "555-1234",
+            serviceType: "Custom Engraving",
+            productSlug: "custom-laser-engraving",
+            productTitle: "Custom Laser Engraving",
+            message: "Looking for a quote on custom slide engraving",
+            status: .new,
+            quotedAmount: nil,
+            adminNotes: nil,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+    ]
+
+    static let newsletterSubscribers: [NewsletterSubscriber] = [
+        NewsletterSubscriber(
+            id: "news_001",
+            firstName: "Sarah",
+            lastName: "Johnson",
+            email: "subscriber1@example.com",
+            phone: "555-8888",
+            subscribedAt: Date().addingTimeInterval(-86400 * 30),
+            isActive: true
+        ),
+        NewsletterSubscriber(
+            id: "news_002",
+            firstName: "Tom",
+            lastName: "Williams",
+            email: "subscriber2@example.com",
+            phone: nil,
+            subscribedAt: Date().addingTimeInterval(-86400 * 15),
+            isActive: true
+        ),
+        NewsletterSubscriber(
+            id: "news_003",
+            firstName: "Lisa",
+            lastName: "Brown",
+            email: "subscriber3@example.com",
+            phone: "555-9999",
+            subscribedAt: Date().addingTimeInterval(-86400 * 7),
+            isActive: true
+        )
+    ]
+
+    static let contactSubmissions: [ContactSubmission] = [
+        ContactSubmission(
+            id: "contact_001",
+            name: "Robert Davis",
+            email: "robert@example.com",
+            phone: "555-1111",
+            subject: "Bulk Order Inquiry",
+            message: "Interested in bulk order pricing for my shop",
+            status: .new,
+            createdAt: Date().addingTimeInterval(-86400 * 2),
+            respondedAt: nil
+        ),
+        ContactSubmission(
+            id: "contact_002",
+            name: "Emily Chen",
+            email: "emily@example.com",
+            phone: nil,
+            subject: "Turnaround Time Question",
+            message: "Question about custom engraving turnaround time",
+            status: .responded,
+            createdAt: Date().addingTimeInterval(-86400 * 5),
+            respondedAt: Date().addingTimeInterval(-86400 * 4)
+        )
+    ]
+
+    static let discountCodes: [DiscountCode] = [
+        DiscountCode(
+            id: "disc_001",
+            code: "PA15",
+            partnerStoreId: "partner_001",
+            discountType: .percentage,
+            discountValue: 15.0,
+            usageCount: 42,
+            maxUsage: nil,
+            active: true,
+            expiresAt: nil,
+            createdAt: Date().addingTimeInterval(-86400 * 90)
+        ),
+        DiscountCode(
+            id: "disc_002",
+            code: "TO10",
+            partnerStoreId: "partner_002",
+            discountType: .percentage,
+            discountValue: 10.0,
+            usageCount: 23,
+            maxUsage: 100,
+            active: true,
+            expiresAt: Date().addingTimeInterval(86400 * 30),
+            createdAt: Date().addingTimeInterval(-86400 * 60)
+        )
+    ]
 }
 
 // MARK: - Convex Response Types

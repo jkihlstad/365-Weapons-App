@@ -9,31 +9,52 @@ import SwiftUI
 
 struct OrdersView: View {
     @StateObject private var viewModel = OrdersViewModel()
+    @State private var showBulkStatusPicker = false
+    @State private var showExportSheet = false
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Status filter
-                statusFilterBar
+            ZStack(alignment: .bottom) {
+                VStack(spacing: 0) {
+                    // Status filter
+                    statusFilterBar
 
-                // Orders list
-                if viewModel.isLoading && viewModel.orders.isEmpty {
-                    ProgressView("Loading orders...")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if viewModel.filteredOrders.isEmpty {
-                    ContentUnavailableView(
-                        "No Orders",
-                        systemImage: "list.clipboard",
-                        description: Text(viewModel.selectedStatus != nil ? "No \(viewModel.selectedStatus!.displayName.lowercased()) orders" : "No orders found")
-                    )
-                } else {
-                    ordersList
+                    // Selection bar (when in selection mode)
+                    if viewModel.isSelectionMode {
+                        selectionBar
+                    }
+
+                    // Orders list
+                    if viewModel.isLoading && viewModel.orders.isEmpty {
+                        ProgressView("Loading orders...")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if viewModel.filteredOrders.isEmpty {
+                        ContentUnavailableView(
+                            "No Orders",
+                            systemImage: "list.clipboard",
+                            description: Text(viewModel.selectedStatus != nil ? "No \(viewModel.selectedStatus!.displayName.lowercased()) orders" : "No orders found")
+                        )
+                    } else {
+                        ordersList
+                    }
+                }
+
+                // Floating bulk action bar
+                if viewModel.hasSelection {
+                    bulkActionBar
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .background(Color.black.ignoresSafeArea())
             .navigationTitle("Orders")
             .searchable(text: $viewModel.searchText, prompt: "Search orders...")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: viewModel.toggleSelectionMode) {
+                        Image(systemName: viewModel.isSelectionMode ? "xmark.circle.fill" : "checkmark.circle")
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: viewModel.refresh) {
                         Image(systemName: "arrow.clockwise")
@@ -46,6 +67,22 @@ struct OrdersView: View {
             .sheet(item: $viewModel.selectedOrder) { order in
                 OrderDetailView(order: order, viewModel: viewModel)
             }
+            .sheet(isPresented: $showBulkStatusPicker) {
+                BulkStatusPickerSheet(viewModel: viewModel)
+            }
+            .sheet(isPresented: $showExportSheet) {
+                ExportSheet(csv: viewModel.exportSelectedToCSV())
+            }
+            .alert("Delete Orders", isPresented: $showDeleteConfirmation) {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    Task {
+                        await viewModel.bulkDelete()
+                    }
+                }
+            } message: {
+                Text("Are you sure you want to delete \(viewModel.selectedOrdersCount) orders? This action cannot be undone.")
+            }
             .alert("Error", isPresented: .constant(viewModel.hasError)) {
                 Button("OK") { viewModel.clearError() }
                 if viewModel.error?.isRetryable ?? false {
@@ -54,9 +91,110 @@ struct OrdersView: View {
             } message: {
                 Text(viewModel.error?.userFriendlyMessage ?? "An unknown error occurred")
             }
+            .alert(item: $viewModel.bulkOperationResult) { result in
+                Alert(
+                    title: Text(result.isSuccess ? "Success" : "Partial Success"),
+                    message: Text(result.message),
+                    dismissButton: .default(Text("OK")) {
+                        viewModel.clearBulkResult()
+                    }
+                )
+            }
+            .overlay {
+                if viewModel.isBulkOperationInProgress {
+                    Color.black.opacity(0.5)
+                        .ignoresSafeArea()
+                    ProgressView("Processing...")
+                        .padding()
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(12)
+                }
+            }
         }
         .task {
             await viewModel.loadOrders()
+        }
+    }
+
+    // MARK: - Selection Bar
+    private var selectionBar: some View {
+        HStack {
+            Button(action: {
+                if viewModel.allFilteredSelected {
+                    viewModel.clearSelection()
+                } else {
+                    viewModel.selectAll()
+                }
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: viewModel.allFilteredSelected ? "checkmark.circle.fill" : "circle")
+                    Text(viewModel.allFilteredSelected ? "Deselect All" : "Select All")
+                        .font(.subheadline)
+                }
+            }
+
+            Spacer()
+
+            if viewModel.hasSelection {
+                Text("\(viewModel.selectedOrdersCount) selected")
+                    .font(.subheadline)
+                    .foregroundColor(.orange)
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(Color.orange.opacity(0.1))
+    }
+
+    // MARK: - Bulk Action Bar
+    private var bulkActionBar: some View {
+        VStack(spacing: 0) {
+            Divider()
+            HStack(spacing: 16) {
+                // Update Status
+                Button(action: { showBulkStatusPicker = true }) {
+                    VStack(spacing: 4) {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.title3)
+                        Text("Status")
+                            .font(.caption2)
+                    }
+                }
+
+                // Export
+                Button(action: { showExportSheet = true }) {
+                    VStack(spacing: 4) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.title3)
+                        Text("Export")
+                            .font(.caption2)
+                    }
+                }
+
+                // Delete
+                Button(action: { showDeleteConfirmation = true }) {
+                    VStack(spacing: 4) {
+                        Image(systemName: "trash")
+                            .font(.title3)
+                        Text("Delete")
+                            .font(.caption2)
+                    }
+                }
+                .foregroundColor(.red)
+
+                Spacer()
+
+                // Selection count
+                Text("\(viewModel.selectedOrdersCount)")
+                    .font(.title2.weight(.bold))
+                    .foregroundColor(.orange)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.orange.opacity(0.2))
+                    .cornerRadius(8)
+            }
+            .padding()
+            .background(Color.black.opacity(0.95))
         }
     }
 
@@ -91,18 +229,41 @@ struct OrdersView: View {
         ScrollView {
             LazyVStack(spacing: 12) {
                 ForEach(viewModel.filteredOrders) { order in
-                    OrderCard(order: order)
-                        .onTapGesture {
-                            viewModel.selectOrder(order)
+                    HStack(spacing: 12) {
+                        // Selection checkbox (only in selection mode)
+                        if viewModel.isSelectionMode {
+                            Button(action: { viewModel.toggleSelection(orderId: order.id) }) {
+                                Image(systemName: viewModel.isSelected(orderId: order.id) ? "checkmark.circle.fill" : "circle")
+                                    .font(.title2)
+                                    .foregroundColor(viewModel.isSelected(orderId: order.id) ? .orange : .gray)
+                            }
                         }
+
+                        OrderCard(order: order)
+                            .onTapGesture {
+                                if viewModel.isSelectionMode {
+                                    viewModel.toggleSelection(orderId: order.id)
+                                } else {
+                                    viewModel.selectOrder(order)
+                                }
+                            }
+                            .onLongPressGesture {
+                                if !viewModel.isSelectionMode {
+                                    viewModel.toggleSelectionMode()
+                                    viewModel.toggleSelection(orderId: order.id)
+                                }
+                            }
+                    }
                 }
             }
             .padding()
+            .padding(.bottom, viewModel.hasSelection ? 80 : 0) // Make room for bulk action bar
         }
     }
 
     private func statusColor(for status: OrderStatus) -> Color {
         switch status {
+        case .pending: return .yellow
         case .awaitingPayment: return .orange
         case .awaitingShipment: return .blue
         case .inProgress: return .purple
@@ -358,17 +519,15 @@ struct OrderDetailView: View {
             if let totals = order.totals {
                 Divider().background(Color.white.opacity(0.1))
 
-                if let subtotal = totals.subtotal as Int? {
-                    InfoRow(label: "Subtotal", value: String(format: "$%.2f", Double(subtotal) / 100.0))
-                }
+                InfoRow(label: "Subtotal", value: String(format: "$%.2f", totals.subtotal))
                 if let discount = totals.discountAmount, discount > 0 {
-                    InfoRow(label: "Discount", value: String(format: "-$%.2f", Double(discount) / 100.0), valueColor: .green)
+                    InfoRow(label: "Discount", value: String(format: "-$%.2f", discount), valueColor: .green)
                 }
                 if let tax = totals.tax {
-                    InfoRow(label: "Tax", value: String(format: "$%.2f", Double(tax) / 100.0))
+                    InfoRow(label: "Tax", value: String(format: "$%.2f", tax))
                 }
                 if let shipping = totals.shipping {
-                    InfoRow(label: "Shipping", value: String(format: "$%.2f", Double(shipping) / 100.0))
+                    InfoRow(label: "Shipping", value: String(format: "$%.2f", shipping))
                 }
             }
         }
@@ -416,6 +575,157 @@ struct InfoRow: View {
                 .foregroundColor(valueColor)
         }
     }
+}
+
+// MARK: - Bulk Status Picker Sheet
+struct BulkStatusPickerSheet: View {
+    @ObservedObject var viewModel: OrdersViewModel
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                Text("Update \(viewModel.selectedOrdersCount) orders to:")
+                    .font(.headline)
+                    .padding()
+
+                List {
+                    ForEach(OrderStatus.allCases, id: \.self) { status in
+                        Button(action: {
+                            Task {
+                                await viewModel.bulkUpdateStatus(to: status)
+                                dismiss()
+                            }
+                        }) {
+                            HStack {
+                                Circle()
+                                    .fill(statusColor(for: status))
+                                    .frame(width: 12, height: 12)
+                                Text(status.displayName)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .foregroundColor(.white)
+                    }
+                }
+                .listStyle(.plain)
+            }
+            .background(Color.black)
+            .navigationTitle("Update Status")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    private func statusColor(for status: OrderStatus) -> Color {
+        switch status {
+        case .pending: return .yellow
+        case .awaitingPayment: return .orange
+        case .awaitingShipment: return .blue
+        case .inProgress: return .purple
+        case .completed: return .green
+        case .cancelled: return .red
+        }
+    }
+}
+
+// MARK: - Export Sheet
+struct ExportSheet: View {
+    let csv: String
+    @Environment(\.dismiss) private var dismiss
+    @State private var showShareSheet = false
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                Image(systemName: "doc.text")
+                    .font(.system(size: 60))
+                    .foregroundColor(.orange)
+
+                Text("Export Ready")
+                    .font(.title2.weight(.bold))
+
+                Text("Your orders have been exported to CSV format.")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+
+                // Preview
+                ScrollView {
+                    Text(csv)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.gray)
+                        .padding()
+                }
+                .frame(maxHeight: 200)
+                .background(Color.white.opacity(0.05))
+                .cornerRadius(12)
+
+                Spacer()
+
+                // Share button
+                Button(action: {
+                    showShareSheet = true
+                }) {
+                    HStack {
+                        Image(systemName: "square.and.arrow.up")
+                        Text("Share")
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                }
+
+                // Copy button
+                Button(action: {
+                    UIPasteboard.general.string = csv
+                    dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "doc.on.doc")
+                        Text("Copy to Clipboard")
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.white.opacity(0.1))
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                }
+            }
+            .padding()
+            .background(Color.black)
+            .navigationTitle("Export Orders")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+            .sheet(isPresented: $showShareSheet) {
+                ShareSheet(items: [csv])
+            }
+        }
+    }
+}
+
+// MARK: - Share Sheet
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 // MARK: - Preview

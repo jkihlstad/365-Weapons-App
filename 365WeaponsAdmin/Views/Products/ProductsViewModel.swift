@@ -202,11 +202,17 @@ class ProductsViewModel: ObservableObject {
             self.lastCacheUpdate = Date()
 
         } catch let fetchError {
-            self.error = ProductsError.loadFailed(fetchError.localizedDescription)
-            print("Products load error: \(fetchError)")
+            // Ignore cancelled request errors (e.g., when view refreshes)
+            let nsError = fetchError as NSError
+            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                print("Request cancelled (normal during view refresh)")
+            } else {
+                self.error = ProductsError.loadFailed(fetchError.localizedDescription)
+                print("Products load error: \(fetchError)")
 
-            // Fall back to cached data
-            await loadCachedProducts()
+                // Fall back to cached data
+                await loadCachedProducts()
+            }
         }
 
         isLoading = false

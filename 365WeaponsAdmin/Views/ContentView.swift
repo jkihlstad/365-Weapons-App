@@ -11,6 +11,7 @@ import Clerk
 struct ContentView: View {
     @EnvironmentObject var orchestrator: OrchestrationAgent
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var configManager: ConfigurationManager
     @Environment(\.clerk) private var clerk
 
     @State private var showAuthSheet = false
@@ -21,6 +22,8 @@ struct ContentView: View {
         case dashboard = "Dashboard"
         case orders = "Orders"
         case products = "Products"
+        case vendors = "Vendors"
+        case customers = "Customers"
         case chat = "AI Chat"
         case settings = "Settings"
 
@@ -29,19 +32,29 @@ struct ContentView: View {
             case .dashboard: return "square.grid.2x2"
             case .orders: return "list.clipboard"
             case .products: return "cube.box"
+            case .vendors: return "person.2"
+            case .customers: return "person.3"
             case .chat: return "bubble.left.and.bubble.right"
             case .settings: return "gearshape"
             }
         }
     }
 
+    /// Check if Clerk authentication is configured
+    private var isClerkConfigured: Bool {
+        configManager.clerkPublishableKey != nil && !configManager.clerkPublishableKey!.isEmpty
+    }
+
     var body: some View {
         Group {
-            if let user = clerk.user {
+            // Skip Clerk auth if not configured - go directly to main content
+            if !isClerkConfigured || clerk.user != nil {
                 mainContent
                     .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            UserButton()
+                        if isClerkConfigured, clerk.user != nil {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                UserButton()
+                            }
                         }
                     }
             } else {
@@ -52,7 +65,9 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showAuthSheet) {
-            AuthView()
+            if isClerkConfigured {
+                AuthView()
+            }
         }
         .preferredColorScheme(.dark)
     }
@@ -76,6 +91,18 @@ struct ContentView: View {
                     Label(Tab.products.rawValue, systemImage: Tab.products.icon)
                 }
                 .tag(Tab.products)
+
+            VendorsView()
+                .tabItem {
+                    Label(Tab.vendors.rawValue, systemImage: Tab.vendors.icon)
+                }
+                .tag(Tab.vendors)
+
+            CustomersView()
+                .tabItem {
+                    Label(Tab.customers.rawValue, systemImage: Tab.customers.icon)
+                }
+                .tag(Tab.customers)
 
             AIChatView()
                 .tabItem {

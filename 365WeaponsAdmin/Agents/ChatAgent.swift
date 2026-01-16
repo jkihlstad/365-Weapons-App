@@ -22,6 +22,10 @@ class ChatAgent: Agent, ObservableObject {
     private let openAI = OpenAIClient.shared
     private let lanceDB = LanceDBClient.shared
     private let convex = ConvexClient.shared
+    private let tavily = TavilyClient.shared
+
+    /// Whether web search is enabled for this agent
+    var canSearchWeb: Bool = true
 
     private var logger: DebugLogger {
         DebugLogger.shared
@@ -29,30 +33,23 @@ class ChatAgent: Agent, ObservableObject {
 
     private var systemPrompt: String {
         """
-        You are an intelligent AI assistant for the 365Weapons admin dashboard. You help administrators manage their firearms service business.
+        You are a friendly and helpful AI assistant for the 365Weapons admin dashboard. You help administrators manage their firearms service business.
 
-        ## About 365Weapons
-        365Weapons is a firearms service company offering:
-        - Porting services
-        - Optic cuts
-        - Slide engraving
-        - Custom gunsmithing
+        About 365Weapons:
+        365Weapons is a firearms service company offering porting services, optic cuts, slide engraving, and custom gunsmithing.
 
-        ## Your Capabilities
-        1. Answer questions about using the admin dashboard
-        2. Explain business metrics and analytics
-        3. Help with order management
-        4. Assist with product catalog management
-        5. Provide insights about partners/vendors
-        6. Help troubleshoot issues
-        7. Offer business recommendations
+        Your Capabilities:
+        You can answer questions about the admin dashboard, explain business metrics, help with order and product management, provide insights about partners, troubleshoot issues, and offer business recommendations.
 
-        ## Guidelines
-        - Be helpful, professional, and concise
-        - If you don't know something, say so
-        - Suggest relevant actions when appropriate
-        - Use clear formatting for complex responses
-        - Reference specific dashboard features when relevant
+        Important Guidelines:
+        - Respond in a natural, conversational tone like you're talking to a colleague
+        - Keep responses concise and easy to read
+        - Do NOT use markdown formatting like **bold**, *italic*, ##headers, or bullet points with dashes
+        - Write in plain, flowing sentences instead of lists when possible
+        - If you need to list items, use simple numbered lists or commas
+        - Be helpful and professional, but also personable
+        - If you don't know something, just say so naturally
+        - Reference specific dashboard features when helpful
         """
     }
 
@@ -76,6 +73,8 @@ class ChatAgent: Agent, ObservableObject {
             }
         }
 
+        var toolsUsed: [String] = []
+
         // Get RAG context if available
         await MainActor.run {
             logger.log("Fetching RAG context...", category: .chat)
@@ -83,6 +82,31 @@ class ChatAgent: Agent, ObservableObject {
         let ragContext = try? await lanceDB.getRAGContext(query: input.message)
         await MainActor.run {
             logger.log("RAG context: \(ragContext != nil ? "found" : "none")", category: .chat)
+        }
+        if ragContext != nil {
+            toolsUsed.append("lancedb_rag")
+        }
+
+        // Check if web search would be helpful
+        var webSearchContext: String?
+        if canSearchWeb && tavily.shouldSearchWeb(for: input.message) {
+            await MainActor.run {
+                logger.log("Performing web search for: '\(input.message.prefix(30))...'", category: .chat)
+            }
+            do {
+                let searchResults = try await tavily.search(query: input.message, maxResults: 5)
+                if !searchResults.isEmpty {
+                    webSearchContext = tavily.formatResultsForContext(searchResults)
+                    toolsUsed.append("tavily_search")
+                    await MainActor.run {
+                        logger.success("Web search returned \(searchResults.count) results", category: .chat)
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    logger.error("Web search failed: \(error.localizedDescription)", category: .chat)
+                }
+            }
         }
 
         // Get business context
@@ -101,6 +125,10 @@ class ChatAgent: Agent, ObservableObject {
             enhancedPrompt += "\n\n## Relevant Context\n\(ragContext)"
         }
 
+        if let webContext = webSearchContext {
+            enhancedPrompt += "\n\n## Web Search Results\n\(webContext)\n\nUse these web search results to provide current and accurate information. Cite sources when relevant."
+        }
+
         if let businessContext = businessContext {
             enhancedPrompt += "\n\n## Current Business State\n\(businessContext)"
         }
@@ -111,6 +139,8 @@ class ChatAgent: Agent, ObservableObject {
         await MainActor.run {
             logger.log("Sending \(messages.count) messages to OpenRouter...", category: .chat)
         }
+
+        toolsUsed.append("openrouter_chat")
 
         // Generate response
         let response = try await openRouter.chat(
@@ -137,7 +167,7 @@ class ChatAgent: Agent, ObservableObject {
         return AgentOutput(
             response: response,
             agentName: name,
-            toolsUsed: ragContext != nil ? ["lancedb_rag", "openrouter_chat"] : ["openrouter_chat"],
+            toolsUsed: toolsUsed,
             data: nil,
             suggestedActions: suggestedActions,
             confidence: 0.9
@@ -163,9 +193,33 @@ class ChatAgent: Agent, ObservableObject {
         let ragContext = try? await lanceDB.getRAGContext(query: input.message)
         let businessContext = try? await getBusinessContext()
 
+        // Check if web search would be helpful
+        var webSearchContext: String?
+        if canSearchWeb && tavily.shouldSearchWeb(for: input.message) {
+            await MainActor.run {
+                logger.log("Performing web search for streaming...", category: .chat)
+            }
+            do {
+                let searchResults = try await tavily.search(query: input.message, maxResults: 5)
+                if !searchResults.isEmpty {
+                    webSearchContext = tavily.formatResultsForContext(searchResults)
+                    await MainActor.run {
+                        logger.success("Web search returned \(searchResults.count) results", category: .chat)
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    logger.error("Web search failed: \(error.localizedDescription)", category: .chat)
+                }
+            }
+        }
+
         var enhancedPrompt = systemPrompt
         if let ragContext = ragContext, !ragContext.isEmpty {
             enhancedPrompt += "\n\n## Relevant Context\n\(ragContext)"
+        }
+        if let webContext = webSearchContext {
+            enhancedPrompt += "\n\n## Web Search Results\n\(webContext)\n\nUse these web search results to provide current and accurate information. Cite sources when relevant."
         }
         if let businessContext = businessContext {
             enhancedPrompt += "\n\n## Current Business State\n\(businessContext)"

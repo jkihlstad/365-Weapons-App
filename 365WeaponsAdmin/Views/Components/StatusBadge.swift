@@ -122,6 +122,7 @@ struct StatusBadge: View {
     /// Returns the appropriate color for an OrderStatus.
     static func color(for status: OrderStatus) -> Color {
         switch status {
+        case .pending: return .yellow
         case .awaitingPayment: return .orange
         case .awaitingShipment: return .blue
         case .inProgress: return .purple

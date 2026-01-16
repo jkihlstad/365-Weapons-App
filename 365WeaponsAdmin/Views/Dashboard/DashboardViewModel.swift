@@ -115,11 +115,17 @@ class DashboardViewModel: ObservableObject {
             self.lastCacheUpdate = Date()
 
         } catch {
-            self.error = error
-            print("Dashboard load error: \(error)")
+            // Ignore cancelled request errors (e.g., when view refreshes)
+            let nsError = error as NSError
+            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                print("Request cancelled (normal during view refresh)")
+            } else {
+                self.error = error
+                print("Dashboard load error: \(error)")
 
-            // Fall back to cached data on error
-            await loadCachedData()
+                // Fall back to cached data on error
+                await loadCachedData()
+            }
         }
 
         isLoading = false
@@ -228,7 +234,7 @@ class DashboardViewModel: ObservableObject {
                   let total = order.totals?.total else { continue }
 
             let current = breakdown[serviceType] ?? (0, 0)
-            breakdown[serviceType] = (current.count + 1, current.revenue + Double(total) / 100.0)
+            breakdown[serviceType] = (current.count + 1, current.revenue + total)
         }
 
         return breakdown.map { ServiceBreakdown(serviceType: $0.key, count: $0.value.count, revenue: $0.value.revenue) }

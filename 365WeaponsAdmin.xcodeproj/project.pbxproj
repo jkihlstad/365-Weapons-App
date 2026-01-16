@@ -61,6 +61,21 @@
 		A3AF7C8D /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A346159C /* ServiceTests.swift */; };
 		A3116040 /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A366CCF1 /* ViewModelTests.swift */; };
 		A311FD76 /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32E684F /* IntegrationTests.swift */; };
+		A4000002 /* DefaultKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4000001 /* DefaultKeys.swift */; };
+		A5000001 /* ProductModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5000002 /* ProductModels.swift */; };
+		A5000003 /* CreateEnhancedProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5000004 /* CreateEnhancedProductView.swift */; };
+		A6000001 /* TavilyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000002 /* TavilyClient.swift */; };
+		A6000003 /* VendorAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000004 /* VendorAgent.swift */; };
+		A6000005 /* CustomerAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000006 /* CustomerAgent.swift */; };
+		A6000007 /* OrderAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000008 /* OrderAgent.swift */; };
+		A6000009 /* InquiryAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000010 /* InquiryAgent.swift */; };
+		A6000011 /* CommissionAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000012 /* CommissionAgent.swift */; };
+		A6000013 /* CustomerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000014 /* CustomerModels.swift */; };
+		A6000015 /* VendorModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000016 /* VendorModels.swift */; };
+		A6000017 /* VendorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000018 /* VendorsView.swift */; };
+		A6000019 /* VendorsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000020 /* VendorsViewModel.swift */; };
+		A6000021 /* CustomersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000022 /* CustomersView.swift */; };
+		A6000023 /* CustomersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000024 /* CustomersViewModel.swift */; };
 /* End PBXBuildFile section */
 
 
@@ -131,6 +146,21 @@
 		A366CCF1 /* ViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelTests.swift; sourceTree = "<group>"; };
 		A32E684F /* IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
 		A370F589 /* 365WeaponsAdminTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "365WeaponsAdminTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4000001 /* DefaultKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultKeys.swift; sourceTree = "<group>"; };
+		A5000002 /* ProductModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductModels.swift; sourceTree = "<group>"; };
+		A5000004 /* CreateEnhancedProductView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEnhancedProductView.swift; sourceTree = "<group>"; };
+		A6000002 /* TavilyClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TavilyClient.swift; sourceTree = "<group>"; };
+		A6000004 /* VendorAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorAgent.swift; sourceTree = "<group>"; };
+		A6000006 /* CustomerAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerAgent.swift; sourceTree = "<group>"; };
+		A6000008 /* OrderAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderAgent.swift; sourceTree = "<group>"; };
+		A6000010 /* InquiryAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryAgent.swift; sourceTree = "<group>"; };
+		A6000012 /* CommissionAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommissionAgent.swift; sourceTree = "<group>"; };
+		A6000014 /* CustomerModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerModels.swift; sourceTree = "<group>"; };
+		A6000016 /* VendorModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorModels.swift; sourceTree = "<group>"; };
+		A6000018 /* VendorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorsView.swift; sourceTree = "<group>"; };
+		A6000020 /* VendorsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorsViewModel.swift; sourceTree = "<group>"; };
+		A6000022 /* CustomersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersView.swift; sourceTree = "<group>"; };
+		A6000024 /* CustomersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +223,8 @@
 				A1000062 /* Dashboard */,
 				A1000063 /* Orders */,
 				A1000064 /* Products */,
+				A6000025 /* Vendors */,
+				A6000026 /* Customers */,
 				A1000065 /* Chat */,
 				A1000066 /* Analytics */,
 				A24BDC9A /* Components */,
@@ -205,7 +237,10 @@
 			children = (
 				A1000008 /* DataModels.swift */,
 				A2B9D63A /* SyncModels.swift */,
-				A245C26B /* WebhookModels.swift */);
+				A245C26B /* WebhookModels.swift */,
+				A5000002 /* ProductModels.swift */,
+				A6000014 /* CustomerModels.swift */,
+				A6000016 /* VendorModels.swift */);
 			path = Models;
 			sourceTree = "<group>";
 		};
@@ -216,6 +251,11 @@
 				A1000012 /* DashboardAgent.swift */,
 				A1000014 /* ProductsAgent.swift */,
 				A1000016 /* ChatAgent.swift */,
+				A6000004 /* VendorAgent.swift */,
+				A6000006 /* CustomerAgent.swift */,
+				A6000008 /* OrderAgent.swift */,
+				A6000010 /* InquiryAgent.swift */,
+				A6000012 /* CommissionAgent.swift */,
 			);
 			path = Agents;
 			sourceTree = "<group>";
@@ -229,6 +269,7 @@
 				A1000024 /* OpenAIClient.swift */,
 				A1000026 /* PostgreSQLClient.swift */,
 				A1000028 /* LanceDBClient.swift */,
+				A6000002 /* TavilyClient.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -283,7 +324,8 @@
 			isa = PBXGroup;
 			children = (
 				A1000038 /* ProductsView.swift */,
-				A29518C3 /* ProductsViewModel.swift */);
+				A29518C3 /* ProductsViewModel.swift */,
+				A5000004 /* CreateEnhancedProductView.swift */);
 			path = Products;
 			sourceTree = "<group>";
 		};
@@ -309,6 +351,7 @@
 			children = (
 				A2DCBB64 /* SecureConfiguration.swift */,
 				A2BB1613 /* ConfigurationManager.swift */,
+				A4000001 /* DefaultKeys.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -336,6 +379,24 @@
 				A2E383BE /* WebhookSettingsView.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		A6000025 /* Vendors */ = {
+			isa = PBXGroup;
+			children = (
+				A6000018 /* VendorsView.swift */,
+				A6000020 /* VendorsViewModel.swift */,
+			);
+			path = Vendors;
+			sourceTree = "<group>";
+		};
+		A6000026 /* Customers */ = {
+			isa = PBXGroup;
+			children = (
+				A6000022 /* CustomersView.swift */,
+				A6000024 /* CustomersViewModel.swift */,
+			);
+			path = Customers;
 			sourceTree = "<group>";
 		};
 
@@ -499,7 +560,22 @@
 				A26B37EC /* OfflineIndicator.swift in Sources */,
 				A2627379 /* OrdersViewModel.swift in Sources */,
 				A291D52D /* ProductsViewModel.swift in Sources */,
-				A26A511F /* WebhookSettingsView.swift in Sources */);
+				A26A511F /* WebhookSettingsView.swift in Sources */,
+				A4000002 /* DefaultKeys.swift in Sources */,
+				A5000001 /* ProductModels.swift in Sources */,
+				A5000003 /* CreateEnhancedProductView.swift in Sources */,
+				A6000001 /* TavilyClient.swift in Sources */,
+				A6000003 /* VendorAgent.swift in Sources */,
+				A6000005 /* CustomerAgent.swift in Sources */,
+				A6000007 /* OrderAgent.swift in Sources */,
+				A6000009 /* InquiryAgent.swift in Sources */,
+				A6000011 /* CommissionAgent.swift in Sources */,
+				A6000013 /* CustomerModels.swift in Sources */,
+				A6000015 /* VendorModels.swift in Sources */,
+				A6000017 /* VendorsView.swift in Sources */,
+				A6000019 /* VendorsViewModel.swift in Sources */,
+				A6000021 /* CustomersView.swift in Sources */,
+				A6000023 /* CustomersViewModel.swift in Sources */);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 
