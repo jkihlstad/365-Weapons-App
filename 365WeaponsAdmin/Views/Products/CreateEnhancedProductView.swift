@@ -92,7 +92,7 @@ struct CreateEnhancedProductView: View {
                 )
                 .padding()
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Create Product")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -148,20 +148,20 @@ struct StepProgressView: View {
             ForEach(ProductFormStep.allCases, id: \.rawValue) { step in
                 VStack(spacing: 4) {
                     Circle()
-                        .fill(step.rawValue <= currentStep.rawValue ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : Color.white.opacity(0.3))
+                        .fill(step.rawValue <= currentStep.rawValue ? (Color.appAccent) : Color.appTextPrimary.opacity(0.3))
                         .frame(width: 8, height: 8)
 
                     if step == currentStep {
                         Text(step.title)
                             .font(.caption2)
-                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                            .foregroundColor(Color.appAccent)
                     }
                 }
                 .frame(maxWidth: .infinity)
 
                 if step.rawValue < ProductFormStep.allCases.count - 1 {
                     Rectangle()
-                        .fill(step.rawValue < currentStep.rawValue ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : Color.white.opacity(0.3))
+                        .fill(step.rawValue < currentStep.rawValue ? (Color.appAccent) : Color.appTextPrimary.opacity(0.3))
                         .frame(height: 2)
                         .frame(maxWidth: 20)
                 }
@@ -194,10 +194,10 @@ struct NavigationButtonsView: View {
                         Image(systemName: "chevron.left")
                         Text("Back")
                     }
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
-                    .background(Color.white.opacity(0.2))
+                    .background(Color.appSurface)
                     .cornerRadius(10)
                 }
             }
@@ -212,16 +212,16 @@ struct NavigationButtonsView: View {
                     HStack {
                         if isSubmitting {
                             ProgressView()
-                                .tint(.black)
+                                .tint(Color.appBackground)
                         } else {
                             Text("Create Product")
                             Image(systemName: "checkmark")
                         }
                     }
-                    .foregroundColor(.black)
+                    .foregroundColor(Color.appBackground)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(canSubmit ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : Color.gray)
+                    .background(canSubmit ? (Color.appAccent) : Color.gray)
                     .cornerRadius(10)
                 }
                 .disabled(!canSubmit || isSubmitting)
@@ -237,10 +237,10 @@ struct NavigationButtonsView: View {
                         Text("Next")
                         Image(systemName: "chevron.right")
                     }
-                    .foregroundColor(.black)
+                    .foregroundColor(Color.appBackground)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
+                    .background(Color.appAccent)
                     .cornerRadius(10)
                 }
             }
@@ -258,7 +258,7 @@ struct BasicInfoStepView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Basic Information")
                     .font(.title2.bold())
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 // Title
                 FormField(label: "Product Title", required: true) {
@@ -271,9 +271,9 @@ struct BasicInfoStepView: View {
                     TextEditor(text: $draft.description)
                         .frame(minHeight: 100)
                         .scrollContentBackground(.hidden)
-                        .background(Color.white.opacity(0.1))
+                        .background(Color.appSurface2)
                         .cornerRadius(10)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
                 }
 
                 // Category
@@ -288,9 +288,9 @@ struct BasicInfoStepView: View {
                         }
                     }
                     .pickerStyle(.menu)
-                    .tint(appearanceManager.isDarkMode ? .orange : .red)
+                    .tint(Color.appAccent)
                     .padding()
-                    .background(Color.white.opacity(0.1))
+                    .background(Color.appSurface2)
                     .cornerRadius(10)
                 }
 
@@ -309,16 +309,16 @@ struct BasicInfoStepView: View {
                                     Spacer()
                                     if draft.pagePlacement == placement {
                                         Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                                            .foregroundColor(Color.appAccent)
                                     }
                                 }
-                                .foregroundColor(draft.pagePlacement == placement ? (appearanceManager.isDarkMode ? .orange : .red) : .white)
+                                .foregroundColor(draft.pagePlacement == placement ? (Color.appAccent) : .white)
                                 .padding()
-                                .background(draft.pagePlacement == placement ? (appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15)) : Color.white.opacity(0.1))
+                                .background(draft.pagePlacement == placement ? Color.appAccent.opacity(0.2) : Color.appSurface2)
                                 .cornerRadius(10)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)
-                                        .stroke(draft.pagePlacement == placement ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : Color.clear, lineWidth: 1)
+                                        .stroke(draft.pagePlacement == placement ? (Color.appAccent) : Color.clear, lineWidth: 1)
                                 )
                             }
                         }
@@ -334,7 +334,7 @@ struct BasicInfoStepView: View {
                     if draft.slug.isEmpty && !draft.title.isEmpty {
                         Text("Will use: \(draft.autoSlug)")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
             }
@@ -354,22 +354,22 @@ struct PricingStepView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Pricing")
                     .font(.title2.bold())
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 // Base Price
                 FormField(label: "Base Price", required: true) {
                     HStack {
                         Text("$")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                         TextField("0.00", text: $priceText)
                             .keyboardType(.decimalPad)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.appTextPrimary)
                             .onChange(of: priceText) { _, newValue in
                                 draft.basePrice = Double(newValue) ?? 0
                             }
                     }
                     .padding()
-                    .background(Color.white.opacity(0.1))
+                    .background(Color.appSurface2)
                     .cornerRadius(10)
                 }
 
@@ -380,41 +380,41 @@ struct PricingStepView: View {
 
                     Text("Leave empty to auto-calculate from variants")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 Divider()
-                    .background(Color.white.opacity(0.3))
+                    .background(Color.appTextPrimary.opacity(0.3))
 
                 // Stock status
                 Toggle("In Stock", isOn: $draft.inStock)
-                    .tint(appearanceManager.isDarkMode ? .orange : .red)
-                    .foregroundColor(.white)
+                    .tint(Color.appAccent)
+                    .foregroundColor(Color.appTextPrimary)
 
                 // Has Options
                 Toggle("Has Customization Options", isOn: $draft.hasOptions)
-                    .tint(appearanceManager.isDarkMode ? .orange : .red)
-                    .foregroundColor(.white)
+                    .tint(Color.appAccent)
+                    .foregroundColor(Color.appTextPrimary)
 
                 // Include Shipping Label
                 Toggle("Include Pre-paid Shipping Label", isOn: $draft.includeShippingLabel)
-                    .tint(appearanceManager.isDarkMode ? .orange : .red)
-                    .foregroundColor(.white)
+                    .tint(Color.appAccent)
+                    .foregroundColor(Color.appTextPrimary)
 
                 // Price preview
                 if draft.basePrice > 0 {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Price Preview")
                             .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
 
                         Text(draft.formattedPriceRange)
                             .font(.title.bold())
-                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                            .foregroundColor(Color.appAccent)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white.opacity(0.05))
+                    .background(Color.appSurface)
                     .cornerRadius(10)
                 }
             }
@@ -443,7 +443,7 @@ struct MediaStepView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Media")
                     .font(.title2.bold())
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 // Images section
                 FormField(label: "Product Images", required: true) {
@@ -479,10 +479,10 @@ struct MediaStepView: View {
                                 Image(systemName: "photo.badge.plus")
                                 Text(draft.images.isEmpty ? "Add Images" : "Add More Images")
                             }
-                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                            .foregroundColor(Color.appAccent)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.white.opacity(0.1))
+                            .background(Color.appSurface2)
                             .cornerRadius(10)
                         }
                         .onChange(of: selectedItems) { _, newItems in
@@ -494,16 +494,16 @@ struct MediaStepView: View {
                         if isUploading {
                             HStack {
                                 ProgressView()
-                                    .tint(appearanceManager.isDarkMode ? .orange : .red)
+                                    .tint(Color.appAccent)
                                 Text("Uploading images...")
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(Color.appTextSecondary)
                             }
                         }
                     }
                 }
 
                 Divider()
-                    .background(Color.white.opacity(0.3))
+                    .background(Color.appTextPrimary.opacity(0.3))
 
                 // Videos section
                 FormField(label: "Video URLs (optional)") {
@@ -511,9 +511,9 @@ struct MediaStepView: View {
                         ForEach(Array(draft.videos.enumerated()), id: \.offset) { index, url in
                             HStack {
                                 Image(systemName: "play.circle")
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(Color.appTextSecondary)
                                 Text(url)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(Color.appTextPrimary)
                                     .lineLimit(1)
                                 Spacer()
                                 Button {
@@ -524,7 +524,7 @@ struct MediaStepView: View {
                                 }
                             }
                             .padding(8)
-                            .background(Color.white.opacity(0.05))
+                            .background(Color.appSurface)
                             .cornerRadius(8)
                         }
 
@@ -540,7 +540,7 @@ struct MediaStepView: View {
                                 }
                             } label: {
                                 Image(systemName: "plus.circle.fill")
-                                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                                    .foregroundColor(Color.appAccent)
                                     .font(.title2)
                             }
                             .disabled(newVideoUrl.isEmpty)
@@ -615,17 +615,17 @@ struct ImageThumbnailView: View {
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(isPrimary ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : Color.clear, lineWidth: 3)
+                    .stroke(isPrimary ? (Color.appAccent) : Color.clear, lineWidth: 3)
             )
 
             // Primary badge
             if isPrimary {
                 Text("Primary")
                     .font(.caption2)
-                    .foregroundColor(.black)
+                    .foregroundColor(Color.appBackground)
                     .padding(.horizontal, 4)
                     .padding(.vertical, 2)
-                    .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
+                    .background(Color.appAccent)
                     .cornerRadius(4)
                     .offset(x: 4, y: -4)
             }
@@ -635,7 +635,7 @@ struct ImageThumbnailView: View {
                 ProgressView()
                     .tint(.white)
                     .frame(width: 80, height: 80)
-                    .background(Color.black.opacity(0.5))
+                    .background(Color.appBackground.opacity(0.5))
                     .cornerRadius(8)
             }
         }
@@ -667,11 +667,11 @@ struct VariantsStepView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Product Variants")
                     .font(.title2.bold())
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 Text("Add variant groups like 'Slide Type' or 'Finish' with options that affect pricing.")
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
 
                 // Existing variants
                 ForEach(Array(draft.variants.enumerated()), id: \.element.id) { index, variant in
@@ -698,17 +698,17 @@ struct VariantsStepView: View {
                         Image(systemName: "plus.circle")
                         Text("Add Variant Group")
                     }
-                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                    .foregroundColor(Color.appAccent)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.white.opacity(0.1))
+                    .background(Color.appSurface2)
                     .cornerRadius(10)
                 }
 
                 if draft.variants.isEmpty {
                     Text("No variants added. Products without variants will have a single fixed price.")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .padding()
                 }
             }
@@ -729,7 +729,7 @@ struct VariantEditorView: View {
             HStack {
                 TextField("Variant Name (e.g., Slide Type)", text: $variant.name)
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 Button(role: .destructive) {
                     onDelete()
@@ -740,7 +740,7 @@ struct VariantEditorView: View {
             }
 
             Divider()
-                .background(Color.white.opacity(0.2))
+                .background(Color.appSurface)
 
             // Options
             ForEach(Array(variant.options.enumerated()), id: \.element.id) { optIndex, option in
@@ -749,11 +749,11 @@ struct VariantEditorView: View {
                         get: { option.label },
                         set: { variant.options[optIndex].label = $0 }
                     ))
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                     HStack {
                         Text("$")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                         TextField("0", value: Binding(
                             get: { option.priceModifier },
                             set: { variant.options[optIndex].priceModifier = $0 }
@@ -771,7 +771,7 @@ struct VariantEditorView: View {
                     }
                 }
                 .padding(8)
-                .background(Color.white.opacity(0.05))
+                .background(Color.appSurface)
                 .cornerRadius(8)
             }
 
@@ -784,11 +784,11 @@ struct VariantEditorView: View {
                     Text("Add Option")
                 }
                 .font(.caption)
-                .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                .foregroundColor(Color.appAccent)
             }
         }
         .padding()
-        .background(Color.white.opacity(0.1))
+        .background(Color.appSurface2)
         .cornerRadius(12)
     }
 }
@@ -803,11 +803,11 @@ struct AddOnsStepView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Product Add-Ons")
                     .font(.title2.bold())
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 Text("Add optional extras customers can add to their order.")
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
 
                 // Existing add-ons
                 ForEach(Array(draft.addOns.enumerated()), id: \.element.id) { index, addOn in
@@ -831,17 +831,17 @@ struct AddOnsStepView: View {
                         Image(systemName: "plus.circle")
                         Text("Add Add-On")
                     }
-                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                    .foregroundColor(Color.appAccent)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.white.opacity(0.1))
+                    .background(Color.appSurface2)
                     .cornerRadius(10)
                 }
 
                 if draft.addOns.isEmpty {
                     Text("No add-ons added. Skip this step if your product doesn't need optional extras.")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .padding()
                 }
             }
@@ -861,11 +861,11 @@ struct AddOnEditorView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 TextField("Add-on Name", text: $addOn.name)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 HStack {
                     Text("+$")
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     TextField("0", text: $priceText)
                         .keyboardType(.decimalPad)
                         .foregroundColor(.green)
@@ -888,10 +888,10 @@ struct AddOnEditorView: View {
                 set: { addOn.description = $0.isEmpty ? nil : $0 }
             ))
             .font(.caption)
-            .foregroundColor(.gray)
+            .foregroundColor(Color.appTextSecondary)
         }
         .padding()
-        .background(Color.white.opacity(0.1))
+        .background(Color.appSurface2)
         .cornerRadius(12)
         .onAppear {
             if addOn.price > 0 {
@@ -911,7 +911,7 @@ struct ReviewStepView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Review Product")
                     .font(.title2.bold())
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 // Validation errors
                 if !draft.validationErrors.isEmpty {
@@ -958,30 +958,30 @@ struct ReviewStepView: View {
                         VStack(alignment: .leading) {
                             Text(draft.title.isEmpty ? "Product Title" : draft.title)
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color.appTextPrimary)
 
                             Text(draft.category.displayName)
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                         }
 
                         Spacer()
 
                         Text(draft.formattedPriceRange)
                             .font(.title3.bold())
-                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                            .foregroundColor(Color.appAccent)
                     }
 
                     // Description
                     if !draft.description.isEmpty {
                         Text(draft.description)
                             .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                             .lineLimit(3)
                     }
 
                     Divider()
-                        .background(Color.white.opacity(0.2))
+                        .background(Color.appSurface)
 
                     // Stats
                     HStack(spacing: 20) {
@@ -997,14 +997,14 @@ struct ReviewStepView: View {
                         Text(draft.pagePlacement.displayName)
                     }
                     .font(.caption)
-                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                    .foregroundColor(Color.appAccent)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
+                    .background(Color.appAccent.opacity(0.2))
                     .cornerRadius(8)
                 }
                 .padding()
-                .background(Color.white.opacity(0.1))
+                .background(Color.appSurface2)
                 .cornerRadius(16)
             }
             .padding()
@@ -1021,10 +1021,10 @@ struct StatItem: View {
         VStack {
             Text(value)
                 .font(.headline)
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
             Text(label)
                 .font(.caption2)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
     }
 }
@@ -1040,7 +1040,7 @@ struct FormField<Content: View>: View {
             HStack {
                 Text(label)
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                 if required {
                     Text("*")
                         .foregroundColor(.red)
@@ -1056,9 +1056,9 @@ struct DarkTextFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
             .padding()
-            .background(Color.white.opacity(0.1))
+            .background(Color.appSurface2)
             .cornerRadius(10)
-            .foregroundColor(.white)
+            .foregroundColor(Color.appTextPrimary)
     }
 }
 

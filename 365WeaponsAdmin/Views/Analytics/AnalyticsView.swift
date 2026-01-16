@@ -58,7 +58,7 @@ struct AnalyticsView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Analytics")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -140,7 +140,7 @@ struct AnalyticsView: View {
                 title: "Avg Order",
                 value: viewModel.averageOrderValue.currencyFormatted,
                 icon: "cart.fill",
-                color: appearanceManager.isDarkMode ? .orange : .red,
+                color: Color.appAccent,
                 isSelected: selectedMetric == .products,
                 action: { selectedMetric = .products }
             )
@@ -203,7 +203,7 @@ struct AnalyticsView: View {
                         AxisValueLabel {
                             if let val = value.as(Double.self) {
                                 Text(selectedMetric == .revenue ? val.shortCurrencyFormatted : "\(Int(val))")
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(Color.appTextSecondary)
                                     .font(.caption2)
                             }
                         }
@@ -214,7 +214,7 @@ struct AnalyticsView: View {
                         AxisValueLabel {
                             if let date = value.as(Date.self) {
                                 Text(date.shortFormatted)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(Color.appTextSecondary)
                                     .font(.caption2)
                             }
                         }
@@ -227,7 +227,7 @@ struct AnalyticsView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -245,7 +245,7 @@ struct AnalyticsView: View {
         case .revenue: return .green
         case .orders: return .blue
         case .customers: return .purple
-        case .products: return appearanceManager.isDarkMode ? .orange : .red
+        case .products: return Color.appAccent
         }
     }
 
@@ -269,12 +269,12 @@ struct AnalyticsView: View {
                 .frame(height: 180)
             } else {
                 Text("No data available")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                     .frame(height: 180)
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -289,8 +289,8 @@ struct AnalyticsView: View {
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
-                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                    .background(Color.appAccent.opacity(0.2))
+                    .foregroundColor(Color.appAccent)
                     .cornerRadius(8)
             }
 
@@ -298,17 +298,17 @@ struct AnalyticsView: View {
             VStack(spacing: 12) {
                 Image(systemName: "person.2.circle")
                     .font(.system(size: 40))
-                    .foregroundColor(.gray.opacity(0.5))
+                    .foregroundColor(Color.appTextSecondary.opacity(0.5))
                 Text("Partner analytics will be\navailable in a future update")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                     .multilineTextAlignment(.center)
             }
             .frame(height: 180)
             .frame(maxWidth: .infinity)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -334,7 +334,7 @@ struct AnalyticsView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -366,12 +366,12 @@ struct AnalyticsView: View {
                     value: viewModel.avgCustomerLifetimeValue.currencyFormatted,
                     subtitle: "Per customer",
                     icon: "dollarsign.circle",
-                    color: appearanceManager.isDarkMode ? .orange : .red
+                    color: Color.appAccent
                 )
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -391,14 +391,14 @@ struct AnalyticsView: View {
 
                 Text("\(viewModel.activeVisitors) active now")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             if !viewModel.recentActions.isEmpty {
                 ForEach(viewModel.recentActions.prefix(5)) { action in
                     HStack(spacing: 12) {
                         Image(systemName: action.actionType.icon)
-                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                            .foregroundColor(Color.appAccent)
                             .frame(width: 24)
 
                         VStack(alignment: .leading, spacing: 2) {
@@ -406,7 +406,7 @@ struct AnalyticsView: View {
                                 .font(.subheadline)
                             Text(action.description)
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                                 .lineLimit(1)
                         }
 
@@ -414,18 +414,18 @@ struct AnalyticsView: View {
 
                         Text(action.timestamp.timeAgo)
                             .font(.caption2)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                     .padding(.vertical, 4)
                 }
             } else {
                 Text("No recent activity")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 }
@@ -463,14 +463,14 @@ struct MetricCard: View {
 
                 Text(value)
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 Text(title)
                     .font(.caption2)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
             .padding(12)
-            .background(isSelected ? color.opacity(0.2) : (appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white))
+            .background(isSelected ? color.opacity(0.2) : Color.appSurface)
             .cornerRadius(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
@@ -495,7 +495,7 @@ struct StatusMetricCard: View {
     var color: Color {
         switch status {
         case .pending: return .yellow
-        case .awaitingPayment: return appearanceManager.isDarkMode ? .orange : .red
+        case .awaitingPayment: return Color.appAccent
         case .awaitingShipment: return .blue
         case .inProgress: return .purple
         case .completed: return .green
@@ -511,7 +511,7 @@ struct StatusMetricCard: View {
                     .frame(width: 8, height: 8)
                 Text(status.displayName)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             Text("\(count)")
@@ -521,7 +521,7 @@ struct StatusMetricCard: View {
                 .tint(color)
         }
         .padding(12)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 }
@@ -546,15 +546,15 @@ struct InsightCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                 Text(subtitle)
                     .font(.caption2)
-                    .foregroundColor(.gray.opacity(0.7))
+                    .foregroundColor(Color.appTextSecondary.opacity(0.7))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 }

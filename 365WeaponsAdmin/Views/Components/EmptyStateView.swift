@@ -84,13 +84,13 @@ struct EmptyStateView: View {
         VStack(spacing: 8) {
             Text(title)
                 .font(style.titleFont)
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
                 .multilineTextAlignment(.center)
 
             if let subtitle = subtitle {
                 Text(subtitle)
                     .font(style.subtitleFont)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                     .multilineTextAlignment(.center)
             }
         }
@@ -100,10 +100,10 @@ struct EmptyStateView: View {
         Button(action: action) {
             Text(title)
                 .font(.subheadline.weight(.medium))
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
-                .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
+                .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
                 .cornerRadius(10)
         }
         .padding(.top, 8)
@@ -207,7 +207,7 @@ struct EmptyStateCard: View {
             style: .card
         )
         .frame(maxWidth: .infinity)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(16)
     }
 }
@@ -226,16 +226,16 @@ struct NoResultsView: View {
         VStack(spacing: 20) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 50))
-                .foregroundColor(.gray.opacity(0.5))
+                .foregroundColor(Color.appTextSecondary.opacity(0.5))
 
             VStack(spacing: 8) {
                 Text("No Results")
                     .font(.title3.weight(.medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 Text("No results found for \"\(searchQuery)\"")
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                     .multilineTextAlignment(.center)
             }
 
@@ -243,7 +243,7 @@ struct NoResultsView: View {
                 VStack(spacing: 12) {
                     Text("Try searching for:")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
 
                     FlowLayout(spacing: 8) {
                         ForEach(suggestions, id: \.self) { suggestion in
@@ -252,8 +252,8 @@ struct NoResultsView: View {
                                     .font(.subheadline)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
-                                    .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
-                                    .foregroundColor(.white)
+                                    .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
+                                    .foregroundColor(Color.appTextPrimary)
                                     .cornerRadius(16)
                             }
                         }
@@ -282,7 +282,7 @@ struct ErrorStateView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [.red.opacity(0.8), (appearanceManager.isDarkMode ? Color.orange.opacity(0.6) : Color.red.opacity(0.6))],
+                        colors: [.red.opacity(0.8), (appearanceManager.isDarkMode ? Color.appAccent.opacity(0.6) : Color.red.opacity(0.6))],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -291,12 +291,12 @@ struct ErrorStateView: View {
             VStack(spacing: 8) {
                 Text(title)
                     .font(.title3.weight(.medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 if let message = message {
                     Text(message)
                         .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .multilineTextAlignment(.center)
                 }
             }
@@ -308,10 +308,10 @@ struct ErrorStateView: View {
                         Text(retryTitle)
                     }
                     .font(.subheadline.weight(.medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
+                    .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
                     .cornerRadius(10)
                 }
             }
@@ -335,14 +335,14 @@ struct ComingSoonView: View {
         VStack(spacing: 20) {
             ZStack {
                 Circle()
-                    .fill(appearanceManager.isDarkMode ? Color.orange.opacity(0.1) : Color.red.opacity(0.1))
+                    .fill(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.1) : Color.red.opacity(0.1))
                     .frame(width: 100, height: 100)
 
                 Image(systemName: icon)
                     .font(.system(size: 40))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [appearanceManager.isDarkMode ? .orange : .red, .red],
+                            colors: [appearanceManager.isDarkMode ? Color.appAccent : .red, .red],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -352,16 +352,16 @@ struct ComingSoonView: View {
             VStack(spacing: 8) {
                 Text(feature)
                     .font(.title3.weight(.bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 Text("Coming Soon")
                     .font(.subheadline.weight(.medium))
-                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
 
                 if let description = description {
                     Text(description)
                         .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.top, 4)
                 }
@@ -442,7 +442,7 @@ struct FlowLayout: Layout {
                 actionTitle: "Add Product",
                 action: {}
             )
-            .background(AppearanceManager.shared.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+            .background(AppearanceManager.shared.isDarkMode ? Color.appSurface : Color.white)
             .cornerRadius(16)
 
             // Compact empty state
@@ -452,7 +452,7 @@ struct FlowLayout: Layout {
                 subtitle: "No orders to display",
                 style: .compact
             )
-            .background(AppearanceManager.shared.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+            .background(AppearanceManager.shared.isDarkMode ? Color.appSurface : Color.white)
             .cornerRadius(12)
 
             // Card empty state
@@ -470,7 +470,7 @@ struct FlowLayout: Layout {
                 message: "Please check your connection and try again.",
                 retryAction: {}
             )
-            .background(AppearanceManager.shared.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+            .background(AppearanceManager.shared.isDarkMode ? Color.appSurface : Color.white)
             .cornerRadius(16)
 
             // Coming soon
@@ -478,7 +478,7 @@ struct FlowLayout: Layout {
                 feature: "Advanced Analytics",
                 description: "Detailed insights and reporting will be available in a future update."
             )
-            .background(AppearanceManager.shared.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+            .background(AppearanceManager.shared.isDarkMode ? Color.appSurface : Color.white)
             .cornerRadius(16)
 
             // No results
@@ -487,10 +487,10 @@ struct FlowLayout: Layout {
                 suggestions: ["Glock", "Pistol", "Handgun"],
                 onSuggestionTap: { _ in }
             )
-            .background(AppearanceManager.shared.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+            .background(AppearanceManager.shared.isDarkMode ? Color.appSurface : Color.white)
             .cornerRadius(16)
         }
         .padding()
     }
-    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
+    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
 }

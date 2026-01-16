@@ -70,12 +70,12 @@ struct SearchBar: View {
     private var searchField: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
                 .font(.body)
 
             TextField(placeholder, text: $text)
                 .textFieldStyle(.plain)
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
                 .focused($isFocused)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
@@ -93,7 +93,7 @@ struct SearchBar: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+        .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
         .cornerRadius(10)
         .onAppear {
             if focusOnAppear {
@@ -105,7 +105,7 @@ struct SearchBar: View {
     private var clearButton: some View {
         Button(action: clearSearch) {
             Image(systemName: "xmark.circle.fill")
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
                 .font(.body)
         }
         .buttonStyle(.plain)
@@ -115,7 +115,7 @@ struct SearchBar: View {
         Button(action: { onFilterTap?() }) {
             Image(systemName: "line.3.horizontal.decrease.circle")
                 .font(.title2)
-                .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
         }
         .buttonStyle(.plain)
     }
@@ -147,7 +147,7 @@ extension SearchBar {
             return AnyView(
                 self
                     .padding(.vertical, 4)
-                    .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+                    .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
                     .cornerRadius(12)
             )
         case .minimal:
@@ -203,8 +203,8 @@ private struct ScopeButton: View {
                 .font(.subheadline)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(isSelected ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : (appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground)))
-                .foregroundColor(isSelected ? .white : .gray)
+                .background(isSelected ? (appearanceManager.isDarkMode ? Color.appAccent : Color.red) : (appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground)))
+                .foregroundColor(isSelected ? Color.appTextPrimary : Color.appTextSecondary)
                 .cornerRadius(16)
         }
         .buttonStyle(.plain)
@@ -224,13 +224,13 @@ struct InlineSearchBar: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
                 .font(.caption)
 
             TextField(placeholder, text: $text)
                 .textFieldStyle(.plain)
                 .font(.subheadline)
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
                 .focused($isFocused)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
@@ -238,7 +238,7 @@ struct InlineSearchBar: View {
             if !text.isEmpty {
                 Button(action: { text = "" }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .font(.caption)
                 }
                 .buttonStyle(.plain)
@@ -246,7 +246,7 @@ struct InlineSearchBar: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+        .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
         .cornerRadius(8)
     }
 }
@@ -278,5 +278,5 @@ struct InlineSearchBar: View {
         Spacer()
     }
     .padding()
-    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
+    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
 }

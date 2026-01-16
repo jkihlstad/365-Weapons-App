@@ -123,36 +123,36 @@ enum ActionButtonStyle {
 
     var backgroundColor: Color {
         switch self {
-        case .primary: return .orange
+        case .primary: return Color.appAccent
         case .secondary: return .clear
         case .destructive: return .red
         case .ghost: return .clear
-        case .subtle: return .white.opacity(0.1)
+        case .subtle: return Color.appSurface2
         }
     }
 
     var foregroundColor: Color {
         switch self {
-        case .primary: return .white
-        case .secondary: return .orange
-        case .destructive: return .white
-        case .ghost: return .orange
-        case .subtle: return .white
+        case .primary: return Color.appTextPrimary
+        case .secondary: return Color.appAccent
+        case .destructive: return Color.appTextPrimary
+        case .ghost: return Color.appAccent
+        case .subtle: return Color.appTextPrimary
         }
     }
 
     var borderColor: Color? {
         switch self {
-        case .secondary: return .orange
+        case .secondary: return Color.appAccent
         default: return nil
         }
     }
 
     var loadingTint: Color {
         switch self {
-        case .primary, .destructive: return .white
-        case .secondary, .ghost: return .orange
-        case .subtle: return .white
+        case .primary, .destructive: return Color.appTextPrimary
+        case .secondary, .ghost: return Color.appAccent
+        case .subtle: return Color.appTextPrimary
         }
     }
 
@@ -258,7 +258,7 @@ private struct ActionButtonButtonStyle: ButtonStyle {
 /// A button that displays only an icon.
 struct IconButton: View {
     let icon: String
-    var color: Color = .orange
+    var color: Color = Color.appAccent
     var size: CGFloat = 24
     var backgroundColor: Color? = nil
     let action: () -> Void
@@ -291,7 +291,7 @@ private struct IconButtonStyle: ButtonStyle {
 struct LinkButton: View {
     let title: String
     var icon: String? = nil
-    var color: Color = .orange
+    var color: Color = Color.appAccent
     let action: () -> Void
 
     var body: some View {
@@ -379,7 +379,7 @@ struct ButtonGroup<Content: View>: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Primary")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 ActionButton(title: "Save Changes", action: {})
                 ActionButton(title: "Add Product", icon: "plus", action: {})
@@ -391,7 +391,7 @@ struct ButtonGroup<Content: View>: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Secondary")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 ActionButton(title: "Cancel", style: .secondary, action: {})
                 ActionButton(title: "View Details", icon: "eye", style: .secondary, action: {})
@@ -401,7 +401,7 @@ struct ButtonGroup<Content: View>: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Destructive")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 ActionButton(title: "Delete", icon: "trash", style: .destructive, action: {})
                 ActionButton(title: "Deleting...", style: .destructive, isLoading: true, action: {})
@@ -411,7 +411,7 @@ struct ButtonGroup<Content: View>: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Other Styles")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 ActionButton(title: "Ghost Button", style: .ghost, action: {})
                 ActionButton(title: "Subtle Button", style: .subtle, action: {})
@@ -421,7 +421,7 @@ struct ButtonGroup<Content: View>: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Sizes")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 ActionButton(title: "Small", size: .small, action: {})
                 ActionButton(title: "Medium", size: .medium, action: {})
@@ -432,7 +432,7 @@ struct ButtonGroup<Content: View>: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Inline Buttons")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 12) {
                     ActionButton(title: "Cancel", style: .secondary, fullWidth: false, action: {})
@@ -444,12 +444,12 @@ struct ButtonGroup<Content: View>: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Icon Buttons")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 16) {
                     IconButton(icon: "plus", action: {})
                     IconButton(icon: "trash", color: .red, action: {})
-                    IconButton(icon: "gearshape", backgroundColor: .white.opacity(0.1), action: {})
+                    IconButton(icon: "gearshape", backgroundColor: Color.appSurface2, action: {})
                 }
             }
 
@@ -457,7 +457,7 @@ struct ButtonGroup<Content: View>: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Link Buttons")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 16) {
                     LinkButton(title: "See All", action: {})
@@ -469,7 +469,7 @@ struct ButtonGroup<Content: View>: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Button Group")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 ButtonGroup {
                     ActionButton(title: "Cancel", style: .secondary, action: {})
@@ -479,5 +479,5 @@ struct ButtonGroup<Content: View>: View {
         }
         .padding()
     }
-    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
+    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
 }

@@ -45,7 +45,7 @@ struct LoadingOverlay: View {
     var showBackground: Bool = true
 
     /// The tint color for the progress indicator
-    var tintColor: Color = .orange
+    var tintColor: Color = Color.appAccent
 
     // MARK: - Body
 
@@ -67,7 +67,7 @@ struct LoadingOverlay: View {
     private var fullscreenView: some View {
         ZStack {
             if showBackground {
-                Color.black.opacity(0.6)
+                Color.appBackground.opacity(0.6)
                     .ignoresSafeArea()
                     .background(.ultraThinMaterial)
             }
@@ -80,12 +80,12 @@ struct LoadingOverlay: View {
                 if let message = message {
                     Text(message)
                         .font(.subheadline)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
                         .multilineTextAlignment(.center)
                 }
             }
             .padding(32)
-            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+            .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
             .cornerRadius(16)
         }
     }
@@ -99,13 +99,13 @@ struct LoadingOverlay: View {
             if let message = message {
                 Text(message)
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                     .multilineTextAlignment(.center)
             }
         }
         .frame(maxWidth: .infinity)
         .padding(24)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(16)
     }
 
@@ -117,7 +117,7 @@ struct LoadingOverlay: View {
             if let message = message {
                 Text(message)
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
         }
     }
@@ -195,7 +195,7 @@ struct SkeletonView: View {
 
     var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius)
-            .fill(Color.white.opacity(isAnimating ? 0.15 : 0.08))
+            .fill(Color.appSurface.opacity(isAnimating ? 0.6 : 0.3))
             .frame(width: width, height: height)
             .animation(
                 Animation.easeInOut(duration: 1.0).repeatForever(autoreverses: true),
@@ -225,7 +225,7 @@ struct SkeletonCard: View {
             SkeletonView(width: 120, height: 14)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(16)
     }
 }
@@ -260,18 +260,18 @@ struct DeterminateLoadingOverlay: View {
     let progress: Double
     var message: String? = nil
     var showPercentage: Bool = true
-    var tintColor: Color = .orange
+    var tintColor: Color = Color.appAccent
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.6)
+            Color.appBackground.opacity(0.6)
                 .ignoresSafeArea()
                 .background(.ultraThinMaterial)
 
             VStack(spacing: 20) {
                 ZStack {
                     Circle()
-                        .stroke(Color.white.opacity(0.2), lineWidth: 8)
+                        .stroke(Color.appSurface, lineWidth: 8)
                         .frame(width: 80, height: 80)
 
                     Circle()
@@ -284,19 +284,19 @@ struct DeterminateLoadingOverlay: View {
                     if showPercentage {
                         Text("\(Int(progress * 100))%")
                             .font(.headline)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.appTextPrimary)
                     }
                 }
 
                 if let message = message {
                     Text(message)
                         .font(.subheadline)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
                         .multilineTextAlignment(.center)
                 }
             }
             .padding(32)
-            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+            .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
             .cornerRadius(16)
         }
     }
@@ -306,11 +306,11 @@ struct DeterminateLoadingOverlay: View {
 
 #Preview("Loading Overlays") {
     ZStack {
-        (AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground)).ignoresSafeArea()
+        (AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground)).ignoresSafeArea()
 
         VStack(spacing: 24) {
             Text("Background Content")
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
         }
 
         LoadingOverlay(
@@ -339,7 +339,7 @@ struct DeterminateLoadingOverlay: View {
             VStack(spacing: 16) {
                 Text("Skeleton Loading")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     SkeletonCard()
@@ -357,5 +357,5 @@ struct DeterminateLoadingOverlay: View {
         }
         .padding()
     }
-    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
+    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
 }

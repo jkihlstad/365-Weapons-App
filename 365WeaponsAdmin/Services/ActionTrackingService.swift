@@ -458,7 +458,7 @@ struct RealTimeActionsView: View {
                         .frame(width: 8, height: 8)
                     Text(trackingService.isConnected ? "Live" : "Polling")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
             }
 
@@ -496,16 +496,16 @@ struct QuickStat: View {
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: icon)
-                .foregroundColor(.orange)
+                .foregroundColor(Color.appAccent)
             Text(value)
                 .font(.headline)
             Text(title)
                 .font(.caption2)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
-        .background(Color.white.opacity(0.05))
+        .background(Color.appSurface)
         .cornerRadius(8)
     }
 }
@@ -516,7 +516,7 @@ struct ActionRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: action.actionType.icon)
-                .foregroundColor(.orange)
+                .foregroundColor(Color.appAccent)
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -524,7 +524,7 @@ struct ActionRow: View {
                     .font(.subheadline)
                 Text(action.description)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                     .lineLimit(1)
             }
 
@@ -532,7 +532,7 @@ struct ActionRow: View {
 
             Text(action.timestamp.timeAgo)
                 .font(.caption2)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .padding(.vertical, 4)
     }

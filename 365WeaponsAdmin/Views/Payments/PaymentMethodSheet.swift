@@ -112,10 +112,10 @@ struct TapToPayView: View {
                             Text("Start Tap to Pay")
                         }
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(viewModel.isPaymentFormValid ? Color.orange : Color.gray)
+                        .background(viewModel.isPaymentFormValid ? Color.appAccent : Color.appTextSecondary)
                         .cornerRadius(12)
                     }
                     .disabled(!viewModel.isPaymentFormValid)
@@ -123,7 +123,7 @@ struct TapToPayView: View {
             }
             .padding()
         }
-        .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+        .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
     }
 
     private func startTapToPay() {
@@ -145,16 +145,16 @@ struct TapToPayReadyView: View {
         VStack(spacing: 16) {
             ZStack {
                 Circle()
-                    .stroke(Color.orange.opacity(0.3), lineWidth: 4)
+                    .stroke(Color.appAccent.opacity(0.3), lineWidth: 4)
                     .frame(width: 120, height: 120)
 
                 Circle()
-                    .stroke(Color.orange.opacity(0.2), lineWidth: 2)
+                    .stroke(Color.appAccent.opacity(0.2), lineWidth: 2)
                     .frame(width: 150, height: 150)
 
                 Image(systemName: "wave.3.right")
                     .font(.system(size: 50))
-                    .foregroundColor(.orange)
+                    .foregroundColor(Color.appAccent)
             }
             .padding()
 
@@ -164,12 +164,12 @@ struct TapToPayReadyView: View {
 
             Text("Enter amount and tap 'Start' to begin accepting payment")
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
                 .multilineTextAlignment(.center)
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(16)
     }
 }
@@ -188,7 +188,7 @@ struct TapToPayActiveView: View {
                 // Animated rings
                 ForEach(0..<3, id: \.self) { i in
                     Circle()
-                        .stroke(Color.orange.opacity(0.3 - Double(i) * 0.1), lineWidth: 2)
+                        .stroke(Color.appAccent.opacity(0.3 - Double(i) * 0.1), lineWidth: 2)
                         .frame(width: 120 + CGFloat(i) * 40, height: 120 + CGFloat(i) * 40)
                         .scaleEffect(animationAmount)
                         .animation(
@@ -201,7 +201,7 @@ struct TapToPayActiveView: View {
 
                 Image(systemName: "creditcard.fill")
                     .font(.system(size: 50))
-                    .foregroundColor(.orange)
+                    .foregroundColor(Color.appAccent)
             }
             .onAppear {
                 animationAmount = 1.2
@@ -214,16 +214,16 @@ struct TapToPayActiveView: View {
             if let amount = viewModel.parsedAmount {
                 Text(formatCurrency(amount))
                     .font(.title.bold())
-                    .foregroundColor(.orange)
+                    .foregroundColor(Color.appAccent)
             }
 
             Text("Hold card near device")
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(16)
     }
 
@@ -263,7 +263,7 @@ struct ManualCardEntryView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Card Number")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
 
                         HStack {
                             TextField("1234 5678 9012 3456", text: $viewModel.cardNumber)
@@ -277,7 +277,7 @@ struct ManualCardEntryView: View {
                                 .foregroundColor(viewModel.cardNumber.isEmpty ? .gray : .orange)
                         }
                         .padding()
-                        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                        .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
                         .cornerRadius(10)
                     }
 
@@ -286,7 +286,7 @@ struct ManualCardEntryView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Expiry")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
 
                             TextField("MM/YY", text: $viewModel.expiryDate)
                                 .keyboardType(.numberPad)
@@ -295,14 +295,14 @@ struct ManualCardEntryView: View {
                                     viewModel.expiryDate = viewModel.formatExpiryDate(newValue)
                                 }
                                 .padding()
-                                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                                .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
                                 .cornerRadius(10)
                         }
 
                         VStack(alignment: .leading, spacing: 8) {
                             Text("CVV")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
 
                             SecureField("123", text: $viewModel.cvv)
                                 .keyboardType(.numberPad)
@@ -311,7 +311,7 @@ struct ManualCardEntryView: View {
                                     viewModel.cvv = String(newValue.prefix(4))
                                 }
                                 .padding()
-                                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                                .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
                                 .cornerRadius(10)
                         }
                     }
@@ -320,13 +320,13 @@ struct ManualCardEntryView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Cardholder Name")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
 
                         TextField("John Smith", text: $viewModel.cardholderName)
                             .textContentType(.name)
                             .focused($focusedField, equals: .name)
                             .padding()
-                            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                            .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
                             .cornerRadius(10)
                     }
 
@@ -334,7 +334,7 @@ struct ManualCardEntryView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("ZIP Code")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
 
                         TextField("12345", text: $viewModel.zipCode)
                             .keyboardType(.numberPad)
@@ -343,12 +343,12 @@ struct ManualCardEntryView: View {
                                 viewModel.zipCode = String(newValue.prefix(5))
                             }
                             .padding()
-                            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                            .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
                             .cornerRadius(10)
                     }
                 }
                 .padding()
-                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+                .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
                 .cornerRadius(12)
 
                 // Customer Info
@@ -370,10 +370,10 @@ struct ManualCardEntryView: View {
                         }
                     }
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(viewModel.isCardFormValid ? Color.orange : Color.gray)
+                    .background(viewModel.isCardFormValid ? Color.appAccent : Color.appTextSecondary)
                     .cornerRadius(12)
                 }
                 .disabled(!viewModel.isCardFormValid || viewModel.isLoading)
@@ -384,12 +384,12 @@ struct ManualCardEntryView: View {
                         .foregroundColor(.green)
                     Text("Payments are processed securely")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
             }
             .padding()
         }
-        .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+        .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
     }
 
     private func processPayment() {
@@ -441,16 +441,16 @@ struct CardOnFileView: View {
                         Text("Charge Card on File")
                     }
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.orange)
+                    .background(Color.appAccent)
                     .cornerRadius(12)
                 }
             }
             .padding()
         }
-        .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+        .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
     }
 }
 
@@ -466,7 +466,7 @@ struct SavedCardRow: View {
     var body: some View {
         HStack {
             Image(systemName: brand.icon)
-                .foregroundColor(.orange)
+                .foregroundColor(Color.appAccent)
 
             Text("\(brand.displayName) •••• \(last4)")
                 .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
@@ -478,11 +478,11 @@ struct SavedCardRow: View {
                     .foregroundColor(.green)
             } else {
                 Image(systemName: "circle")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(10)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
@@ -521,34 +521,34 @@ struct SendInvoiceView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Description")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
 
                         TextField("Invoice for...", text: $viewModel.paymentDescription)
                             .padding()
-                            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                            .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
                             .cornerRadius(10)
                     }
 
                     // Due Date
                     DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
-                        .tint(.orange)
+                        .tint(Color.appAccent)
 
                     // Notes
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Additional Notes")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
 
                         TextEditor(text: $notes)
                             .frame(minHeight: 80)
                             .padding(8)
                             .scrollContentBackground(.hidden)
-                            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                            .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
                             .cornerRadius(10)
                     }
                 }
                 .padding()
-                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+                .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
                 .cornerRadius(12)
 
                 Spacer(minLength: 20)
@@ -567,17 +567,17 @@ struct SendInvoiceView: View {
                         }
                     }
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(canSendInvoice ? Color.orange : Color.gray)
+                    .background(canSendInvoice ? Color.appAccent : Color.appTextSecondary)
                     .cornerRadius(12)
                 }
                 .disabled(!canSendInvoice || viewModel.isLoading)
             }
             .padding()
         }
-        .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+        .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
     }
 
     private var canSendInvoice: Bool {
@@ -608,7 +608,7 @@ struct PaymentAmountSection: View {
             HStack {
                 Text("$")
                     .font(.largeTitle.bold())
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
 
                 TextField("0.00", text: $viewModel.paymentAmount)
                     .font(.largeTitle.bold())
@@ -617,7 +617,7 @@ struct PaymentAmountSection: View {
                     .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
             }
             .padding()
-            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+            .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
             .cornerRadius(12)
 
             // Quick amounts
@@ -630,8 +630,8 @@ struct PaymentAmountSection: View {
                             .font(.caption)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(Color.orange.opacity(0.2))
-                            .foregroundColor(.orange)
+                            .background(Color.appAccent.opacity(0.2))
+                            .foregroundColor(Color.appAccent)
                             .cornerRadius(8)
                     }
                 }
@@ -658,7 +658,7 @@ struct CustomerInfoSection: View {
                 HStack {
                     Text("Name")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text("(Optional)")
                         .font(.caption)
                         .foregroundColor(.gray.opacity(0.7))
@@ -667,7 +667,7 @@ struct CustomerInfoSection: View {
                 TextField("Customer name", text: $viewModel.customerName)
                     .textContentType(.name)
                     .padding()
-                    .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                    .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
                     .cornerRadius(10)
             }
 
@@ -675,7 +675,7 @@ struct CustomerInfoSection: View {
                 HStack {
                     Text("Email")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     if emailRequired {
                         Text("*")
                             .font(.caption)
@@ -692,7 +692,7 @@ struct CustomerInfoSection: View {
                     .keyboardType(.emailAddress)
                     .autocapitalization(.none)
                     .padding()
-                    .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                    .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
                     .cornerRadius(10)
             }
 
@@ -700,7 +700,7 @@ struct CustomerInfoSection: View {
                 HStack {
                     Text("Description")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text("(Optional)")
                         .font(.caption)
                         .foregroundColor(.gray.opacity(0.7))
@@ -708,12 +708,12 @@ struct CustomerInfoSection: View {
 
                 TextField("Payment for...", text: $viewModel.paymentDescription)
                     .padding()
-                    .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                    .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
                     .cornerRadius(10)
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
     }
 }

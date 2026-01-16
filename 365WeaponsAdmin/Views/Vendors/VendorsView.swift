@@ -31,7 +31,7 @@ struct VendorsView: View {
                     vendorsList
                 }
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Vendors")
             .searchable(text: $viewModel.searchText, prompt: "Search vendors...")
             .toolbar {
@@ -99,7 +99,7 @@ struct VendorsView: View {
             }
             .padding()
         }
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
     }
 
     // MARK: - Vendors List
@@ -132,10 +132,10 @@ struct VendorCard: View {
                         .font(.headline)
                     Text(vendor.storeCode)
                         .font(.caption)
-                        .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                        .foregroundColor(Color.appAccent)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
-                        .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
+                        .background(Color.appAccent.opacity(0.2))
                         .cornerRadius(4)
                 }
 
@@ -158,12 +158,12 @@ struct VendorCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Label(vendor.storeContactName, systemImage: "person")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .lineLimit(1)
 
                     Label(vendor.storeEmail, systemImage: "envelope")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .lineLimit(1)
                 }
 
@@ -172,16 +172,16 @@ struct VendorCard: View {
                 VStack(alignment: .trailing, spacing: 4) {
                     Text(vendor.formattedCommission)
                         .font(.title3.weight(.bold))
-                        .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                        .foregroundColor(Color.appAccent)
 
                     Text("Commission")
                         .font(.caption2)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 }
@@ -228,7 +228,7 @@ struct VendorDetailView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle(vendor.storeName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -273,10 +273,10 @@ struct VendorDetailView: View {
                     HStack(spacing: 8) {
                         Text(vendor.storeCode)
                             .font(.subheadline)
-                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                            .foregroundColor(Color.appAccent)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
+                            .background(Color.appAccent.opacity(0.2))
                             .cornerRadius(6)
 
                         if !vendor.onboardingComplete {
@@ -305,7 +305,7 @@ struct VendorDetailView: View {
 
             Text("Member since \(vendor.createdAt.formatted(date: .abbreviated, time: .omitted))")
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
 
             // Contact action buttons
             HStack(spacing: 24) {
@@ -326,7 +326,7 @@ struct VendorDetailView: View {
                         }
                         Text("Email")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
 
@@ -345,7 +345,7 @@ struct VendorDetailView: View {
                         }
                         Text("Call")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
 
@@ -364,14 +364,14 @@ struct VendorDetailView: View {
                         }
                         Text("Profile")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
             }
             .padding(.top, 8)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -383,12 +383,12 @@ struct VendorDetailView: View {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 VendorStatCard(title: "Total Orders", value: "\(stats.totalOrders)", icon: "list.clipboard")
                 VendorStatCard(title: "Revenue", value: stats.formattedRevenue, icon: "dollarsign.circle", color: .green)
-                VendorStatCard(title: "Commission Earned", value: stats.formattedCommissionTotal, icon: "banknote", color: appearanceManager.isDarkMode ? .orange : .red)
+                VendorStatCard(title: "Commission Earned", value: stats.formattedCommissionTotal, icon: "banknote", color: Color.appAccent)
                 VendorStatCard(title: "Pending Payout", value: stats.formattedCommissionPending, icon: "clock", color: .blue)
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -402,7 +402,7 @@ struct VendorDetailView: View {
             InfoRow(label: "Phone", value: vendor.storePhone)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -415,7 +415,7 @@ struct VendorDetailView: View {
             InfoRow(label: "Commission Rate", value: vendor.formattedCommission)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -429,7 +429,7 @@ struct VendorDetailView: View {
             InfoRow(label: "Hold Period", value: "\(vendor.payoutHoldDays) days")
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -445,7 +445,7 @@ struct VendorDetailView: View {
                             .font(.subheadline.weight(.medium))
                         Text(order.createdAt.formatted(date: .abbreviated, time: .shortened))
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
 
                     Spacer()
@@ -465,7 +465,7 @@ struct VendorDetailView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -481,7 +481,7 @@ struct VendorDetailView: View {
                             .font(.subheadline.weight(.medium))
                         Text(commission.createdAt.formatted(date: .abbreviated, time: .shortened))
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
 
                     Spacer()
@@ -489,7 +489,7 @@ struct VendorDetailView: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(commission.formattedAmount)
                             .font(.subheadline.weight(.bold))
-                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                            .foregroundColor(Color.appAccent)
                         Text(commission.status.displayName)
                             .font(.caption)
                             .foregroundColor(commissionStatusColor(commission.status))
@@ -503,13 +503,13 @@ struct VendorDetailView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
     private func commissionStatusColor(_ status: CommissionStatus) -> Color {
         switch status {
-        case .pending: return appearanceManager.isDarkMode ? .orange : .red
+        case .pending: return Color.appAccent
         case .eligible: return .blue
         case .approved: return .purple
         case .paid: return .green
@@ -523,7 +523,7 @@ struct VendorStatCard: View {
     let title: String
     let value: String
     let icon: String
-    var color: Color = .white
+    var color: Color = Color.appTextPrimary
     @ObservedObject private var appearanceManager = AppearanceManager.shared
 
     var body: some View {
@@ -538,10 +538,10 @@ struct VendorStatCard: View {
                 .foregroundColor(color)
             Text(title)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 }

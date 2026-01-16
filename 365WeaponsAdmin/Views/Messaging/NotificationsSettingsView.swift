@@ -37,7 +37,7 @@ enum NotificationCategory: String, CaseIterable, Identifiable {
         case .submissions: return .blue
         case .orders: return .green
         case .vendors: return .purple
-        case .inventory: return .orange
+        case .inventory: return Color.appAccent
         case .users: return .cyan
         case .marketing: return .pink
         case .system: return .gray
@@ -72,10 +72,10 @@ struct NotificationsSettingsView: View {
                         HStack(spacing: 12) {
                             ZStack {
                                 Circle()
-                                    .fill(Color.orange.opacity(0.2))
+                                    .fill(Color.appAccent.opacity(0.2))
                                     .frame(width: 40, height: 40)
                                 Image(systemName: "bell.badge.fill")
-                                    .foregroundColor(.orange)
+                                    .foregroundColor(Color.appAccent)
                             }
 
                             VStack(alignment: .leading, spacing: 2) {
@@ -83,17 +83,17 @@ struct NotificationsSettingsView: View {
                                     .font(.headline)
                                 Text("Master toggle for all notifications")
                                     .font(.caption)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(Color.appTextSecondary)
                             }
                         }
                     }
-                    .tint(.orange)
+                    .tint(Color.appAccent)
                     .onChange(of: viewModel.allNotificationsEnabled) { _, newValue in
                         viewModel.toggleAllNotifications(enabled: newValue)
                         hasChanges = true
                     }
                 }
-                .listRowBackground(Color.white.opacity(0.05))
+                .listRowBackground(Color.appSurface)
 
                 // Category sections
                 ForEach(NotificationCategory.allCases) { category in
@@ -118,7 +118,7 @@ struct NotificationsSettingsView: View {
                                     .foregroundColor(category.color)
                             }
                         }
-                        .listRowBackground(Color.white.opacity(0.08))
+                        .listRowBackground(Color.appSurface2)
 
                         // Individual toggles
                         ForEach($viewModel.settings.filter { $0.wrappedValue.category == category }) { $setting in
@@ -128,7 +128,7 @@ struct NotificationsSettingsView: View {
                                         .font(.subheadline)
                                     Text(setting.description)
                                         .font(.caption)
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(Color.appTextSecondary)
                                 }
                             }
                             .tint(category.color)
@@ -137,7 +137,7 @@ struct NotificationsSettingsView: View {
                                 hasChanges = true
                             }
                         }
-                        .listRowBackground(Color.white.opacity(0.05))
+                        .listRowBackground(Color.appSurface)
                     }
                 }
 
@@ -151,7 +151,7 @@ struct NotificationsSettingsView: View {
                         Text("Delivery Method")
                             .font(.subheadline.weight(.semibold))
                     }
-                    .listRowBackground(Color.white.opacity(0.08))
+                    .listRowBackground(Color.appSurface2)
 
                     Toggle(isOn: $viewModel.pushNotifications) {
                         VStack(alignment: .leading, spacing: 2) {
@@ -163,7 +163,7 @@ struct NotificationsSettingsView: View {
                         }
                     }
                     .tint(.blue)
-                    .listRowBackground(Color.white.opacity(0.05))
+                    .listRowBackground(Color.appSurface)
 
                     Toggle(isOn: $viewModel.emailNotifications) {
                         VStack(alignment: .leading, spacing: 2) {
@@ -175,7 +175,7 @@ struct NotificationsSettingsView: View {
                         }
                     }
                     .tint(.blue)
-                    .listRowBackground(Color.white.opacity(0.05))
+                    .listRowBackground(Color.appSurface)
 
                     Toggle(isOn: $viewModel.inAppBadges) {
                         VStack(alignment: .leading, spacing: 2) {
@@ -187,7 +187,7 @@ struct NotificationsSettingsView: View {
                         }
                     }
                     .tint(.blue)
-                    .listRowBackground(Color.white.opacity(0.05))
+                    .listRowBackground(Color.appSurface)
                 } header: {
                     Text("Delivery Preferences")
                 }
@@ -204,14 +204,14 @@ struct NotificationsSettingsView: View {
                         }
                     }
                     .tint(.purple)
-                    .listRowBackground(Color.white.opacity(0.05))
+                    .listRowBackground(Color.appSurface)
 
                     if viewModel.quietHoursEnabled {
                         DatePicker("Start Time", selection: $viewModel.quietHoursStart, displayedComponents: .hourAndMinute)
-                            .listRowBackground(Color.white.opacity(0.05))
+                            .listRowBackground(Color.appSurface)
 
                         DatePicker("End Time", selection: $viewModel.quietHoursEnd, displayedComponents: .hourAndMinute)
-                            .listRowBackground(Color.white.opacity(0.05))
+                            .listRowBackground(Color.appSurface)
                     }
                 } header: {
                     Text("Do Not Disturb")
@@ -219,7 +219,7 @@ struct NotificationsSettingsView: View {
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Notifications")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {

@@ -18,7 +18,7 @@ struct WebhookSettingsView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header Stats
@@ -170,7 +170,7 @@ struct LoadingView: View {
             ProgressView()
                 .scaleEffect(1.5)
             Text("Loading webhooks...")
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -184,24 +184,24 @@ struct EmptyWebhooksView: View {
         VStack(spacing: 24) {
             Image(systemName: "arrow.left.arrow.right.circle")
                 .font(.system(size: 64))
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
 
             Text("No Webhooks Configured")
                 .font(.title2.bold())
 
             Text("Webhooks allow you to receive real-time notifications when events occur in your store.")
                 .font(.body)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
             Button(action: onAddTapped) {
                 Label("Add Webhook", systemImage: "plus")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
                     .padding()
                     .frame(maxWidth: 200)
-                    .background(Color.orange)
+                    .background(Color.appAccent)
                     .cornerRadius(12)
             }
         }
@@ -255,22 +255,22 @@ struct WebhookRowView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(webhook.name)
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
 
                     Text(webhook.url)
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .lineLimit(1)
 
                     HStack(spacing: 8) {
                         Text("\(webhook.events.count) events")
                             .font(.caption2)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
 
                         if let lastTriggered = webhook.lastTriggeredAt {
                             Text("Last: \(lastTriggered.timeAgo)")
                                 .font(.caption2)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                         }
                     }
                 }
@@ -281,7 +281,7 @@ struct WebhookRowView: View {
                 VStack(alignment: .trailing, spacing: 8) {
                     Toggle("", isOn: .constant(webhook.isActive))
                         .labelsHidden()
-                        .tint(.orange)
+                        .tint(Color.appAccent)
                         .onTapGesture {
                             onToggle()
                         }
@@ -303,12 +303,12 @@ struct WebhookRowView: View {
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
             }
             .padding()
-            .background(Color.white.opacity(0.05))
+            .background(Color.appSurface)
             .cornerRadius(12)
         }
         .buttonStyle(.plain)
@@ -317,7 +317,7 @@ struct WebhookRowView: View {
     private var statusColor: Color {
         switch webhook.status {
         case .healthy: return .green
-        case .warning: return .orange
+        case .warning: return Color.appAccent
         case .failing: return .red
         case .disabled: return .gray
         }
@@ -372,7 +372,7 @@ struct WebhookDetailView: View {
             }
             .padding()
         }
-        .background(Color.black.ignoresSafeArea())
+        .background(Color.appBackground.ignoresSafeArea())
         .navigationTitle(webhook.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -459,7 +459,7 @@ struct StatusCard: View {
 
                     Text(statusDescription)
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 Spacer()
@@ -478,20 +478,20 @@ struct StatusCard: View {
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(Color.gray.opacity(0.2))
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .cornerRadius(8)
                 }
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
     private var statusColor: Color {
         switch webhook.status {
         case .healthy: return .green
-        case .warning: return .orange
+        case .warning: return Color.appAccent
         case .failing: return .red
         case .disabled: return .gray
         }
@@ -569,11 +569,11 @@ struct WebhookActionButton: View {
 
                 Text(title)
                     .font(.caption)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color.white.opacity(0.05))
+            .background(Color.appSurface)
             .cornerRadius(12)
         }
         .disabled(isLoading)
@@ -610,7 +610,7 @@ struct TestResultCard: View {
                 HStack {
                     Text("Response Time:")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text(String(format: "%.0fms", duration * 1000))
                         .font(.caption.monospaced())
                 }
@@ -626,13 +626,13 @@ struct TestResultCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Response:")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
 
                     Text(response.prefix(200) + (response.count > 200 ? "..." : ""))
                         .font(.caption.monospaced())
-                        .foregroundColor(.white.opacity(0.8))
+                        .foregroundColor(Color.appTextPrimary.opacity(0.8))
                         .padding(8)
-                        .background(Color.black.opacity(0.3))
+                        .background(Color.appBackground.opacity(0.3))
                         .cornerRadius(4)
                 }
             }
@@ -659,25 +659,25 @@ struct ConfigurationCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Endpoint URL")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
 
                 Text(webhook.url)
                     .font(.body.monospaced())
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
             }
 
-            Divider().background(Color.white.opacity(0.1))
+            Divider().background(Color.appSurface2)
 
             // Secret
             VStack(alignment: .leading, spacing: 8) {
                 Text("Signing Secret")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
 
                 HStack {
                     Text(webhook.maskedSecret)
                         .font(.body.monospaced())
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
 
                     Spacer()
 
@@ -688,19 +688,19 @@ struct ConfigurationCard: View {
 
                     Button(action: onRegenerateSecret) {
                         Image(systemName: "arrow.triangle.2.circlepath")
-                            .foregroundColor(.orange)
+                            .foregroundColor(Color.appAccent)
                     }
                 }
             }
 
-            Divider().background(Color.white.opacity(0.1))
+            Divider().background(Color.appSurface2)
 
             // Settings
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Retry Enabled")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text(webhook.retryEnabled ? "Yes" : "No")
                         .font(.body)
                 }
@@ -710,7 +710,7 @@ struct ConfigurationCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Max Retries")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text("\(webhook.maxRetries)")
                         .font(.body)
                 }
@@ -720,14 +720,14 @@ struct ConfigurationCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Created")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text(webhook.createdAt.relativeFormatted)
                         .font(.body)
                 }
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 }
@@ -746,7 +746,7 @@ struct EventsCard: View {
 
                 Text("\(events.count) events")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
@@ -754,22 +754,22 @@ struct EventsCard: View {
                     HStack {
                         Image(systemName: event.icon)
                             .font(.caption)
-                            .foregroundColor(.orange)
+                            .foregroundColor(Color.appAccent)
 
                         Text(event.displayName)
                             .font(.caption)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.appTextPrimary)
 
                         Spacer()
                     }
                     .padding(8)
-                    .background(Color.white.opacity(0.05))
+                    .background(Color.appSurface)
                     .cornerRadius(8)
                 }
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 }
@@ -799,7 +799,7 @@ struct StatisticsCard: View {
                             .font(.title2.bold())
                         Text("Total")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -809,7 +809,7 @@ struct StatisticsCard: View {
                             .foregroundColor(.green)
                         Text("Success")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -819,7 +819,7 @@ struct StatisticsCard: View {
                             .foregroundColor(.red)
                         Text("Failed")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -829,35 +829,35 @@ struct StatisticsCard: View {
                             .foregroundColor(.blue)
                         Text("Rate")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
                 }
 
                 if let lastDelivery = stats.lastDelivery {
-                    Divider().background(Color.white.opacity(0.1))
+                    Divider().background(Color.appSurface2)
 
                     HStack {
                         Text("Last delivery:")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                         Text(lastDelivery.timestamp.timeAgo)
                             .font(.caption)
                         Spacer()
                         Text("Avg response: \(stats.averageDurationFormatted)")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
             } else {
                 Text("No statistics available")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                     .padding()
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(Color.appSurface)
         .cornerRadius(12)
         .onAppear {
             loadStatistics()
@@ -972,12 +972,12 @@ struct WebhookEditView: View {
                     } label: {
                         HStack {
                             Image(systemName: category.icon)
-                                .foregroundColor(.orange)
+                                .foregroundColor(Color.appAccent)
                             Text(category.rawValue)
                             Spacer()
                             Text("\(selectedEvents.filter { $0.category == category }.count)/\(category.events.count)")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                         }
                     }
                 }
@@ -1019,12 +1019,12 @@ struct WebhookEditView: View {
 
                     Text("A unique signing secret will be generated for this webhook. Use it to verify that webhook payloads are authentic.")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
             }
         }
         .scrollContentBackground(.hidden)
-        .background(Color.black.ignoresSafeArea())
+        .background(Color.appBackground.ignoresSafeArea())
         .navigationTitle(isEditMode ? "Edit Webhook" : "Add Webhook")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -1119,11 +1119,11 @@ struct EventToggleRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(event.displayName)
                         .font(.body)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
 
                     Text(event.description)
                         .font(.caption2)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 Spacer()
@@ -1146,7 +1146,7 @@ struct DeliveryHistoryView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
 
             if isLoading {
                 ProgressView("Loading history...")
@@ -1154,14 +1154,14 @@ struct DeliveryHistoryView: View {
                 VStack(spacing: 16) {
                     Image(systemName: "clock")
                         .font(.system(size: 48))
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
 
                     Text("No Delivery History")
                         .font(.headline)
 
                     Text("Deliveries will appear here once webhooks are triggered.")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                 }
@@ -1241,12 +1241,12 @@ struct DeliveryRow: View {
 
                     Text(delivery.durationFormatted)
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
 
                     if delivery.retryCount > 0 {
                         Text("Retry \(delivery.retryCount)")
                             .font(.caption)
-                            .foregroundColor(.orange)
+                            .foregroundColor(Color.appAccent)
                     }
                 }
             }
@@ -1256,15 +1256,15 @@ struct DeliveryRow: View {
             VStack(alignment: .trailing, spacing: 4) {
                 Text(delivery.timestamp.timeAgo)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
 
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 }
@@ -1289,7 +1289,7 @@ struct DeliveryDetailView: View {
 
                         Text(delivery.timestamp, style: .date) + Text(" at ") + Text(delivery.timestamp, style: .time)
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
                 .padding()
@@ -1311,7 +1311,7 @@ struct DeliveryDetailView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Error")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                             Text(error)
                                 .font(.body)
                                 .foregroundColor(.red)
@@ -1319,7 +1319,7 @@ struct DeliveryDetailView: View {
                     }
                 }
                 .padding()
-                .background(Color.white.opacity(0.05))
+                .background(Color.appSurface)
                 .cornerRadius(12)
 
                 // Payload
@@ -1330,14 +1330,14 @@ struct DeliveryDetailView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         Text(formatJSON(delivery.payload))
                             .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.8))
+                            .foregroundColor(Color.appTextPrimary.opacity(0.8))
                     }
                     .padding()
-                    .background(Color.black.opacity(0.3))
+                    .background(Color.appBackground.opacity(0.3))
                     .cornerRadius(8)
                 }
                 .padding()
-                .background(Color.white.opacity(0.05))
+                .background(Color.appSurface)
                 .cornerRadius(12)
 
                 // Response
@@ -1349,20 +1349,20 @@ struct DeliveryDetailView: View {
                         ScrollView(.horizontal, showsIndicators: false) {
                             Text(formatJSON(response))
                                 .font(.system(.caption, design: .monospaced))
-                                .foregroundColor(.white.opacity(0.8))
+                                .foregroundColor(Color.appTextPrimary.opacity(0.8))
                         }
                         .padding()
-                        .background(Color.black.opacity(0.3))
+                        .background(Color.appBackground.opacity(0.3))
                         .cornerRadius(8)
                     }
                     .padding()
-                    .background(Color.white.opacity(0.05))
+                    .background(Color.appSurface)
                     .cornerRadius(12)
                 }
             }
             .padding()
         }
-        .background(Color.black.ignoresSafeArea())
+        .background(Color.appBackground.ignoresSafeArea())
         .navigationTitle("Delivery Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -1392,7 +1392,7 @@ struct WebhookDetailRow: View {
         HStack {
             Text(label)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
             Spacer()
             Text(value)
                 .font(.body)

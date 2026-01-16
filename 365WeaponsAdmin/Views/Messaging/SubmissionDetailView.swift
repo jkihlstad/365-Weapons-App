@@ -46,7 +46,7 @@ struct SubmissionDetailView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle(submission.type.rawValue)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -137,17 +137,17 @@ struct SubmissionDetailView: View {
                     if submission.isNew {
                         Text("NEW")
                             .font(.caption.bold())
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.appTextPrimary)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
+                            .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
                             .cornerRadius(6)
                     }
                 }
 
                 Text("Submitted \(submission.createdAt.formatted(date: .abbreviated, time: .shortened))")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             // Contact info
@@ -198,7 +198,7 @@ struct SubmissionDetailView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(16)
     }
 
@@ -246,7 +246,7 @@ struct SubmissionDetailView: View {
         switch submission.type {
         case .inquiry: return .blue
         case .vendorSignup: return .purple
-        case .contact: return appearanceManager.isDarkMode ? .orange : .red
+        case .contact: return appearanceManager.isDarkMode ? Color.appAccent : .red
         case .newsletter: return .green
         }
     }
@@ -288,7 +288,7 @@ struct InquiryDetailContent: View {
                 DetailSection(title: "Message") {
                     Text(message)
                         .font(.body)
-                        .foregroundColor(.white.opacity(0.9))
+                        .foregroundColor(Color.appTextPrimary.opacity(0.9))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
@@ -298,7 +298,7 @@ struct InquiryDetailContent: View {
                 DetailSection(title: "Admin Notes") {
                     Text(notes)
                         .font(.body)
-                        .foregroundColor(.white.opacity(0.9))
+                        .foregroundColor(Color.appTextPrimary.opacity(0.9))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
@@ -396,7 +396,7 @@ struct ContactDetailContent: View {
                 DetailSection(title: "Subject") {
                     Text(subject)
                         .font(.body.weight(.medium))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
@@ -405,7 +405,7 @@ struct ContactDetailContent: View {
             DetailSection(title: "Message") {
                 Text(contact.message)
                     .font(.body)
-                    .foregroundColor(.white.opacity(0.9))
+                    .foregroundColor(Color.appTextPrimary.opacity(0.9))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
@@ -466,13 +466,13 @@ struct DetailSection<Content: View>: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .font(.headline)
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
 
             VStack(spacing: 8) {
                 content
             }
             .padding()
-            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+            .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
             .cornerRadius(12)
         }
     }
@@ -486,13 +486,13 @@ struct DetailRow: View {
         HStack {
             Text(label)
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
 
             Spacer()
 
             Text(value)
                 .font(.subheadline)
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
                 .multilineTextAlignment(.trailing)
         }
     }
@@ -555,7 +555,7 @@ struct CustomerProfileSheet: View {
 
                         Text(email)
                             .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                     .padding()
 
@@ -600,7 +600,7 @@ struct CustomerProfileSheet: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Customer Profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -654,7 +654,7 @@ struct OrderMiniCard: View {
 
                 Text(order.serviceType?.displayName ?? "Order")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             Spacer()
@@ -665,11 +665,11 @@ struct OrderMiniCard: View {
 
                 Text(order.status.displayName)
                     .font(.caption)
-                    .foregroundColor(order.status == .completed ? .green : (appearanceManager.isDarkMode ? .orange : .red))
+                    .foregroundColor(order.status == .completed ? .green : (appearanceManager.isDarkMode ? Color.appAccent : .red))
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
         .padding(.horizontal)
     }
@@ -687,7 +687,7 @@ struct InquiryMiniCard: View {
 
                 Text(inquiry.productTitle)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             Spacer()
@@ -704,7 +704,7 @@ struct InquiryMiniCard: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
         .padding(.horizontal)
     }

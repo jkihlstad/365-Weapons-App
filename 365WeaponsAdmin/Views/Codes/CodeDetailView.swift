@@ -50,7 +50,7 @@ struct CodeDetailView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Code Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -129,7 +129,7 @@ struct CodeDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(20)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(16)
     }
 
@@ -143,7 +143,7 @@ struct CodeDetailView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Type")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text(code.discountType.displayName)
                         .font(.subheadline.weight(.medium))
                 }
@@ -153,7 +153,7 @@ struct CodeDetailView: View {
                 VStack(alignment: .trailing, spacing: 4) {
                     Text("Value")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text(code.formattedDiscount)
                         .font(.title3.weight(.bold))
                         .foregroundColor(.green)
@@ -169,14 +169,14 @@ struct CodeDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Example on $\(String(format: "%.2f", exampleOrderTotal)) order:")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                 Text("Customer saves $\(String(format: "%.2f", discountAmount)) (pays $\(String(format: "%.2f", afterDiscount)))")
                     .font(.subheadline)
                     .foregroundColor(.green)
             }
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
     }
 
@@ -184,13 +184,13 @@ struct CodeDetailView: View {
 
     private var commissionDetailsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeaderLabel(title: "Commission", icon: "dollarsign.circle.fill", color: appearanceManager.isDarkMode ? .orange : .red)
+            SectionHeaderLabel(title: "Commission", icon: "dollarsign.circle.fill", color: appearanceManager.isDarkMode ? Color.appAccent : .red)
 
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Type")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text(code.commissionType?.displayName ?? "N/A")
                         .font(.subheadline.weight(.medium))
                 }
@@ -200,10 +200,10 @@ struct CodeDetailView: View {
                 VStack(alignment: .trailing, spacing: 4) {
                     Text("Value")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text(code.formattedCommission ?? "N/A")
                         .font(.title3.weight(.bold))
-                        .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                        .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
                 }
             }
 
@@ -215,14 +215,14 @@ struct CodeDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Example on $\(String(format: "%.2f", exampleOrderTotal)) order:")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                 Text("Partner earns $\(String(format: "%.2f", commissionAmount))")
                     .font(.subheadline)
-                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
             }
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
     }
 
@@ -261,7 +261,7 @@ struct CodeDetailView: View {
             }
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
     }
 
@@ -282,14 +282,14 @@ struct CodeDetailView: View {
                         .font(.subheadline.weight(.medium))
                     Text(productRestrictionDescription)
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 Spacer()
             }
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
     }
 
@@ -346,14 +346,14 @@ struct CodeDetailView: View {
                 QuickActionButton(
                     title: "Email",
                     icon: "envelope",
-                    color: appearanceManager.isDarkMode ? .orange : .red
+                    color: appearanceManager.isDarkMode ? Color.appAccent : .red
                 ) {
                     showEmailInput = true
                 }
             }
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
     }
 
@@ -378,7 +378,7 @@ struct CodeDetailView: View {
             CodeInfoRow(label: "Code ID", value: String(code.id.prefix(20)) + "...")
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
     }
 
@@ -460,7 +460,7 @@ struct UsageStatItem: View {
                 .foregroundColor(color)
             Text(title)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .frame(maxWidth: .infinity)
     }
@@ -497,11 +497,11 @@ struct CodeInfoRow: View {
         HStack {
             Text(label)
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
             Spacer()
             Text(value)
                 .font(.subheadline)
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
         }
     }
 }

@@ -33,14 +33,14 @@ struct SettingsView: View {
                             Circle()
                                 .fill(
                                     LinearGradient(
-                                        colors: [.orange, .red],
+                                        colors: [Color.appAccent, .red],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     )
                                 )
                             Text(authClient.userFullName?.prefix(1).uppercased() ?? "A")
                                 .font(.title2.weight(.bold))
-                                .foregroundColor(.white)
+                                .foregroundColor(Color.appTextPrimary)
                         }
                         .frame(width: 60, height: 60)
 
@@ -49,7 +49,7 @@ struct SettingsView: View {
                                 .font(.headline)
                             Text(authClient.userEmail ?? "")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
 
                             HStack {
                                 Image(systemName: "checkmark.shield.fill")
@@ -98,7 +98,7 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Theme")
                             .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
 
                         HStack(spacing: 8) {
                             ForEach(AppearanceMode.allCases) { mode in
@@ -117,21 +117,21 @@ struct SettingsView: View {
                                     .padding(.vertical, 12)
                                     .background(
                                         appearanceManager.appearanceMode == mode
-                                            ? Color.orange.opacity(0.2)
+                                            ? Color.appAccent.opacity(0.2)
                                             : Color.clear
                                     )
                                     .foregroundColor(
                                         appearanceManager.appearanceMode == mode
-                                            ? .orange
-                                            : .gray
+                                            ? Color.appAccent
+                                            : Color.appTextSecondary
                                     )
                                     .cornerRadius(10)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
                                             .stroke(
                                                 appearanceManager.appearanceMode == mode
-                                                    ? Color.orange
-                                                    : Color.gray.opacity(0.3),
+                                                    ? Color.appAccent
+                                                    : Color.appTextSecondary.opacity(0.3),
                                                 lineWidth: 1
                                             )
                                     )
@@ -178,7 +178,7 @@ struct SettingsView: View {
                             Spacer()
                             Text("\(DebugLogger.shared.logs.count) logs")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                         }
                     }
                 }
@@ -208,7 +208,7 @@ struct SettingsView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -254,7 +254,7 @@ struct CacheManagementView: View {
                     HStack {
                         ProgressView()
                         Text("Loading cache information...")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 } else if let stats = cacheStatistics {
                     HStack {
@@ -262,14 +262,14 @@ struct CacheManagementView: View {
                         Spacer()
                         Text(stats.formattedTotalSize)
                             .font(.headline)
-                            .foregroundColor(.orange)
+                            .foregroundColor(Color.appAccent)
                     }
 
                     HStack {
                         Label("Cached Items", systemImage: "doc.on.doc")
                         Spacer()
                         Text("\(stats.validEntries) items")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
 
                     if stats.expiredEntries > 0 {
@@ -277,7 +277,7 @@ struct CacheManagementView: View {
                             Label("Expired Items", systemImage: "clock.badge.exclamationmark")
                             Spacer()
                             Text("\(stats.expiredEntries) items")
-                                .foregroundColor(.orange)
+                                .foregroundColor(Color.appAccent)
                         }
                     }
 
@@ -285,7 +285,7 @@ struct CacheManagementView: View {
                         Label("Last Sync", systemImage: "arrow.triangle.2.circlepath")
                         Spacer()
                         Text(offlineManager.formattedLastSyncDate)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
             }
@@ -306,9 +306,9 @@ struct CacheManagementView: View {
                 if cacheStatistics?.sizeByType.values.reduce(0, +) == 0 {
                     HStack {
                         Image(systemName: "tray")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                         Text("No cached data")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
             }
@@ -326,7 +326,7 @@ struct CacheManagementView: View {
                     Label("Connection Type", systemImage: offlineManager.connectionType.icon)
                     Spacer()
                     Text(offlineManager.connectionType.displayName)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 if offlineManager.hasPendingActions {
@@ -334,7 +334,7 @@ struct CacheManagementView: View {
                         Label("Pending Actions", systemImage: "clock.badge.exclamationmark")
                         Spacer()
                         Text("\(offlineManager.pendingActionsCount)")
-                            .foregroundColor(.orange)
+                            .foregroundColor(Color.appAccent)
                     }
 
                     Button(action: syncNow) {
@@ -366,7 +366,7 @@ struct CacheManagementView: View {
                         Image(systemName: "trash")
                         Text("Clear All Cache")
                     }
-                    .foregroundColor(.orange)
+                    .foregroundColor(Color.appAccent)
                 }
                 .disabled(isClearing)
 
@@ -376,7 +376,7 @@ struct CacheManagementView: View {
                             Image(systemName: "xmark.circle")
                             Text("Clear Pending Actions")
                         }
-                        .foregroundColor(.orange)
+                        .foregroundColor(Color.appAccent)
                     }
                 }
             }
@@ -389,7 +389,7 @@ struct CacheManagementView: View {
             }
         }
         .scrollContentBackground(.hidden)
-        .background(Color.black.ignoresSafeArea())
+        .background(Color.appBackground.ignoresSafeArea())
         .navigationTitle("Cache Management")
         .task {
             await loadCacheStatistics()
@@ -483,7 +483,7 @@ struct CacheTypeCellView: View {
     var body: some View {
         HStack {
             Image(systemName: dataType.icon)
-                .foregroundColor(.orange)
+                .foregroundColor(Color.appAccent)
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -491,14 +491,14 @@ struct CacheTypeCellView: View {
                     .font(.subheadline)
                 Text(size)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             Spacer()
 
             Button(action: onClear) {
                 Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
             .buttonStyle(.plain)
         }
@@ -539,11 +539,11 @@ struct CacheExpirationSettingsView: View {
             Section {
                 Text("Shorter expiration times provide more up-to-date data but may increase network usage. Longer times improve offline performance but data may be stale.")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
         }
         .scrollContentBackground(.hidden)
-        .background(Color.black.ignoresSafeArea())
+        .background(Color.appBackground.ignoresSafeArea())
         .navigationTitle("Expiration Settings")
     }
 }
@@ -598,7 +598,7 @@ struct APISettingsView: View {
                                 .font(.subheadline)
                             Text(status.source.rawValue)
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                         }
 
                         Spacer()
@@ -754,13 +754,13 @@ struct APISettingsView: View {
                     if let existingURL = configManager.convexDeploymentURL, convexURL.isEmpty {
                         Text("Current: \(existingURL)")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
 
                     if let error = convexError {
                         Text(error)
                             .font(.caption)
-                            .foregroundColor(.orange)
+                            .foregroundColor(Color.appAccent)
                     }
                 }
                 .onChange(of: convexURL) { _, newValue in
@@ -856,20 +856,20 @@ struct APISettingsView: View {
 
                         Button(action: { showBackendKey.toggle() }) {
                             Image(systemName: showBackendKey ? "eye.slash" : "eye")
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                         }
                     }
 
                     if let existingURL = configManager.getAPIKey(for: .backendAuth), backendURL.isEmpty {
                         Text("Stored: \(String(existingURL.prefix(30)))...")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
 
                     if let error = backendError {
                         Text(error)
                             .font(.caption)
-                            .foregroundColor(.orange)
+                            .foregroundColor(Color.appAccent)
                     }
                 }
                 .onChange(of: backendURL) { _, newValue in
@@ -935,7 +935,7 @@ struct APISettingsView: View {
                         Text("Clear Input Fields")
                     }
                 }
-                .foregroundColor(.orange)
+                .foregroundColor(Color.appAccent)
             }
 
             // Security Info
@@ -943,22 +943,22 @@ struct APISettingsView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Keys stored in iOS Keychain", systemImage: "lock.shield")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
 
                     Label("Encrypted and protected by device security", systemImage: "checkmark.shield")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
 
                     Label("Keys persist across app reinstalls", systemImage: "arrow.clockwise")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
             } header: {
                 Text("Security")
             }
         }
         .scrollContentBackground(.hidden)
-        .background(Color.black.ignoresSafeArea())
+        .background(Color.appBackground.ignoresSafeArea())
         .navigationTitle("API Keys")
         .onAppear {
             configManager.refreshStatus()
@@ -1124,20 +1124,20 @@ struct SecureKeyInputRow: View {
 
                 Button(action: { isVisible.toggle() }) {
                     Image(systemName: isVisible ? "eye.slash" : "eye")
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
             }
 
             if text.isEmpty && !existingKeyMasked.isEmpty {
                 Text("Stored: \(existingKeyMasked)")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             if let error = errorMessage {
                 Text(error)
                     .font(.caption)
-                    .foregroundColor(.orange)
+                    .foregroundColor(Color.appAccent)
             }
         }
     }
@@ -1163,7 +1163,7 @@ struct AboutView: View {
                     .font(.system(size: 80))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [.orange, .red],
+                            colors: [Color.appAccent, .red],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -1175,7 +1175,7 @@ struct AboutView: View {
 
                     Text("Version 1.0.0")
                         .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 // Features
@@ -1187,14 +1187,14 @@ struct AboutView: View {
                     FeatureRow(icon: "mic", title: "Voice Control", description: "Use voice commands for hands-free operation")
                 }
                 .padding()
-                .background(Color.white.opacity(0.05))
+                .background(Color.appSurface)
                 .cornerRadius(16)
 
                 // Credits
                 VStack(spacing: 8) {
                     Text("Powered by")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
 
                     HStack(spacing: 16) {
                         TechBadge(name: "Convex")
@@ -1205,11 +1205,11 @@ struct AboutView: View {
 
                 Text("2024 365Weapons. All rights reserved.")
                     .font(.caption2)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
             .padding()
         }
-        .background(Color.black.ignoresSafeArea())
+        .background(Color.appBackground.ignoresSafeArea())
         .navigationTitle("About")
     }
 }
@@ -1223,7 +1223,7 @@ struct FeatureRow: View {
         HStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundColor(.orange)
+                .foregroundColor(Color.appAccent)
                 .frame(width: 32)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -1231,7 +1231,7 @@ struct FeatureRow: View {
                     .font(.subheadline.weight(.medium))
                 Text(description)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
         }
     }
@@ -1245,7 +1245,7 @@ struct TechBadge: View {
             .font(.caption)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Color.white.opacity(0.1))
+            .background(Color.appSurface2)
             .cornerRadius(12)
     }
 }

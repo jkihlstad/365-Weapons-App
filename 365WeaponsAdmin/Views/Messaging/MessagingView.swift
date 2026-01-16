@@ -33,7 +33,7 @@ struct MessagingView: View {
                     submissionsList
                 }
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Messages")
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $viewModel.searchText, prompt: "Search submissions...")
@@ -44,7 +44,7 @@ struct MessagingView: View {
                         viewModel.showOnlyNew.toggle()
                     } label: {
                         Image(systemName: viewModel.showOnlyNew ? "bell.badge.fill" : "bell.badge")
-                            .foregroundColor(viewModel.showOnlyNew ? (appearanceManager.isDarkMode ? .orange : .red) : .gray)
+                            .foregroundColor(viewModel.showOnlyNew ? (appearanceManager.isDarkMode ? Color.appAccent : .red) : Color.appTextSecondary)
                     }
 
                     // Sort menu
@@ -105,7 +105,7 @@ struct MessagingView: View {
                     title: "New",
                     value: "\(viewModel.newCount)",
                     icon: "bell.badge",
-                    color: appearanceManager.isDarkMode ? .orange : .red
+                    color: appearanceManager.isDarkMode ? Color.appAccent : .red
                 )
 
                 ForEach(SubmissionType.allCases) { type in
@@ -120,7 +120,7 @@ struct MessagingView: View {
             .padding(.horizontal)
             .padding(.vertical, 12)
         }
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
     }
 
     // MARK: - Type Filter Bar
@@ -158,8 +158,8 @@ struct MessagingView: View {
         List {
             ForEach(viewModel.filteredSubmissions) { submission in
                 SubmissionRow(submission: submission)
-                    .listRowBackground(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
-                    .listRowSeparatorTint(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.separator))
+                    .listRowBackground(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+                    .listRowSeparatorTint(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.separator))
                     .contentShape(Rectangle())
                     .onTapGesture {
                         selectedSubmission = submission
@@ -186,7 +186,7 @@ struct MessagingView: View {
         switch type {
         case .inquiry: return .blue
         case .vendorSignup: return .purple
-        case .contact: return appearanceManager.isDarkMode ? .orange : .red
+        case .contact: return appearanceManager.isDarkMode ? Color.appAccent : .red
         case .newsletter: return .green
                 }
     }
@@ -212,7 +212,7 @@ struct StatChip: View {
 
             Text(title)
                 .font(.caption2)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -233,7 +233,7 @@ struct MessagingFilterChip: View {
         Button(action: action) {
             Text(title)
                 .font(.caption.weight(.medium))
-                .foregroundColor(isSelected ? .white : color)
+                .foregroundColor(isSelected ? Color.appTextPrimary : color)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background(isSelected ? color : color.opacity(0.15))
@@ -271,10 +271,10 @@ struct SubmissionRow: View {
                     if submission.isNew {
                         Text("NEW")
                             .font(.caption2.bold())
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.appTextPrimary)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
+                            .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
                             .cornerRadius(4)
                     }
 
@@ -282,20 +282,20 @@ struct SubmissionRow: View {
 
                     Text(submission.createdAt.formatted(.relative(presentation: .named)))
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 if let subject = submission.subject {
                     Text(subject)
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.8))
+                        .foregroundColor(Color.appTextPrimary.opacity(0.8))
                         .lineLimit(1)
                 }
 
                 HStack {
                     Text(submission.email)
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                         .lineLimit(1)
 
                     Spacer()
@@ -307,7 +307,7 @@ struct SubmissionRow: View {
             // Chevron
             Image(systemName: "chevron.right")
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .padding(.vertical, 8)
     }
@@ -316,7 +316,7 @@ struct SubmissionRow: View {
         switch type {
         case .inquiry: return .blue
         case .vendorSignup: return .purple
-        case .contact: return appearanceManager.isDarkMode ? .orange : .red
+        case .contact: return appearanceManager.isDarkMode ? Color.appAccent : .red
         case .newsletter: return .green
                 }
     }
@@ -342,7 +342,7 @@ struct SubmissionStatusBadge: View {
     private var statusColor: Color {
         let lowercased = status.lowercased()
         if lowercased.contains("new") || lowercased.contains("pending") {
-            return appearanceManager.isDarkMode ? .orange : .red
+            return appearanceManager.isDarkMode ? Color.appAccent : .red
         } else if lowercased.contains("active") || lowercased.contains("completed") || lowercased.contains("paid") {
             return .green
         } else if lowercased.contains("inactive") || lowercased.contains("cancelled") || lowercased.contains("unsubscribed") {

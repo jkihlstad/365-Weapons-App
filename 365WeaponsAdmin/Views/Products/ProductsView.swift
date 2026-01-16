@@ -39,7 +39,7 @@ struct ProductsView: View {
                     }
                 }
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Products")
             .searchable(text: $viewModel.searchText, prompt: "Search products...")
             .toolbar {
@@ -121,7 +121,7 @@ struct ProductsView: View {
             }
             .padding()
         }
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
     }
 
     // MARK: - Products Grid
@@ -182,7 +182,7 @@ struct ProductGridCard: View {
             GeometryReader { geometry in
                 ZStack {
                     Rectangle()
-                        .fill(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                        .fill(Color.appSurface2)
 
                     if let url = imageURL {
                         KFImage(url)
@@ -199,7 +199,7 @@ struct ProductGridCard: View {
                     } else {
                         Image(systemName: "cube.box.fill")
                             .font(.largeTitle)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
                 .frame(width: geometry.size.width, height: geometry.size.width)
@@ -216,7 +216,7 @@ struct ProductGridCard: View {
 
                 Text(product.category)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                     .lineLimit(1)
 
                 HStack {
@@ -234,7 +234,7 @@ struct ProductGridCard: View {
             .frame(height: 80)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 }
@@ -261,7 +261,7 @@ struct ProductListCard: View {
             // Product image - fixed 60x60 size
             ZStack {
                 Rectangle()
-                    .fill(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                    .fill(Color.appSurface2)
 
                 if let url = imageURL {
                     KFImage(url)
@@ -278,7 +278,7 @@ struct ProductListCard: View {
                         .clipped()
                 } else {
                     Image(systemName: "cube.box.fill")
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
             }
             .frame(width: 60, height: 60)
@@ -293,7 +293,7 @@ struct ProductListCard: View {
 
                 Text(product.category)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
 
                 HStack {
                     Text(product.inStock ? "In Stock" : "Out of Stock")
@@ -316,7 +316,7 @@ struct ProductListCard: View {
         }
         .padding()
         .frame(height: 80)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 }
@@ -352,7 +352,7 @@ struct CreateProductView: View {
                     TextField("Price", text: $price)
                         .keyboardType(.decimalPad)
                     TextField("Price Range (optional)", text: $priceRange)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 Section("Category") {
@@ -375,7 +375,7 @@ struct CreateProductView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Create Product")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -474,7 +474,7 @@ struct ProductDetailView: View {
                     // Product image
                     ZStack {
                         Rectangle()
-                            .fill(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                            .fill(Color.appSurface2)
 
                         if let url = imageURL {
                             KFImage(url)
@@ -489,7 +489,7 @@ struct ProductDetailView: View {
                         } else {
                             Image(systemName: "cube.box.fill")
                                 .font(.system(size: 60))
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                         }
                     }
                     .aspectRatio(16/9, contentMode: .fit)
@@ -505,7 +505,7 @@ struct ProductDetailView: View {
                         }
                     }
                     .padding()
-                    .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+                    .background(Color.appSurface)
                     .cornerRadius(16)
 
                     // Actions
@@ -514,8 +514,8 @@ struct ProductDetailView: View {
                             Text("Save Changes")
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
-                                .foregroundColor(.white)
+                                .background(Color.appAccent)
+                                .foregroundColor(Color.appTextPrimary)
                                 .cornerRadius(12)
                         }
                     }
@@ -530,7 +530,7 @@ struct ProductDetailView: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                                .background(Color.appSurface2)
                                 .foregroundColor(product.inStock ? .red : .green)
                                 .cornerRadius(12)
                             }
@@ -539,7 +539,7 @@ struct ProductDetailView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle(isEditing ? "Edit Product" : "Product Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -573,7 +573,7 @@ struct ProductDetailView: View {
 
                 Text(product.category)
                     .font(.subheadline)
-                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                    .foregroundColor(Color.appAccent)
             }
 
             HStack {
@@ -597,7 +597,7 @@ struct ProductDetailView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Description")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text(description)
                         .font(.body)
                 }
@@ -606,7 +606,7 @@ struct ProductDetailView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Details")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
 
                 InfoRow(label: "ID", value: product.id)
                 InfoRow(label: "Created", value: product.createdAt.formatted())
@@ -620,7 +620,7 @@ struct ProductDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Title")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                 TextField("Title", text: $editedTitle)
                     .textFieldStyle(.roundedBorder)
             }
@@ -628,7 +628,7 @@ struct ProductDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Price")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                 TextField("Price", text: $editedPrice)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(.roundedBorder)
@@ -637,7 +637,7 @@ struct ProductDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Description")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                 TextField("Description", text: $editedDescription, axis: .vertical)
                     .lineLimit(3...6)
                     .textFieldStyle(.roundedBorder)

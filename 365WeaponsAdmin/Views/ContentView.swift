@@ -352,7 +352,7 @@ struct ScrollableTabBar: View {
                 Text(tab.rawValue)
                     .font(.caption2)
             }
-            .foregroundColor(selectedTab == tab ? (appearanceManager.isDarkMode ? .orange : .red) : .gray)
+            .foregroundColor(selectedTab == tab ? (appearanceManager.isDarkMode ? Color.appAccent : .red) : Color.appTextSecondary)
             .frame(width: 68)
             .padding(.vertical, 4)
         }
@@ -365,7 +365,7 @@ struct LoginView: View {
         ZStack {
             // Background gradient
             LinearGradient(
-                colors: [Color.black, Color(red: 0.1, green: 0.1, blue: 0.15)],
+                colors: [Color.appBackground, Color(red: 0.1, green: 0.1, blue: 0.15)],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -380,7 +380,7 @@ struct LoginView: View {
                         .font(.system(size: 80))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.orange, .red],
+                                colors: [Color.appAccent, .red],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -388,22 +388,22 @@ struct LoginView: View {
 
                     Text("365 Weapons")
                         .font(.system(size: 36, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
 
                     Text("Admin Dashboard")
                         .font(.title3)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 // Loading indicator
                 VStack(spacing: 16) {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .orange))
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color.appAccent))
                         .scaleEffect(1.5)
 
                     Text("Loading authentication...")
                         .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 Spacer()
@@ -411,10 +411,10 @@ struct LoginView: View {
                 // Admin access note
                 VStack(spacing: 8) {
                     Image(systemName: "exclamationmark.shield")
-                        .foregroundColor(.orange)
+                        .foregroundColor(Color.appAccent)
                     Text("Admin access required")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
                 .padding(.bottom, 40)
             }
@@ -432,18 +432,18 @@ struct CustomTextField: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
                 .frame(width: 24)
 
             TextField(placeholder, text: $text)
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
         }
         .padding()
-        .background(Color.white.opacity(0.1))
+        .background(Color.appSurface2)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                .stroke(Color.appSurface2, lineWidth: 1)
         )
     }
 }
@@ -458,28 +458,28 @@ struct CustomSecureField: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
                 .frame(width: 24)
 
             if showPassword {
                 TextField(placeholder, text: $text)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
             } else {
                 SecureField(placeholder, text: $text)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
             }
 
             Button(action: { showPassword.toggle() }) {
                 Image(systemName: showPassword ? "eye.slash" : "eye")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
         }
         .padding()
-        .background(Color.white.opacity(0.1))
+        .background(Color.appSurface2)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                .stroke(Color.appSurface2, lineWidth: 1)
         )
     }
 }

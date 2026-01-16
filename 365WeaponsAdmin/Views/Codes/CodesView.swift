@@ -34,7 +34,7 @@ struct CodesView: View {
                     codesList
                 }
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Discount Codes")
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $viewModel.searchText, prompt: "Search codes...")
@@ -44,7 +44,7 @@ struct CodesView: View {
                         showCreateSheet = true
                     } label: {
                         Image(systemName: "plus.circle.fill")
-                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                            .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
                     }
                 }
             }
@@ -106,7 +106,7 @@ struct CodesView: View {
             .padding(.horizontal)
             .padding(.vertical, 12)
         }
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
     }
 
     // MARK: - Filter Bar
@@ -145,7 +145,7 @@ struct CodesView: View {
                             .font(.caption2)
                     }
                     .font(.caption.weight(.medium))
-                    .foregroundColor(viewModel.selectedPartnerFilter != nil ? .white : .purple)
+                    .foregroundColor(viewModel.selectedPartnerFilter != nil ? Color.appTextPrimary : .purple)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(viewModel.selectedPartnerFilter != nil ? Color.purple : Color.purple.opacity(0.15))
@@ -163,8 +163,8 @@ struct CodesView: View {
         List {
             ForEach(viewModel.filteredCodes) { code in
                 CodeRow(code: code)
-                    .listRowBackground(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
-                    .listRowSeparatorTint(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.separator))
+                    .listRowBackground(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+                    .listRowSeparatorTint(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.separator))
                     .contentShape(Rectangle())
                     .onTapGesture {
                         selectedCode = code
@@ -185,7 +185,7 @@ struct CodesView: View {
                             Label(code.active ? "Disable" : "Enable",
                                   systemImage: code.active ? "xmark.circle" : "checkmark.circle")
                         }
-                        .tint(code.active ? (appearanceManager.isDarkMode ? .orange : .red) : .green)
+                        .tint(code.active ? (appearanceManager.isDarkMode ? Color.appAccent : .red) : .green)
                     }
             }
         }
@@ -224,7 +224,7 @@ struct CodeStatChip: View {
 
             Text(title)
                 .font(.caption2)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -245,7 +245,7 @@ struct FilterToggleChip: View {
         Button(action: action) {
             Text(title)
                 .font(.caption.weight(.medium))
-                .foregroundColor(isSelected ? .white : color)
+                .foregroundColor(isSelected ? Color.appTextPrimary : color)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background(isSelected ? color : color.opacity(0.15))
@@ -285,10 +285,10 @@ struct CodeRow: View {
                     if !code.active {
                         Text("INACTIVE")
                             .font(.caption2.bold())
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.appTextPrimary)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color.gray)
+                            .background(Color.appTextSecondary)
                             .cornerRadius(4)
                     }
 
@@ -303,14 +303,14 @@ struct CodeRow: View {
                     if let productName = code.productName {
                         Text("on \(productName)")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
 
                     Spacer()
 
                     Text("\(code.usageCount) uses")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 if let commission = code.formattedCommission {
@@ -320,14 +320,14 @@ struct CodeRow: View {
                         Text(commission)
                             .font(.caption)
                     }
-                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
                 }
             }
 
             // Chevron
             Image(systemName: "chevron.right")
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .padding(.vertical, 8)
     }
@@ -481,7 +481,7 @@ struct CreateCodeView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Create Discount Code")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -533,7 +533,7 @@ struct CreateCodeView: View {
                     commissionVal
 
                 Text("Commission Example: On a $\(String(format: "%.2f", exampleOrderTotal)) order, the partner would earn: $\(String(format: "%.2f", commissionAmount))")
-                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
             } else {
                 Text("Enter discount and commission values to see the example")
             }

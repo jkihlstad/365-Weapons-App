@@ -70,7 +70,7 @@ struct StatCard: View {
             valueSection
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(16)
     }
 
@@ -78,7 +78,7 @@ struct StatCard: View {
         HStack {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundColor(isComingSoon ? .gray : color)
+                .foregroundColor(isComingSoon ? Color.appTextSecondary : color)
 
             Spacer()
 
@@ -99,18 +99,18 @@ struct StatCard: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(value)
                 .font(.title.weight(.bold))
-                .foregroundColor(isComingSoon ? .gray : .white)
+                .foregroundColor(isComingSoon ? Color.appTextSecondary : Color.appTextPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
             Text(title)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
 
             if let subtitle = subtitle {
                 Text(subtitle)
                     .font(.caption2)
-                    .foregroundColor(.gray.opacity(0.7))
+                    .foregroundColor(Color.appTextSecondary.opacity(0.7))
             }
         }
     }
@@ -149,10 +149,10 @@ struct ComingSoonBadge: View {
     var body: some View {
         Text("Soon")
             .font(.caption2)
-            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+            .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
+            .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.2) : Color.red.opacity(0.15))
             .cornerRadius(4)
     }
 }
@@ -192,11 +192,11 @@ struct CompactStatCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(value)
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 Text(title)
                     .font(.caption2)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             Spacer()
@@ -206,7 +206,7 @@ struct CompactStatCard: View {
             }
         }
         .padding(12)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
     }
 }
@@ -259,5 +259,5 @@ struct CompactStatCard: View {
         )
     }
     .padding()
-    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
+    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
 }

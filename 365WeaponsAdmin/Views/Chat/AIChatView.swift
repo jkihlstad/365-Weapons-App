@@ -27,26 +27,26 @@ struct AIChatView: View {
                 inputArea
             }
             .padding(.bottom, 80) // Space for tab bar
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("AI Assistant")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: viewModel.clearHistory) {
                         Image(systemName: "trash")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: { showVoiceMode = true }) {
                         Image(systemName: "mic.circle.fill")
-                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                            .foregroundColor(Color.appAccent)
                     }
 
                     Button(action: { showSettings = true }) {
                         Image(systemName: "gearshape")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
             }
@@ -100,7 +100,7 @@ struct AIChatView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(
                     LinearGradient(
-                        colors: appearanceManager.isDarkMode ? [.orange, .red] : [.red, .red],
+                        colors: [Color.appAccent, Color.appAccent],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -112,7 +112,7 @@ struct AIChatView: View {
 
                 Text("Ask me anything about your dashboard, orders, products, or business insights.")
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
                     .multilineTextAlignment(.center)
             }
 
@@ -120,7 +120,7 @@ struct AIChatView: View {
             VStack(spacing: 12) {
                 Text("Try asking:")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
 
                 ForEach(quickPrompts, id: \.self) { prompt in
                     QuickPromptButton(prompt: prompt) {
@@ -146,7 +146,7 @@ struct AIChatView: View {
     private var inputArea: some View {
         VStack(spacing: 0) {
             Divider()
-                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                .background(Color.appSurface2)
 
             HStack(spacing: 12) {
                 // Text input
@@ -163,26 +163,26 @@ struct AIChatView: View {
                     if !inputText.isEmpty {
                         Button(action: { inputText = "" }) {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.appTextSecondary)
                         }
                     }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                .background(Color.appSurface2)
                 .cornerRadius(24)
 
                 // Send button
                 Button(action: sendMessage) {
                     Image(systemName: viewModel.isProcessing ? "stop.fill" : "arrow.up.circle.fill")
                         .font(.title)
-                        .foregroundColor(inputText.isEmpty && !viewModel.isProcessing ? .gray : (appearanceManager.isDarkMode ? .orange : .red))
+                        .foregroundColor(inputText.isEmpty && !viewModel.isProcessing ? .gray : (Color.appAccent))
                 }
                 .disabled(inputText.isEmpty && !viewModel.isProcessing)
             }
             .padding()
         }
-        .background(appearanceManager.isDarkMode ? Color.black : Color(UIColor.systemBackground))
+        .background(Color.appBackground)
     }
 
     private func sendMessage() {
@@ -249,14 +249,14 @@ struct MessageBubble: View {
                     Circle()
                         .fill(
                             LinearGradient(
-                                colors: appearanceManager.isDarkMode ? [.orange, .red] : [.red, .red],
+                                colors: [Color.appAccent, Color.appAccent],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
                     Image(systemName: "sparkles")
                         .font(.caption)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
                 }
                 .frame(width: 32, height: 32)
             }
@@ -264,20 +264,20 @@ struct MessageBubble: View {
             VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 4) {
                 Text(displayText)
                     .font(.body)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .background(
                         message.role == .user
-                            ? (appearanceManager.isDarkMode ? Color.orange : Color.red)
-                            : (appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+                            ? Color.appAccent
+                            : Color.appSurface2
                     )
                     .cornerRadius(20)
                     .cornerRadius(message.role == .user ? 20 : 4, corners: message.role == .user ? [.topLeft, .bottomLeft, .bottomRight] : [.topRight, .bottomLeft, .bottomRight])
 
                 Text(message.timestamp, style: .time)
                     .font(.caption2)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             if message.role == .user {
@@ -287,7 +287,7 @@ struct MessageBubble: View {
                         .fill(Color.blue)
                     Image(systemName: "person.fill")
                         .font(.caption)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.appTextPrimary)
                 }
                 .frame(width: 32, height: 32)
             }
@@ -339,7 +339,7 @@ struct TypingIndicator: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+        .background(Color.appSurface2)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .onAppear {
@@ -364,8 +364,8 @@ struct QuickPromptButton: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
-            .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+            .background(Color.appSurface2)
+            .foregroundColor(Color.appTextPrimary)
             .cornerRadius(20)
         }
     }
@@ -398,7 +398,7 @@ struct VoiceModeView: View {
                     if !transcript.isEmpty {
                         Text(transcript)
                             .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal)
                     }
@@ -410,17 +410,17 @@ struct VoiceModeView: View {
                 Button(action: toggleRecording) {
                     ZStack {
                         Circle()
-                            .fill(isRecording ? Color.red : (appearanceManager.isDarkMode ? Color.orange : Color.red))
+                            .fill(isRecording ? Color.red : Color.appAccent)
                             .frame(width: 80, height: 80)
 
                         Image(systemName: isRecording ? "stop.fill" : "mic.fill")
                             .font(.title)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.appTextPrimary)
                     }
                 }
                 .padding(.bottom, 40)
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Voice Mode")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -496,7 +496,7 @@ struct VoiceVisualization: View {
         ZStack {
             ForEach(0..<3) { i in
                 Circle()
-                    .stroke((appearanceManager.isDarkMode ? Color.orange : Color.red).opacity(0.3), lineWidth: 2)
+                    .stroke(Color.appAccent.opacity(0.3), lineWidth: 2)
                     .frame(width: 100 + CGFloat(i) * 40, height: 100 + CGFloat(i) * 40)
                     .scaleEffect(animation && isRecording ? 1.2 : 1.0)
                     .opacity(animation && isRecording ? 0.5 : 1.0)
@@ -511,7 +511,7 @@ struct VoiceVisualization: View {
             Circle()
                 .fill(
                     LinearGradient(
-                        colors: appearanceManager.isDarkMode ? [.orange, .red] : [.red, .red],
+                        colors: [Color.appAccent, Color.appAccent],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -521,7 +521,7 @@ struct VoiceVisualization: View {
 
             Image(systemName: isRecording ? "waveform" : "mic.fill")
                 .font(.system(size: 40))
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
         }
         .onAppear {
             animation = true
@@ -569,7 +569,7 @@ struct ChatSettingsView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Chat Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

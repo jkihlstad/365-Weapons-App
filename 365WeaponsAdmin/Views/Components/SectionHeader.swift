@@ -89,12 +89,12 @@ struct SectionHeader<TrailingContent: View>: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(style.titleFont)
-                .foregroundColor(.white)
+                .foregroundColor(Color.appTextPrimary)
 
             if let subtitle = subtitle {
                 Text(subtitle)
                     .font(style.subtitleFont)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
         }
     }
@@ -112,7 +112,7 @@ struct SectionHeader<TrailingContent: View>: View {
                         Image(systemName: "chevron.right")
                             .font(.caption2)
                     }
-                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
                 }
                 .buttonStyle(.plain)
             }
@@ -190,14 +190,14 @@ struct BadgedSectionHeader: View {
     let title: String
     let count: Int
     var seeAllAction: (() -> Void)? = nil
-    var badgeColor: Color = .orange
+    var badgeColor: Color = Color.appAccent
 
     var body: some View {
         SectionHeader(title: title, seeAllAction: seeAllAction) {
             if count > 0 {
                 Text("\(count)")
                     .font(.caption.weight(.bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(badgeColor)
@@ -213,7 +213,7 @@ struct BadgedSectionHeader: View {
 struct IconSectionHeader: View {
     let icon: String
     let title: String
-    var iconColor: Color = .orange
+    var iconColor: Color = Color.appAccent
     var seeAllAction: (() -> Void)? = nil
 
     var body: some View {
@@ -246,7 +246,7 @@ struct LiveSectionHeader: View {
 
                     Text("Live")
                         .font(.caption2)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
             }
         }
@@ -295,7 +295,7 @@ struct CardSection<Content: View>: View {
             content()
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(16)
     }
 }
@@ -373,5 +373,5 @@ struct CardSection<Content: View>: View {
         }
         .padding()
     }
-    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
+    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
 }

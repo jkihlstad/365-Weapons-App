@@ -105,7 +105,7 @@ struct StatusBadge: View {
         case .standard, .pill, .outline:
             return color
         case .solid:
-            return .white
+            return Color.appTextPrimary
         }
     }
 
@@ -123,7 +123,7 @@ struct StatusBadge: View {
     static func color(for status: OrderStatus) -> Color {
         switch status {
         case .pending: return .yellow
-        case .awaitingPayment: return .orange
+        case .awaitingPayment: return Color.appAccent
         case .awaitingShipment: return .blue
         case .inProgress: return .purple
         case .completed: return .green
@@ -134,7 +134,7 @@ struct StatusBadge: View {
     /// Returns the appropriate color for a CommissionStatus.
     static func color(for status: CommissionStatus) -> Color {
         switch status {
-        case .pending: return .orange
+        case .pending: return Color.appAccent
         case .eligible: return .blue
         case .approved: return .purple
         case .paid: return .green
@@ -147,7 +147,7 @@ struct StatusBadge: View {
         switch status {
         case .new: return .blue
         case .reviewed: return .purple
-        case .quoted: return .orange
+        case .quoted: return Color.appAccent
         case .invoiceSent: return .yellow
         case .paid: return .teal
         case .inProgress: return .indigo
@@ -271,7 +271,7 @@ struct IconStatusBadge: View {
         case .standard, .pill, .outline:
             return color
         case .solid:
-            return .white
+            return Color.appTextPrimary
         }
     }
 }
@@ -315,7 +315,7 @@ struct StatusDot: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Order Statuses")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 8) {
                     ForEach(OrderStatus.allCases, id: \.self) { status in
@@ -328,7 +328,7 @@ struct StatusDot: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Commission Statuses")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 8) {
                     ForEach(CommissionStatus.allCases, id: \.self) { status in
@@ -341,7 +341,7 @@ struct StatusDot: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Inquiry Statuses")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 8) {
                     ForEach(InquiryStatus.allCases, id: \.self) { status in
@@ -354,12 +354,12 @@ struct StatusDot: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Badge Styles")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 8) {
                     StatusBadge(status: "Standard", color: .blue, style: .standard)
                     StatusBadge(status: "Pill", color: .green, style: .pill)
-                    StatusBadge(status: "Outline", color: .orange, style: .outline)
+                    StatusBadge(status: "Outline", color: Color.appAccent, style: .outline)
                     StatusBadge(status: "Solid", color: .purple, style: .solid)
                 }
             }
@@ -368,7 +368,7 @@ struct StatusDot: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Badge Sizes")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 8) {
                     StatusBadge(status: "Small", color: .blue, size: .small)
@@ -381,11 +381,11 @@ struct StatusDot: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Icon Badge")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 8) {
                     IconStatusBadge(status: "Active", icon: "checkmark.circle", color: .green)
-                    IconStatusBadge(status: "Pending", icon: "clock", color: .orange)
+                    IconStatusBadge(status: "Pending", icon: "clock", color: Color.appAccent)
                     IconStatusBadge(status: "Error", icon: "exclamationmark.triangle", color: .red)
                 }
             }
@@ -394,33 +394,33 @@ struct StatusDot: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Status Dots")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 16) {
                     HStack(spacing: 4) {
                         StatusDot(color: .green)
                         Text("Online")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
 
                     HStack(spacing: 4) {
                         StatusDot(color: .green, isPulsing: true)
                         Text("Live")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
 
                     HStack(spacing: 4) {
                         StatusDot(color: .red)
                         Text("Offline")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
             }
         }
         .padding()
     }
-    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
+    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
 }

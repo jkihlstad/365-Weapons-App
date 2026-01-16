@@ -22,7 +22,7 @@ struct OfflineIndicator: View {
         } else if offlineManager.isSyncing {
             return .blue
         } else if offlineManager.hasPendingActions {
-            return appearanceManager.isDarkMode ? .orange : .red
+            return appearanceManager.isDarkMode ? Color.appAccent : .red
         } else {
             return .green
         }
@@ -43,7 +43,7 @@ struct OfflineIndicator: View {
                     if !offlineManager.isOnline || offlineManager.hasPendingActions {
                         Text(statusSubtitle)
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
 
@@ -60,8 +60,8 @@ struct OfflineIndicator: View {
                                 .font(.caption.weight(.semibold))
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
-                                .foregroundColor(.white)
+                                .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
+                                .foregroundColor(Color.appTextPrimary)
                                 .cornerRadius(12)
                         }
                     }
@@ -73,7 +73,7 @@ struct OfflineIndicator: View {
                     Button(action: { withAnimation { isExpanded.toggle() } }) {
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
                 }
             }
@@ -138,14 +138,14 @@ struct OfflineIndicator: View {
     private var expandedDetails: some View {
         VStack(alignment: .leading, spacing: 12) {
             Divider()
-                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.separator))
+                .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.separator))
 
             // Pending actions list
             ForEach(offlineManager.pendingActions.prefix(5)) { action in
                 HStack(spacing: 12) {
                     Image(systemName: action.type.icon)
                         .font(.caption)
-                        .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+                        .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
                         .frame(width: 20)
 
                     VStack(alignment: .leading, spacing: 2) {
@@ -154,7 +154,7 @@ struct OfflineIndicator: View {
 
                         Text(formatDate(action.timestamp))
                             .font(.caption2)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                     }
 
                     Spacer()
@@ -170,7 +170,7 @@ struct OfflineIndicator: View {
             if offlineManager.pendingActionsCount > 5 {
                 Text("+ \(offlineManager.pendingActionsCount - 5) more actions")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
 
             // Last sync info
@@ -178,7 +178,7 @@ struct OfflineIndicator: View {
                 HStack {
                     Text("Last synced:")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                     Text(offlineManager.formattedLastSyncDate)
                         .font(.caption.weight(.medium))
                 }
@@ -186,7 +186,7 @@ struct OfflineIndicator: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.02) : Color(UIColor.systemBackground))
+        .background(appearanceManager.isDarkMode ? Color.appSurface.opacity(0.4) : Color(UIColor.systemBackground))
     }
 
     // MARK: - Actions
@@ -241,7 +241,7 @@ struct CompactOfflineIndicator: View {
         if !offlineManager.isOnline {
             return .red
         } else if offlineManager.hasPendingActions {
-            return appearanceManager.isDarkMode ? .orange : .red
+            return appearanceManager.isDarkMode ? Color.appAccent : .red
         } else {
             return .green
         }
@@ -311,13 +311,13 @@ struct CachedDataIndicator: View {
                 if let age = cacheAge {
                     Text("(\(age))")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
             }
-            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
+            .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.15) : Color.red.opacity(0.12))
+            .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.15) : Color.red.opacity(0.12))
             .cornerRadius(12)
         }
     }
@@ -348,7 +348,7 @@ struct SyncStatusBadge: View {
     private var statusColor: Color {
         switch status {
         case .synced: return .green
-        case .pending: return appearanceManager.isDarkMode ? .orange : .red
+        case .pending: return appearanceManager.isDarkMode ? Color.appAccent : .red
         case .failed: return .red
         case .syncing: return .blue
         }
@@ -378,5 +378,5 @@ struct SyncStatusBadge: View {
         }
     }
     .padding()
-    .background(AppearanceManager.shared.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
 }

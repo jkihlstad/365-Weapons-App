@@ -35,7 +35,7 @@ struct PaymentsView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Payments")
             .navigationBarTitleDisplayMode(.large)
             .refreshable {
@@ -99,7 +99,7 @@ struct PaymentsView: View {
                     title: "Transactions",
                     count: viewModel.transactionCount,
                     icon: "arrow.left.arrow.right",
-                    color: .orange
+                    color: Color.appAccent
                 )
             }
         }
@@ -173,7 +173,7 @@ struct PaymentsView: View {
                 NavigationLink(destination: PaymentHistoryView(viewModel: viewModel)) {
                     Text("See All")
                         .font(.subheadline)
-                        .foregroundColor(.orange)
+                        .foregroundColor(Color.appAccent)
                 }
             }
 
@@ -224,11 +224,11 @@ struct PaymentStatCard: View {
 
             Text(title)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .padding()
         .frame(width: 140)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
         .shadow(color: appearanceManager.isDarkMode ? .clear : .black.opacity(0.05), radius: 5)
     }
@@ -264,7 +264,7 @@ struct PayQuickActionButton: View {
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+            .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
             .cornerRadius(12)
             .shadow(color: appearanceManager.isDarkMode ? .clear : .black.opacity(0.05), radius: 5)
         }
@@ -286,12 +286,12 @@ struct PaymentMethodRow: View {
                 // Icon
                 ZStack {
                     Circle()
-                        .fill(isAvailable ? Color.orange.opacity(0.2) : Color.gray.opacity(0.2))
+                        .fill(isAvailable ? Color.appAccent.opacity(0.2) : Color.appTextSecondary.opacity(0.2))
                         .frame(width: 50, height: 50)
 
                     Image(systemName: method.icon)
                         .font(.title3)
-                        .foregroundColor(isAvailable ? .orange : .gray)
+                        .foregroundColor(isAvailable ? Color.appAccent : Color.appTextSecondary)
                 }
 
                 // Info
@@ -304,27 +304,27 @@ struct PaymentMethodRow: View {
                         if !isAvailable {
                             Text("Unavailable")
                                 .font(.caption2)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color.appTextPrimary)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(Color.gray)
+                                .background(Color.appTextSecondary)
                                 .cornerRadius(4)
                         }
                     }
 
                     Text(method.description)
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.appTextSecondary)
             }
             .padding()
-            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+            .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
             .cornerRadius(12)
             .shadow(color: appearanceManager.isDarkMode ? .clear : .black.opacity(0.05), radius: 5)
         }
@@ -369,7 +369,7 @@ struct TransactionRow: View {
                     if let description = transaction.description {
                         Text(description)
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.appTextSecondary)
                             .lineLimit(1)
                     }
 
@@ -377,18 +377,18 @@ struct TransactionRow: View {
 
                     Text(transaction.createdAt.formatted(.relative(presentation: .named)))
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
 
                 if transaction.cardLast4 != nil {
                     Text(transaction.cardDisplay)
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.appTextSecondary)
                 }
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
         .shadow(color: appearanceManager.isDarkMode ? .clear : .black.opacity(0.05), radius: 5)
     }
@@ -403,7 +403,7 @@ struct EmptyTransactionsView: View {
         VStack(spacing: 12) {
             Image(systemName: "creditcard.trianglebadge.exclamationmark")
                 .font(.system(size: 40))
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
 
             Text("No Transactions Yet")
                 .font(.headline)
@@ -411,11 +411,11 @@ struct EmptyTransactionsView: View {
 
             Text("Accept your first payment to see it here")
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.appTextSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(40)
-        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
         .cornerRadius(12)
     }
 }
