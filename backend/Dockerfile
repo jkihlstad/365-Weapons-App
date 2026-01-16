@@ -23,8 +23,5 @@ RUN mkdir -p /app/lancedb_data
 # Environment variables
 ENV LANCEDB_PATH=/app/lancedb_data
 
-# Expose port
-EXPOSE 8000
-
-# Run the application on port 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the application - uses PORT from environment
+CMD ["python", "main.py"]
