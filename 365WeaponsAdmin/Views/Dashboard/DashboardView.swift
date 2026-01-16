@@ -18,6 +18,7 @@ struct DashboardView: View {
     @StateObject private var viewModel = DashboardViewModel()
     @StateObject private var errorService = ErrorRecoveryService.shared
     @EnvironmentObject var orchestrator: OrchestrationAgent
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
 
     @State private var showAIInsights = false
     @State private var selectedTimeRange: TimeRange = .week
@@ -86,7 +87,7 @@ struct DashboardView: View {
                     }
                     .padding()
                 }
-                .background(Color.black.ignoresSafeArea())
+                .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
 
                 // Loading overlay using new component
                 if viewModel.isLoading {
@@ -108,8 +109,8 @@ struct DashboardView: View {
                         .font(.subheadline.weight(.medium))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color.orange.opacity(0.2))
-                        .foregroundColor(.orange)
+                        .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
+                        .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                         .cornerRadius(8)
                     }
                 }
@@ -247,7 +248,7 @@ struct DashboardView: View {
         HStack(spacing: 12) {
             Image(systemName: "wifi.slash")
                 .font(.system(size: 18))
-                .foregroundColor(.orange)
+                .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Connection Lost")
@@ -268,26 +269,26 @@ struct DashboardView: View {
             }) {
                 Text("Retry")
                     .font(.caption.weight(.semibold))
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color.orange.opacity(0.2))
+                    .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
                     .cornerRadius(6)
             }
         }
         .padding()
-        .background(Color.orange.opacity(0.1))
+        .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.1) : Color.red.opacity(0.1))
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                .stroke((appearanceManager.isDarkMode ? Color.orange : Color.red).opacity(0.3), lineWidth: 1)
         )
     }
 
     private func connectionColor(for state: ConvexClient.ConnectionState) -> Color {
         switch state {
         case .connected: return .green
-        case .connecting, .reconnecting: return .orange
+        case .connecting, .reconnecting: return appearanceManager.isDarkMode ? .orange : .red
         case .disconnected, .error: return .red
         }
     }
@@ -339,7 +340,7 @@ struct DashboardView: View {
             .frame(width: 200)
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -460,7 +461,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -477,7 +478,7 @@ struct DashboardView: View {
                         Image(systemName: "chevron.right")
                             .font(.caption2)
                     }
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                 }
             }
 
@@ -496,7 +497,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -533,7 +534,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -564,7 +565,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -582,10 +583,10 @@ struct DashboardView: View {
                 } else {
                     Text("Coming Soon")
                         .font(.caption)
-                        .foregroundColor(.orange)
+                        .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.orange.opacity(0.2))
+                        .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
                         .cornerRadius(4)
                 }
             }
@@ -615,7 +616,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -644,7 +645,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 }
@@ -694,6 +695,7 @@ struct OrderStatusBadge: View {
 }
 
 struct PendingItemRow: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let title: String
     let count: Int
     let icon: String
@@ -715,10 +717,10 @@ struct PendingItemRow: View {
             if isComingSoon {
                 Text("Coming Soon")
                     .font(.caption2)
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(Color.orange.opacity(0.2))
+                    .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
                     .cornerRadius(4)
             } else {
                 Text(isCurrency ? Double(count).currencyFormatted : "\(count)")
@@ -731,6 +733,7 @@ struct PendingItemRow: View {
 }
 
 struct ServiceTypeCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let serviceType: ServiceType
     let count: Int
 
@@ -738,7 +741,7 @@ struct ServiceTypeCard: View {
         VStack(spacing: 8) {
             Image(systemName: serviceType.icon)
                 .font(.title2)
-                .foregroundColor(.orange)
+                .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
 
             Text(serviceType.displayName)
                 .font(.caption2)
@@ -749,7 +752,7 @@ struct ServiceTypeCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(8)
     }
 }
@@ -787,12 +790,13 @@ struct PartnerRow: View {
 }
 
 struct ActivityRow: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let action: WebsiteAction
 
     var body: some View {
         HStack {
             Image(systemName: action.actionType.icon)
-                .foregroundColor(.orange)
+                .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -832,6 +836,7 @@ struct PulseAnimation: ViewModifier {
 // MARK: - AI Insights Sheet
 struct AIInsightsSheet: View {
     @ObservedObject var viewModel: DashboardViewModel
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @Environment(\.dismiss) private var dismiss
     @State private var insights: String = ""
     @State private var isLoading = true
@@ -852,7 +857,7 @@ struct AIInsightsSheet: View {
                 }
                 .padding()
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("AI Insights")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

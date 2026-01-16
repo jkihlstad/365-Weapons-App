@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CustomersView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @StateObject private var viewModel = CustomersViewModel()
 
     var body: some View {
@@ -35,7 +36,7 @@ struct CustomersView: View {
                     customersList
                 }
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Customers")
             .searchable(text: $viewModel.searchText, prompt: "Search by name, email, or phone...")
             .toolbar {
@@ -104,13 +105,13 @@ struct CustomersView: View {
                     title: "Contact",
                     count: viewModel.contactCount,
                     isSelected: viewModel.selectedSource == .contact,
-                    color: .orange,
+                    color: appearanceManager.isDarkMode ? .orange : .red,
                     action: { viewModel.filterBySource(.contact) }
                 )
             }
             .padding()
         }
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
     }
 
     // MARK: - Stats Summary
@@ -136,7 +137,7 @@ struct CustomersView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
     }
 
     // MARK: - Customers List
@@ -157,6 +158,7 @@ struct CustomersView: View {
 
 // MARK: - Customer Card
 struct CustomerCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let customer: Customer
 
     var body: some View {
@@ -196,7 +198,6 @@ struct CustomerCard: View {
 
             if customer.orderCount > 0 || customer.phone != nil {
                 Divider()
-                    .background(Color.white.opacity(0.1))
 
                 // Details
                 HStack {
@@ -217,7 +218,7 @@ struct CustomerCard: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -226,13 +227,15 @@ struct CustomerCard: View {
         case .order: return .green
         case .inquiry: return .blue
         case .newsletter: return .purple
-        case .contact: return .orange
+        case .contact: return appearanceManager.isDarkMode ? .orange : .red
+        case .vendor: return .red
         }
     }
 }
 
 // MARK: - Source Badge
 struct SourceBadge: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let source: CustomerSource
 
     var body: some View {
@@ -254,13 +257,15 @@ struct SourceBadge: View {
         case .order: return .green
         case .inquiry: return .blue
         case .newsletter: return .purple
-        case .contact: return .orange
+        case .contact: return appearanceManager.isDarkMode ? .orange : .red
+        case .vendor: return .red
         }
     }
 }
 
 // MARK: - Customer Detail View
 struct CustomerDetailView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let customer: Customer
     @ObservedObject var viewModel: CustomersViewModel
     @Environment(\.dismiss) private var dismiss
@@ -294,7 +299,7 @@ struct CustomerDetailView: View {
                 }
                 .padding()
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Customer Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -424,7 +429,7 @@ struct CustomerDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -445,7 +450,7 @@ struct CustomerDetailView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -483,12 +488,12 @@ struct CustomerDetailView: View {
                     Spacer()
                     Text(String(format: "$%.2f", customer.totalSpent / Double(customer.orderCount)))
                         .font(.subheadline)
-                        .foregroundColor(.orange)
+                        .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                 }
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -519,12 +524,12 @@ struct CustomerDetailView: View {
                 .padding(.vertical, 4)
 
                 if order.id != viewModel.customerOrders.prefix(10).last?.id {
-                    Divider().background(Color.white.opacity(0.1))
+                    Divider()
                 }
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -549,7 +554,7 @@ struct CustomerDetailView: View {
                         if let quote = inquiry.formattedQuote {
                             Text(quote)
                                 .font(.subheadline.weight(.bold))
-                                .foregroundColor(.orange)
+                                .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                         }
                         Text(inquiry.status.displayName)
                             .font(.caption)
@@ -563,12 +568,12 @@ struct CustomerDetailView: View {
                 .padding(.vertical, 4)
 
                 if inquiry.id != viewModel.customerInquiries.prefix(5).last?.id {
-                    Divider().background(Color.white.opacity(0.1))
+                    Divider()
                 }
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -577,7 +582,8 @@ struct CustomerDetailView: View {
         case .order: return .green
         case .inquiry: return .blue
         case .newsletter: return .purple
-        case .contact: return .orange
+        case .contact: return appearanceManager.isDarkMode ? .orange : .red
+        case .vendor: return .red
         }
     }
 }

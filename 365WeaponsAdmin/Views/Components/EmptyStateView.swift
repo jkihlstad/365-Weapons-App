@@ -26,6 +26,8 @@ import SwiftUI
 struct EmptyStateView: View {
     // MARK: - Properties
 
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     /// SF Symbol name for the icon
     let icon: String
 
@@ -101,7 +103,7 @@ struct EmptyStateView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
-                .background(Color.orange)
+                .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
                 .cornerRadius(10)
         }
         .padding(.top, 8)
@@ -187,6 +189,8 @@ enum EmptyStateStyle {
 
 /// An empty state view with a card background.
 struct EmptyStateCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     let icon: String
     let title: String
     var subtitle: String? = nil
@@ -203,7 +207,7 @@ struct EmptyStateCard: View {
             style: .card
         )
         .frame(maxWidth: .infinity)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 }
@@ -212,6 +216,8 @@ struct EmptyStateCard: View {
 
 /// A specialized empty state for search results.
 struct NoResultsView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     var searchQuery: String
     var suggestions: [String]? = nil
     var onSuggestionTap: ((String) -> Void)? = nil
@@ -246,7 +252,7 @@ struct NoResultsView: View {
                                     .font(.subheadline)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
-                                    .background(Color.white.opacity(0.1))
+                                    .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
                                     .foregroundColor(.white)
                                     .cornerRadius(16)
                             }
@@ -263,6 +269,8 @@ struct NoResultsView: View {
 
 /// A specialized empty state for error conditions.
 struct ErrorStateView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     var title: String = "Something went wrong"
     var message: String? = nil
     var retryTitle: String = "Try Again"
@@ -274,7 +282,7 @@ struct ErrorStateView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [.red.opacity(0.8), .orange.opacity(0.6)],
+                        colors: [.red.opacity(0.8), (appearanceManager.isDarkMode ? Color.orange.opacity(0.6) : Color.red.opacity(0.6))],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -303,7 +311,7 @@ struct ErrorStateView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(Color.orange)
+                    .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
                     .cornerRadius(10)
                 }
             }
@@ -317,6 +325,8 @@ struct ErrorStateView: View {
 
 /// A specialized empty state for features that are coming soon.
 struct ComingSoonView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     let feature: String
     var description: String? = nil
     var icon: String = "sparkles"
@@ -325,14 +335,14 @@ struct ComingSoonView: View {
         VStack(spacing: 20) {
             ZStack {
                 Circle()
-                    .fill(Color.orange.opacity(0.1))
+                    .fill(appearanceManager.isDarkMode ? Color.orange.opacity(0.1) : Color.red.opacity(0.1))
                     .frame(width: 100, height: 100)
 
                 Image(systemName: icon)
                     .font(.system(size: 40))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [.orange, .red],
+                            colors: [appearanceManager.isDarkMode ? .orange : .red, .red],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -346,7 +356,7 @@ struct ComingSoonView: View {
 
                 Text("Coming Soon")
                     .font(.subheadline.weight(.medium))
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
 
                 if let description = description {
                     Text(description)
@@ -432,7 +442,7 @@ struct FlowLayout: Layout {
                 actionTitle: "Add Product",
                 action: {}
             )
-            .background(Color.white.opacity(0.05))
+            .background(AppearanceManager.shared.isDarkMode ? Color.white.opacity(0.05) : Color.white)
             .cornerRadius(16)
 
             // Compact empty state
@@ -442,7 +452,7 @@ struct FlowLayout: Layout {
                 subtitle: "No orders to display",
                 style: .compact
             )
-            .background(Color.white.opacity(0.05))
+            .background(AppearanceManager.shared.isDarkMode ? Color.white.opacity(0.05) : Color.white)
             .cornerRadius(12)
 
             // Card empty state
@@ -460,7 +470,7 @@ struct FlowLayout: Layout {
                 message: "Please check your connection and try again.",
                 retryAction: {}
             )
-            .background(Color.white.opacity(0.05))
+            .background(AppearanceManager.shared.isDarkMode ? Color.white.opacity(0.05) : Color.white)
             .cornerRadius(16)
 
             // Coming soon
@@ -468,7 +478,7 @@ struct FlowLayout: Layout {
                 feature: "Advanced Analytics",
                 description: "Detailed insights and reporting will be available in a future update."
             )
-            .background(Color.white.opacity(0.05))
+            .background(AppearanceManager.shared.isDarkMode ? Color.white.opacity(0.05) : Color.white)
             .cornerRadius(16)
 
             // No results
@@ -477,10 +487,10 @@ struct FlowLayout: Layout {
                 suggestions: ["Glock", "Pistol", "Handgun"],
                 onSuggestionTap: { _ in }
             )
-            .background(Color.white.opacity(0.05))
+            .background(AppearanceManager.shared.isDarkMode ? Color.white.opacity(0.05) : Color.white)
             .cornerRadius(16)
         }
         .padding()
     }
-    .background(Color.black)
+    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
 }

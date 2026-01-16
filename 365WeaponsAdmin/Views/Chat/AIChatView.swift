@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AIChatView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @StateObject private var viewModel = AIChatViewModel()
     @EnvironmentObject var orchestrator: OrchestrationAgent
     @FocusState private var isInputFocused: Bool
@@ -26,7 +27,7 @@ struct AIChatView: View {
                 inputArea
             }
             .padding(.bottom, 80) // Space for tab bar
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("AI Assistant")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -40,7 +41,7 @@ struct AIChatView: View {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: { showVoiceMode = true }) {
                         Image(systemName: "mic.circle.fill")
-                            .foregroundColor(.orange)
+                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     }
 
                     Button(action: { showSettings = true }) {
@@ -99,7 +100,7 @@ struct AIChatView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [.orange, .red],
+                        colors: appearanceManager.isDarkMode ? [.orange, .red] : [.red, .red],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -145,7 +146,7 @@ struct AIChatView: View {
     private var inputArea: some View {
         VStack(spacing: 0) {
             Divider()
-                .background(Color.white.opacity(0.1))
+                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
 
             HStack(spacing: 12) {
                 // Text input
@@ -168,20 +169,20 @@ struct AIChatView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(Color.white.opacity(0.1))
+                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
                 .cornerRadius(24)
 
                 // Send button
                 Button(action: sendMessage) {
                     Image(systemName: viewModel.isProcessing ? "stop.fill" : "arrow.up.circle.fill")
                         .font(.title)
-                        .foregroundColor(inputText.isEmpty && !viewModel.isProcessing ? .gray : .orange)
+                        .foregroundColor(inputText.isEmpty && !viewModel.isProcessing ? .gray : (appearanceManager.isDarkMode ? .orange : .red))
                 }
                 .disabled(inputText.isEmpty && !viewModel.isProcessing)
             }
             .padding()
         }
-        .background(Color.black)
+        .background(appearanceManager.isDarkMode ? Color.black : Color(UIColor.systemBackground))
     }
 
     private func sendMessage() {
@@ -199,6 +200,7 @@ struct AIChatView: View {
 
 // MARK: - Message Bubble
 struct MessageBubble: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let message: ChatMessage
 
     /// Strip markdown formatting from text for cleaner display
@@ -247,7 +249,7 @@ struct MessageBubble: View {
                     Circle()
                         .fill(
                             LinearGradient(
-                                colors: [.orange, .red],
+                                colors: appearanceManager.isDarkMode ? [.orange, .red] : [.red, .red],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -267,8 +269,8 @@ struct MessageBubble: View {
                     .padding(.vertical, 12)
                     .background(
                         message.role == .user
-                            ? Color.orange
-                            : Color.white.opacity(0.1)
+                            ? (appearanceManager.isDarkMode ? Color.orange : Color.red)
+                            : (appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
                     )
                     .cornerRadius(20)
                     .cornerRadius(message.role == .user ? 20 : 4, corners: message.role == .user ? [.topLeft, .bottomLeft, .bottomRight] : [.topRight, .bottomLeft, .bottomRight])
@@ -317,6 +319,7 @@ struct RoundedCorner: Shape {
 
 // MARK: - Typing Indicator
 struct TypingIndicator: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @State private var animationOffset: CGFloat = 0
 
     var body: some View {
@@ -336,7 +339,7 @@ struct TypingIndicator: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color.white.opacity(0.1))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .onAppear {
@@ -347,6 +350,7 @@ struct TypingIndicator: View {
 
 // MARK: - Quick Prompt Button
 struct QuickPromptButton: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let prompt: String
     let action: () -> Void
 
@@ -360,8 +364,8 @@ struct QuickPromptButton: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(Color.white.opacity(0.1))
-            .foregroundColor(.white)
+            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
+            .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
             .cornerRadius(20)
         }
     }
@@ -369,6 +373,7 @@ struct QuickPromptButton: View {
 
 // MARK: - Voice Mode View
 struct VoiceModeView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var viewModel: AIChatViewModel
     @Environment(\.dismiss) private var dismiss
 
@@ -405,7 +410,7 @@ struct VoiceModeView: View {
                 Button(action: toggleRecording) {
                     ZStack {
                         Circle()
-                            .fill(isRecording ? Color.red : Color.orange)
+                            .fill(isRecording ? Color.red : (appearanceManager.isDarkMode ? Color.orange : Color.red))
                             .frame(width: 80, height: 80)
 
                         Image(systemName: isRecording ? "stop.fill" : "mic.fill")
@@ -415,7 +420,7 @@ struct VoiceModeView: View {
                 }
                 .padding(.bottom, 40)
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Voice Mode")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -481,6 +486,7 @@ struct VoiceModeView: View {
 
 // MARK: - Voice Visualization
 struct VoiceVisualization: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let isRecording: Bool
     let audioLevel: CGFloat
 
@@ -490,7 +496,7 @@ struct VoiceVisualization: View {
         ZStack {
             ForEach(0..<3) { i in
                 Circle()
-                    .stroke(Color.orange.opacity(0.3), lineWidth: 2)
+                    .stroke((appearanceManager.isDarkMode ? Color.orange : Color.red).opacity(0.3), lineWidth: 2)
                     .frame(width: 100 + CGFloat(i) * 40, height: 100 + CGFloat(i) * 40)
                     .scaleEffect(animation && isRecording ? 1.2 : 1.0)
                     .opacity(animation && isRecording ? 0.5 : 1.0)
@@ -505,7 +511,7 @@ struct VoiceVisualization: View {
             Circle()
                 .fill(
                     LinearGradient(
-                        colors: [.orange, .red],
+                        colors: appearanceManager.isDarkMode ? [.orange, .red] : [.red, .red],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -525,6 +531,7 @@ struct VoiceVisualization: View {
 
 // MARK: - Chat Settings View
 struct ChatSettingsView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var viewModel: AIChatViewModel
     @Environment(\.dismiss) private var dismiss
 
@@ -562,7 +569,7 @@ struct ChatSettingsView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Chat Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

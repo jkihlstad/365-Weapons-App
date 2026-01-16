@@ -9,6 +9,7 @@ import SwiftUI
 import MessageUI
 
 struct CodeDetailView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @Environment(\.dismiss) private var dismiss
     let code: EnrichedDiscountCode
     @ObservedObject var viewModel: CodesViewModel
@@ -49,7 +50,7 @@ struct CodeDetailView: View {
                 }
                 .padding()
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Code Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -128,7 +129,7 @@ struct CodeDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(20)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -159,7 +160,7 @@ struct CodeDetailView: View {
                 }
             }
 
-            Divider().background(Color.white.opacity(0.1))
+            Divider()
 
             // Example calculation
             let discountAmount = code.discountAmount(for: exampleOrderTotal)
@@ -175,7 +176,7 @@ struct CodeDetailView: View {
             }
         }
         .padding(16)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
     }
 
@@ -183,7 +184,7 @@ struct CodeDetailView: View {
 
     private var commissionDetailsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeaderLabel(title: "Commission", icon: "dollarsign.circle.fill", color: .orange)
+            SectionHeaderLabel(title: "Commission", icon: "dollarsign.circle.fill", color: appearanceManager.isDarkMode ? .orange : .red)
 
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
@@ -202,11 +203,11 @@ struct CodeDetailView: View {
                         .foregroundColor(.gray)
                     Text(code.formattedCommission ?? "N/A")
                         .font(.title3.weight(.bold))
-                        .foregroundColor(.orange)
+                        .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                 }
             }
 
-            Divider().background(Color.white.opacity(0.1))
+            Divider()
 
             // Example calculation
             let commissionAmount = code.commissionAmount(for: exampleOrderTotal)
@@ -217,11 +218,11 @@ struct CodeDetailView: View {
                     .foregroundColor(.gray)
                 Text("Partner earns $\(String(format: "%.2f", commissionAmount))")
                     .font(.subheadline)
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
             }
         }
         .padding(16)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
     }
 
@@ -240,7 +241,6 @@ struct CodeDetailView: View {
 
                 Divider()
                     .frame(height: 40)
-                    .background(Color.white.opacity(0.1))
 
                 UsageStatItem(
                     title: "Max Usage",
@@ -251,7 +251,6 @@ struct CodeDetailView: View {
                 if let maxUsage = code.maxUsage {
                     Divider()
                         .frame(height: 40)
-                        .background(Color.white.opacity(0.1))
 
                     UsageStatItem(
                         title: "Remaining",
@@ -262,7 +261,7 @@ struct CodeDetailView: View {
             }
         }
         .padding(16)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
     }
 
@@ -290,7 +289,7 @@ struct CodeDetailView: View {
             }
         }
         .padding(16)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
     }
 
@@ -347,14 +346,14 @@ struct CodeDetailView: View {
                 QuickActionButton(
                     title: "Email",
                     icon: "envelope",
-                    color: .orange
+                    color: appearanceManager.isDarkMode ? .orange : .red
                 ) {
                     showEmailInput = true
                 }
             }
         }
         .padding(16)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
     }
 
@@ -379,7 +378,7 @@ struct CodeDetailView: View {
             CodeInfoRow(label: "Code ID", value: String(code.id.prefix(20)) + "...")
         }
         .padding(16)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
     }
 

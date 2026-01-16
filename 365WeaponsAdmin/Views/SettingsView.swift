@@ -324,7 +324,7 @@ struct CacheManagementView: View {
                             Label("Expired Items", systemImage: "clock.badge.exclamationmark")
                             Spacer()
                             Text("\(stats.expiredEntries) items")
-                                .foregroundColor(.red)
+                                .foregroundColor(.orange)
                         }
                     }
 
@@ -413,7 +413,7 @@ struct CacheManagementView: View {
                         Image(systemName: "trash")
                         Text("Clear All Cache")
                     }
-                    .foregroundColor(.red)
+                    .foregroundColor(.orange)
                 }
                 .disabled(isClearing)
 
@@ -423,7 +423,7 @@ struct CacheManagementView: View {
                             Image(systemName: "xmark.circle")
                             Text("Clear Pending Actions")
                         }
-                        .foregroundColor(.red)
+                        .foregroundColor(.orange)
                     }
                 }
             }
@@ -604,17 +604,23 @@ struct APISettingsView: View {
     @State private var openAIKey = ""
     @State private var clerkKey = ""
     @State private var convexURL = ""
+    @State private var tavilyKey = ""
+    @State private var backendURL = ""
 
     // Visibility toggles
     @State private var showOpenRouterKey = false
     @State private var showOpenAIKey = false
     @State private var showClerkKey = false
+    @State private var showTavilyKey = false
+    @State private var showBackendKey = false
 
     // Validation errors
     @State private var openRouterError: String?
     @State private var openAIError: String?
     @State private var clerkError: String?
     @State private var convexError: String?
+    @State private var tavilyError: String?
+    @State private var backendError: String?
 
     // UI State
     @State private var isTesting = false
@@ -801,7 +807,7 @@ struct APISettingsView: View {
                     if let error = convexError {
                         Text(error)
                             .font(.caption)
-                            .foregroundColor(.red)
+                            .foregroundColor(.orange)
                     }
                 }
                 .onChange(of: convexURL) { _, newValue in
@@ -831,6 +837,115 @@ struct APISettingsView: View {
                     Text("Convex Backend")
                     Spacer()
                     if configManager.hasAPIKey(for: .convex) {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundColor(.green)
+                            .font(.caption)
+                    }
+                }
+            }
+
+            // Tavily (AI Search)
+            Section {
+                SecureKeyInputRow(
+                    title: "API Key",
+                    placeholder: "tvly-...",
+                    text: $tavilyKey,
+                    isVisible: $showTavilyKey,
+                    errorMessage: tavilyError,
+                    existingKeyMasked: configManager.getMaskedKey(for: .tavily)
+                )
+                .onChange(of: tavilyKey) { _, newValue in
+                    if !newValue.isEmpty {
+                        tavilyError = configManager.validationError(for: newValue, keyType: .tavily)
+                    } else {
+                        tavilyError = nil
+                    }
+                }
+
+                HStack {
+                    Link("Get API Key", destination: URL(string: "https://tavily.com")!)
+                        .font(.caption)
+
+                    Spacer()
+
+                    if configManager.hasAPIKey(for: .tavily) {
+                        Button("Delete", role: .destructive) {
+                            keyToDelete = .tavily
+                            showDeleteConfirmation = true
+                        }
+                        .font(.caption)
+                    }
+                }
+            } header: {
+                HStack {
+                    Text("Tavily (AI Search)")
+                    Spacer()
+                    if configManager.hasAPIKey(for: .tavily) {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundColor(.green)
+                            .font(.caption)
+                    }
+                }
+            }
+
+            // Backend API (Railway)
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        if showBackendKey {
+                            TextField("Backend URL", text: $backendURL)
+                                .autocapitalization(.none)
+                                .keyboardType(.URL)
+                                .autocorrectionDisabled()
+                        } else {
+                            SecureField("Backend URL", text: $backendURL)
+                        }
+
+                        Button(action: { showBackendKey.toggle() }) {
+                            Image(systemName: showBackendKey ? "eye.slash" : "eye")
+                                .foregroundColor(.gray)
+                        }
+                    }
+
+                    if let existingURL = configManager.getAPIKey(for: .backendAuth), backendURL.isEmpty {
+                        Text("Stored: \(String(existingURL.prefix(30)))...")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+
+                    if let error = backendError {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                    }
+                }
+                .onChange(of: backendURL) { _, newValue in
+                    if !newValue.isEmpty {
+                        backendError = configManager.validationError(for: newValue, keyType: .backendAuth)
+                    } else {
+                        backendError = nil
+                    }
+                }
+
+                HStack {
+                    Link("Railway Dashboard", destination: URL(string: "https://railway.app/dashboard")!)
+                        .font(.caption)
+
+                    Spacer()
+
+                    if configManager.hasAPIKey(for: .backendAuth) {
+                        Button("Delete", role: .destructive) {
+                            keyToDelete = .backendAuth
+                            showDeleteConfirmation = true
+                        }
+                        .font(.caption)
+                    }
+                }
+            } header: {
+                HStack {
+                    Text("Backend API (Railway)")
+                    Spacer()
+                    if configManager.hasAPIKey(for: .backendAuth) {
                         Image(systemName: "checkmark.seal.fill")
                             .foregroundColor(.green)
                             .font(.caption)
@@ -922,7 +1037,7 @@ struct APISettingsView: View {
     }
 
     private var hasChanges: Bool {
-        !openRouterKey.isEmpty || !openAIKey.isEmpty || !clerkKey.isEmpty || !convexURL.isEmpty
+        !openRouterKey.isEmpty || !openAIKey.isEmpty || !clerkKey.isEmpty || !convexURL.isEmpty || !tavilyKey.isEmpty || !backendURL.isEmpty
     }
 
     private func saveChanges() {
@@ -949,6 +1064,16 @@ struct APISettingsView: View {
 
                 if !convexURL.isEmpty && convexError == nil {
                     try configManager.setAPIKey(convexURL, for: .convex)
+                    saved = true
+                }
+
+                if !tavilyKey.isEmpty && tavilyError == nil {
+                    try configManager.setAPIKey(tavilyKey, for: .tavily)
+                    saved = true
+                }
+
+                if !backendURL.isEmpty && backendError == nil {
+                    try configManager.setAPIKey(backendURL, for: .backendAuth)
                     saved = true
                 }
 
@@ -1013,10 +1138,14 @@ struct APISettingsView: View {
         openAIKey = ""
         clerkKey = ""
         convexURL = ""
+        tavilyKey = ""
+        backendURL = ""
         openRouterError = nil
         openAIError = nil
         clerkError = nil
         convexError = nil
+        tavilyError = nil
+        backendError = nil
     }
 }
 
@@ -1055,7 +1184,7 @@ struct SecureKeyInputRow: View {
             if let error = errorMessage {
                 Text(error)
                     .font(.caption)
-                    .foregroundColor(.red)
+                    .foregroundColor(.orange)
             }
         }
     }

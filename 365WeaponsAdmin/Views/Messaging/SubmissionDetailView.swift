@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SubmissionDetailView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let submission: UnifiedSubmission
     @Environment(\.dismiss) private var dismiss
     @State private var showCustomerProfile = false
@@ -45,7 +46,7 @@ struct SubmissionDetailView: View {
                 }
                 .padding()
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle(submission.type.rawValue)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -139,7 +140,7 @@ struct SubmissionDetailView: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.orange)
+                            .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
                             .cornerRadius(6)
                     }
                 }
@@ -197,7 +198,7 @@ struct SubmissionDetailView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -245,7 +246,7 @@ struct SubmissionDetailView: View {
         switch submission.type {
         case .inquiry: return .blue
         case .vendorSignup: return .purple
-        case .contact: return .orange
+        case .contact: return appearanceManager.isDarkMode ? .orange : .red
         case .newsletter: return .green
         }
     }
@@ -457,6 +458,7 @@ struct NewsletterDetailContent: View {
 // MARK: - Reusable Components
 
 struct DetailSection<Content: View>: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let title: String
     @ViewBuilder let content: Content
 
@@ -470,7 +472,7 @@ struct DetailSection<Content: View>: View {
                 content
             }
             .padding()
-            .background(Color.white.opacity(0.05))
+            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
             .cornerRadius(12)
         }
     }
@@ -522,6 +524,7 @@ struct SubmissionActionButton: View {
 // MARK: - Customer Profile Sheet
 
 struct CustomerProfileSheet: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let email: String
     let name: String
     @Environment(\.dismiss) private var dismiss
@@ -597,7 +600,7 @@ struct CustomerProfileSheet: View {
                 }
                 .padding()
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Customer Profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -640,6 +643,7 @@ struct CustomerProfileSheet: View {
 // MARK: - Mini Cards
 
 struct OrderMiniCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let order: Order
 
     var body: some View {
@@ -661,17 +665,18 @@ struct OrderMiniCard: View {
 
                 Text(order.status.displayName)
                     .font(.caption)
-                    .foregroundColor(order.status == .completed ? .green : .orange)
+                    .foregroundColor(order.status == .completed ? .green : (appearanceManager.isDarkMode ? .orange : .red))
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
         .padding(.horizontal)
     }
 }
 
 struct InquiryMiniCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let inquiry: ServiceInquiry
 
     var body: some View {
@@ -699,7 +704,7 @@ struct InquiryMiniCard: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
         .padding(.horizontal)
     }

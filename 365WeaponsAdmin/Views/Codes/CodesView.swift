@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CodesView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @StateObject private var viewModel = CodesViewModel()
     @State private var selectedCode: EnrichedDiscountCode?
     @State private var showCreateSheet = false
@@ -33,7 +34,7 @@ struct CodesView: View {
                     codesList
                 }
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Discount Codes")
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $viewModel.searchText, prompt: "Search codes...")
@@ -43,7 +44,7 @@ struct CodesView: View {
                         showCreateSheet = true
                     } label: {
                         Image(systemName: "plus.circle.fill")
-                            .foregroundColor(.orange)
+                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     }
                 }
             }
@@ -105,7 +106,7 @@ struct CodesView: View {
             .padding(.horizontal)
             .padding(.vertical, 12)
         }
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
     }
 
     // MARK: - Filter Bar
@@ -162,8 +163,8 @@ struct CodesView: View {
         List {
             ForEach(viewModel.filteredCodes) { code in
                 CodeRow(code: code)
-                    .listRowBackground(Color.white.opacity(0.05))
-                    .listRowSeparatorTint(Color.white.opacity(0.1))
+                    .listRowBackground(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+                    .listRowSeparatorTint(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.separator))
                     .contentShape(Rectangle())
                     .onTapGesture {
                         selectedCode = code
@@ -184,7 +185,7 @@ struct CodesView: View {
                             Label(code.active ? "Disable" : "Enable",
                                   systemImage: code.active ? "xmark.circle" : "checkmark.circle")
                         }
-                        .tint(code.active ? .orange : .green)
+                        .tint(code.active ? (appearanceManager.isDarkMode ? .orange : .red) : .green)
                     }
             }
         }
@@ -256,6 +257,7 @@ struct FilterToggleChip: View {
 // MARK: - Code Row
 
 struct CodeRow: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let code: EnrichedDiscountCode
 
     var body: some View {
@@ -318,7 +320,7 @@ struct CodeRow: View {
                         Text(commission)
                             .font(.caption)
                     }
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                 }
             }
 
@@ -334,6 +336,7 @@ struct CodeRow: View {
 // MARK: - Create Code View
 
 struct CreateCodeView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: CodesViewModel
 
@@ -478,7 +481,7 @@ struct CreateCodeView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Create Discount Code")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -530,7 +533,7 @@ struct CreateCodeView: View {
                     commissionVal
 
                 Text("Commission Example: On a $\(String(format: "%.2f", exampleOrderTotal)) order, the partner would earn: $\(String(format: "%.2f", commissionAmount))")
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
             } else {
                 Text("Enter discount and commission values to see the example")
             }

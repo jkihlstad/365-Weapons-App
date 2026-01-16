@@ -33,6 +33,8 @@ import SwiftUI
 struct LoadingOverlay: View {
     // MARK: - Properties
 
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     /// Optional message to display below the progress indicator
     var message: String? = nil
 
@@ -83,7 +85,7 @@ struct LoadingOverlay: View {
                 }
             }
             .padding(32)
-            .background(Color.white.opacity(0.1))
+            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
             .cornerRadius(16)
         }
     }
@@ -103,7 +105,7 @@ struct LoadingOverlay: View {
         }
         .frame(maxWidth: .infinity)
         .padding(24)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -183,6 +185,8 @@ extension View {
 
 /// A placeholder view that shows a pulsing skeleton loading effect.
 struct SkeletonView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     var width: CGFloat? = nil
     var height: CGFloat = 16
     var cornerRadius: CGFloat = 4
@@ -207,6 +211,8 @@ struct SkeletonView: View {
 
 /// A skeleton placeholder for card-shaped content.
 struct SkeletonCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -219,7 +225,7 @@ struct SkeletonCard: View {
             SkeletonView(width: 120, height: 14)
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 }
@@ -249,6 +255,8 @@ struct LoadingButtonContent<Content: View>: View {
 
 /// A loading overlay with determinate progress indication.
 struct DeterminateLoadingOverlay: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     let progress: Double
     var message: String? = nil
     var showPercentage: Bool = true
@@ -288,7 +296,7 @@ struct DeterminateLoadingOverlay: View {
                 }
             }
             .padding(32)
-            .background(Color.white.opacity(0.1))
+            .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
             .cornerRadius(16)
         }
     }
@@ -298,7 +306,7 @@ struct DeterminateLoadingOverlay: View {
 
 #Preview("Loading Overlays") {
     ZStack {
-        Color.black.ignoresSafeArea()
+        (AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground)).ignoresSafeArea()
 
         VStack(spacing: 24) {
             Text("Background Content")
@@ -349,5 +357,5 @@ struct DeterminateLoadingOverlay: View {
         }
         .padding()
     }
-    .background(Color.black)
+    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
 }

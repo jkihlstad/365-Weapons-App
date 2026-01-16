@@ -9,6 +9,7 @@ import SwiftUI
 import Charts
 
 struct AnalyticsView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @StateObject private var viewModel = AnalyticsViewModel()
     @State private var selectedTimeRange: TimeRange = .month
     @State private var selectedMetric: MetricType = .revenue
@@ -57,7 +58,7 @@ struct AnalyticsView: View {
                 }
                 .padding()
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Analytics")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -139,7 +140,7 @@ struct AnalyticsView: View {
                 title: "Avg Order",
                 value: viewModel.averageOrderValue.currencyFormatted,
                 icon: "cart.fill",
-                color: .orange,
+                color: appearanceManager.isDarkMode ? .orange : .red,
                 isSelected: selectedMetric == .products,
                 action: { selectedMetric = .products }
             )
@@ -226,7 +227,7 @@ struct AnalyticsView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -244,7 +245,7 @@ struct AnalyticsView: View {
         case .revenue: return .green
         case .orders: return .blue
         case .customers: return .purple
-        case .products: return .orange
+        case .products: return appearanceManager.isDarkMode ? .orange : .red
         }
     }
 
@@ -273,7 +274,7 @@ struct AnalyticsView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -288,8 +289,8 @@ struct AnalyticsView: View {
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.orange.opacity(0.2))
-                    .foregroundColor(.orange)
+                    .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     .cornerRadius(8)
             }
 
@@ -307,7 +308,7 @@ struct AnalyticsView: View {
             .frame(maxWidth: .infinity)
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -333,7 +334,7 @@ struct AnalyticsView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -365,12 +366,12 @@ struct AnalyticsView: View {
                     value: viewModel.avgCustomerLifetimeValue.currencyFormatted,
                     subtitle: "Per customer",
                     icon: "dollarsign.circle",
-                    color: .orange
+                    color: appearanceManager.isDarkMode ? .orange : .red
                 )
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -397,7 +398,7 @@ struct AnalyticsView: View {
                 ForEach(viewModel.recentActions.prefix(5)) { action in
                     HStack(spacing: 12) {
                         Image(systemName: action.actionType.icon)
-                            .foregroundColor(.orange)
+                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                             .frame(width: 24)
 
                         VStack(alignment: .leading, spacing: 2) {
@@ -424,13 +425,14 @@ struct AnalyticsView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 }
 
 // MARK: - Metric Card
 struct MetricCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let title: String
     let value: String
     let icon: String
@@ -468,7 +470,7 @@ struct MetricCard: View {
                     .foregroundColor(.gray)
             }
             .padding(12)
-            .background(isSelected ? color.opacity(0.2) : Color.white.opacity(0.05))
+            .background(isSelected ? color.opacity(0.2) : (appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white))
             .cornerRadius(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
@@ -480,6 +482,7 @@ struct MetricCard: View {
 
 // MARK: - Status Metric Card
 struct StatusMetricCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let status: OrderStatus
     let count: Int
     let total: Int
@@ -492,7 +495,7 @@ struct StatusMetricCard: View {
     var color: Color {
         switch status {
         case .pending: return .yellow
-        case .awaitingPayment: return .orange
+        case .awaitingPayment: return appearanceManager.isDarkMode ? .orange : .red
         case .awaitingShipment: return .blue
         case .inProgress: return .purple
         case .completed: return .green
@@ -518,13 +521,14 @@ struct StatusMetricCard: View {
                 .tint(color)
         }
         .padding(12)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
     }
 }
 
 // MARK: - Insight Card
 struct InsightCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let title: String
     let value: String
     let subtitle: String
@@ -550,7 +554,7 @@ struct InsightCard: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
     }
 }

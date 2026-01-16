@@ -27,6 +27,8 @@ import SwiftUI
 struct StatCard: View {
     // MARK: - Properties
 
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     /// The title displayed at the bottom of the card
     let title: String
 
@@ -68,7 +70,7 @@ struct StatCard: View {
             valueSection
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 
@@ -142,13 +144,15 @@ struct TrendBadge: View {
 
 /// A badge indicating a feature is coming soon.
 struct ComingSoonBadge: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     var body: some View {
         Text("Soon")
             .font(.caption2)
-            .foregroundColor(.orange)
+            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(Color.orange.opacity(0.2))
+            .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
             .cornerRadius(4)
     }
 }
@@ -170,6 +174,8 @@ private struct StatCardButtonStyle: ButtonStyle {
 
 /// A more compact version of StatCard for dense layouts.
 struct CompactStatCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     let title: String
     let value: String
     let icon: String
@@ -200,7 +206,7 @@ struct CompactStatCard: View {
             }
         }
         .padding(12)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
     }
 }
@@ -253,5 +259,5 @@ struct CompactStatCard: View {
         )
     }
     .padding()
-    .background(Color.black)
+    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
 }

@@ -204,11 +204,15 @@ struct Theme {
     // MARK: - Accent Colors
 
     var accent: Color {
-        .orange
+        isDark ? .orange : .red
     }
 
     var accentSecondary: Color {
-        .red
+        isDark ? .red : .orange
+    }
+
+    var accentBackground: Color {
+        isDark ? Color.orange.opacity(0.2) : Color.red.opacity(0.15)
     }
 
     // MARK: - Status Colors
@@ -258,7 +262,7 @@ struct Theme {
     }
 
     var tabBarSelectedTint: Color {
-        .orange
+        accent
     }
 
     var tabBarUnselectedTint: Color {

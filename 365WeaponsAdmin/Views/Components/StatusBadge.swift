@@ -422,5 +422,5 @@ struct StatusDot: View {
         }
         .padding()
     }
-    .background(Color.black)
+    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
 }

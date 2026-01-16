@@ -10,6 +10,7 @@ import SwiftUI
 // MARK: - Offline Indicator
 /// A subtle banner that shows when the device is offline with pending sync information
 struct OfflineIndicator: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var offlineManager: OfflineManager
 
     @State private var isExpanded: Bool = false
@@ -21,7 +22,7 @@ struct OfflineIndicator: View {
         } else if offlineManager.isSyncing {
             return .blue
         } else if offlineManager.hasPendingActions {
-            return .orange
+            return appearanceManager.isDarkMode ? .orange : .red
         } else {
             return .green
         }
@@ -59,7 +60,7 @@ struct OfflineIndicator: View {
                                 .font(.caption.weight(.semibold))
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(Color.orange)
+                                .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
                                 .foregroundColor(.white)
                                 .cornerRadius(12)
                         }
@@ -137,14 +138,14 @@ struct OfflineIndicator: View {
     private var expandedDetails: some View {
         VStack(alignment: .leading, spacing: 12) {
             Divider()
-                .background(Color.white.opacity(0.1))
+                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.separator))
 
             // Pending actions list
             ForEach(offlineManager.pendingActions.prefix(5)) { action in
                 HStack(spacing: 12) {
                     Image(systemName: action.type.icon)
                         .font(.caption)
-                        .foregroundColor(.orange)
+                        .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                         .frame(width: 20)
 
                     VStack(alignment: .leading, spacing: 2) {
@@ -185,7 +186,7 @@ struct OfflineIndicator: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color.white.opacity(0.02))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.02) : Color(UIColor.systemBackground))
     }
 
     // MARK: - Actions
@@ -207,6 +208,7 @@ struct OfflineIndicator: View {
 // MARK: - Compact Offline Indicator
 /// A smaller version of the offline indicator for use in navigation bars or headers
 struct CompactOfflineIndicator: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var offlineManager: OfflineManager
 
     @State private var showPopover = false
@@ -239,7 +241,7 @@ struct CompactOfflineIndicator: View {
         if !offlineManager.isOnline {
             return .red
         } else if offlineManager.hasPendingActions {
-            return .orange
+            return appearanceManager.isDarkMode ? .orange : .red
         } else {
             return .green
         }
@@ -292,6 +294,8 @@ extension View {
 // MARK: - Cached Data Indicator
 /// Shows when data is being served from cache
 struct CachedDataIndicator: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     let isUsingCachedData: Bool
     let cacheAge: String?
 
@@ -310,10 +314,10 @@ struct CachedDataIndicator: View {
                         .foregroundColor(.gray)
                 }
             }
-            .foregroundColor(.orange)
+            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Color.orange.opacity(0.15))
+            .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.15) : Color.red.opacity(0.12))
             .cornerRadius(12)
         }
     }
@@ -322,6 +326,8 @@ struct CachedDataIndicator: View {
 // MARK: - Sync Status Badge
 /// A small badge showing sync status
 struct SyncStatusBadge: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     let status: SyncStatus
 
     var body: some View {
@@ -342,7 +348,7 @@ struct SyncStatusBadge: View {
     private var statusColor: Color {
         switch status {
         case .synced: return .green
-        case .pending: return .orange
+        case .pending: return appearanceManager.isDarkMode ? .orange : .red
         case .failed: return .red
         case .syncing: return .blue
         }
@@ -372,5 +378,5 @@ struct SyncStatusBadge: View {
         }
     }
     .padding()
-    .background(Color.black.ignoresSafeArea())
+    .background(AppearanceManager.shared.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
 }

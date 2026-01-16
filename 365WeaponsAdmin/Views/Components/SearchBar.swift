@@ -26,6 +26,8 @@ import SwiftUI
 struct SearchBar: View {
     // MARK: - Properties
 
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     /// Binding to the search text
     @Binding var text: String
 
@@ -91,7 +93,7 @@ struct SearchBar: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .background(Color.white.opacity(0.1))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
         .cornerRadius(10)
         .onAppear {
             if focusOnAppear {
@@ -113,7 +115,7 @@ struct SearchBar: View {
         Button(action: { onFilterTap?() }) {
             Image(systemName: "line.3.horizontal.decrease.circle")
                 .font(.title2)
-                .foregroundColor(.orange)
+                .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
         }
         .buttonStyle(.plain)
     }
@@ -145,7 +147,7 @@ extension SearchBar {
             return AnyView(
                 self
                     .padding(.vertical, 4)
-                    .background(Color.white.opacity(0.05))
+                    .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
                     .cornerRadius(12)
             )
         case .minimal:
@@ -189,6 +191,8 @@ struct ScopedSearchBar<Scope: Hashable>: View where Scope: CaseIterable, Scope: 
 // MARK: - Scope Button
 
 private struct ScopeButton: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     let title: String
     let isSelected: Bool
     let action: () -> Void
@@ -199,7 +203,7 @@ private struct ScopeButton: View {
                 .font(.subheadline)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(isSelected ? Color.orange : Color.white.opacity(0.1))
+                .background(isSelected ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : (appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground)))
                 .foregroundColor(isSelected ? .white : .gray)
                 .cornerRadius(16)
         }
@@ -211,6 +215,8 @@ private struct ScopeButton: View {
 
 /// A compact inline search bar for use in navigation bars or tight spaces.
 struct InlineSearchBar: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     @Binding var text: String
     var placeholder: String = "Search..."
     @FocusState private var isFocused: Bool
@@ -240,7 +246,7 @@ struct InlineSearchBar: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background(Color.white.opacity(0.1))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
         .cornerRadius(8)
     }
 }
@@ -272,5 +278,5 @@ struct InlineSearchBar: View {
         Spacer()
     }
     .padding()
-    .background(Color.black)
+    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
 }

@@ -32,6 +32,8 @@ import SwiftUI
 struct SectionHeader<TrailingContent: View>: View {
     // MARK: - Properties
 
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     /// The section title
     let title: String
 
@@ -110,7 +112,7 @@ struct SectionHeader<TrailingContent: View>: View {
                         Image(systemName: "chevron.right")
                             .font(.caption2)
                     }
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                 }
                 .buttonStyle(.plain)
             }
@@ -275,6 +277,8 @@ private struct PulseAnimationModifier: ViewModifier {
 
 /// A complete section with header and content in a card.
 struct CardSection<Content: View>: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
+
     let title: String
     var subtitle: String? = nil
     var seeAllAction: (() -> Void)? = nil
@@ -291,7 +295,7 @@ struct CardSection<Content: View>: View {
             content()
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 }
@@ -369,5 +373,5 @@ struct CardSection<Content: View>: View {
         }
         .padding()
     }
-    .background(Color.black)
+    .background(AppearanceManager.shared.isDarkMode ? Color.black : Color(UIColor.systemGroupedBackground))
 }

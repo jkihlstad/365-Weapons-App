@@ -42,6 +42,7 @@ enum ProductFormStep: Int, CaseIterable {
 
 // MARK: - Create Enhanced Product View
 struct CreateEnhancedProductView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @Environment(\.dismiss) private var dismiss
     @StateObject private var draft = EnhancedProductDraft()
     @State private var currentStep: ProductFormStep = .basicInfo
@@ -139,6 +140,7 @@ struct CreateEnhancedProductView: View {
 
 // MARK: - Step Progress View
 struct StepProgressView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let currentStep: ProductFormStep
 
     var body: some View {
@@ -146,20 +148,20 @@ struct StepProgressView: View {
             ForEach(ProductFormStep.allCases, id: \.rawValue) { step in
                 VStack(spacing: 4) {
                     Circle()
-                        .fill(step.rawValue <= currentStep.rawValue ? Color.orange : Color.white.opacity(0.3))
+                        .fill(step.rawValue <= currentStep.rawValue ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : Color.white.opacity(0.3))
                         .frame(width: 8, height: 8)
 
                     if step == currentStep {
                         Text(step.title)
                             .font(.caption2)
-                            .foregroundColor(.orange)
+                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     }
                 }
                 .frame(maxWidth: .infinity)
 
                 if step.rawValue < ProductFormStep.allCases.count - 1 {
                     Rectangle()
-                        .fill(step.rawValue < currentStep.rawValue ? Color.orange : Color.white.opacity(0.3))
+                        .fill(step.rawValue < currentStep.rawValue ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : Color.white.opacity(0.3))
                         .frame(height: 2)
                         .frame(maxWidth: 20)
                 }
@@ -171,6 +173,7 @@ struct StepProgressView: View {
 
 // MARK: - Navigation Buttons View
 struct NavigationButtonsView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @Binding var currentStep: ProductFormStep
     let isSubmitting: Bool
     let canSubmit: Bool
@@ -218,7 +221,7 @@ struct NavigationButtonsView: View {
                     .foregroundColor(.black)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(canSubmit ? Color.orange : Color.gray)
+                    .background(canSubmit ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : Color.gray)
                     .cornerRadius(10)
                 }
                 .disabled(!canSubmit || isSubmitting)
@@ -237,7 +240,7 @@ struct NavigationButtonsView: View {
                     .foregroundColor(.black)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(Color.orange)
+                    .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
                     .cornerRadius(10)
                 }
             }
@@ -247,6 +250,7 @@ struct NavigationButtonsView: View {
 
 // MARK: - Step 1: Basic Info
 struct BasicInfoStepView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var draft: EnhancedProductDraft
 
     var body: some View {
@@ -284,7 +288,7 @@ struct BasicInfoStepView: View {
                         }
                     }
                     .pickerStyle(.menu)
-                    .tint(.orange)
+                    .tint(appearanceManager.isDarkMode ? .orange : .red)
                     .padding()
                     .background(Color.white.opacity(0.1))
                     .cornerRadius(10)
@@ -305,16 +309,16 @@ struct BasicInfoStepView: View {
                                     Spacer()
                                     if draft.pagePlacement == placement {
                                         Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.orange)
+                                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                                     }
                                 }
-                                .foregroundColor(draft.pagePlacement == placement ? .orange : .white)
+                                .foregroundColor(draft.pagePlacement == placement ? (appearanceManager.isDarkMode ? .orange : .red) : .white)
                                 .padding()
-                                .background(draft.pagePlacement == placement ? Color.orange.opacity(0.2) : Color.white.opacity(0.1))
+                                .background(draft.pagePlacement == placement ? (appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15)) : Color.white.opacity(0.1))
                                 .cornerRadius(10)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)
-                                        .stroke(draft.pagePlacement == placement ? Color.orange : Color.clear, lineWidth: 1)
+                                        .stroke(draft.pagePlacement == placement ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : Color.clear, lineWidth: 1)
                                 )
                             }
                         }
@@ -341,6 +345,7 @@ struct BasicInfoStepView: View {
 
 // MARK: - Step 2: Pricing
 struct PricingStepView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var draft: EnhancedProductDraft
     @State private var priceText: String = ""
 
@@ -383,17 +388,17 @@ struct PricingStepView: View {
 
                 // Stock status
                 Toggle("In Stock", isOn: $draft.inStock)
-                    .tint(.orange)
+                    .tint(appearanceManager.isDarkMode ? .orange : .red)
                     .foregroundColor(.white)
 
                 // Has Options
                 Toggle("Has Customization Options", isOn: $draft.hasOptions)
-                    .tint(.orange)
+                    .tint(appearanceManager.isDarkMode ? .orange : .red)
                     .foregroundColor(.white)
 
                 // Include Shipping Label
                 Toggle("Include Pre-paid Shipping Label", isOn: $draft.includeShippingLabel)
-                    .tint(.orange)
+                    .tint(appearanceManager.isDarkMode ? .orange : .red)
                     .foregroundColor(.white)
 
                 // Price preview
@@ -405,7 +410,7 @@ struct PricingStepView: View {
 
                         Text(draft.formattedPriceRange)
                             .font(.title.bold())
-                            .foregroundColor(.orange)
+                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -425,6 +430,7 @@ struct PricingStepView: View {
 
 // MARK: - Step 3: Media
 struct MediaStepView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var draft: EnhancedProductDraft
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var isUploading = false
@@ -473,7 +479,7 @@ struct MediaStepView: View {
                                 Image(systemName: "photo.badge.plus")
                                 Text(draft.images.isEmpty ? "Add Images" : "Add More Images")
                             }
-                            .foregroundColor(.orange)
+                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                             .padding()
                             .frame(maxWidth: .infinity)
                             .background(Color.white.opacity(0.1))
@@ -488,7 +494,7 @@ struct MediaStepView: View {
                         if isUploading {
                             HStack {
                                 ProgressView()
-                                    .tint(.orange)
+                                    .tint(appearanceManager.isDarkMode ? .orange : .red)
                                 Text("Uploading images...")
                                     .foregroundColor(.gray)
                             }
@@ -534,7 +540,7 @@ struct MediaStepView: View {
                                 }
                             } label: {
                                 Image(systemName: "plus.circle.fill")
-                                    .foregroundColor(.orange)
+                                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                                     .font(.title2)
                             }
                             .disabled(newVideoUrl.isEmpty)
@@ -581,6 +587,7 @@ struct MediaStepView: View {
 
 // MARK: - Image Thumbnail View
 struct ImageThumbnailView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let item: MediaItem
     let isPrimary: Bool
     let onSetPrimary: () -> Void
@@ -608,7 +615,7 @@ struct ImageThumbnailView: View {
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(isPrimary ? Color.orange : Color.clear, lineWidth: 3)
+                    .stroke(isPrimary ? (appearanceManager.isDarkMode ? Color.orange : Color.red) : Color.clear, lineWidth: 3)
             )
 
             // Primary badge
@@ -618,7 +625,7 @@ struct ImageThumbnailView: View {
                     .foregroundColor(.black)
                     .padding(.horizontal, 4)
                     .padding(.vertical, 2)
-                    .background(Color.orange)
+                    .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
                     .cornerRadius(4)
                     .offset(x: 4, y: -4)
             }
@@ -652,6 +659,7 @@ struct ImageThumbnailView: View {
 
 // MARK: - Step 4: Variants
 struct VariantsStepView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var draft: EnhancedProductDraft
 
     var body: some View {
@@ -690,7 +698,7 @@ struct VariantsStepView: View {
                         Image(systemName: "plus.circle")
                         Text("Add Variant Group")
                     }
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     .padding()
                     .frame(maxWidth: .infinity)
                     .background(Color.white.opacity(0.1))
@@ -711,6 +719,7 @@ struct VariantsStepView: View {
 
 // MARK: - Variant Editor View
 struct VariantEditorView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @Binding var variant: ProductVariant
     let onDelete: () -> Void
 
@@ -775,7 +784,7 @@ struct VariantEditorView: View {
                     Text("Add Option")
                 }
                 .font(.caption)
-                .foregroundColor(.orange)
+                .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
             }
         }
         .padding()
@@ -786,6 +795,7 @@ struct VariantEditorView: View {
 
 // MARK: - Step 5: Add-Ons
 struct AddOnsStepView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var draft: EnhancedProductDraft
 
     var body: some View {
@@ -821,7 +831,7 @@ struct AddOnsStepView: View {
                         Image(systemName: "plus.circle")
                         Text("Add Add-On")
                     }
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     .padding()
                     .frame(maxWidth: .infinity)
                     .background(Color.white.opacity(0.1))
@@ -842,6 +852,7 @@ struct AddOnsStepView: View {
 
 // MARK: - Add-On Editor View
 struct AddOnEditorView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @Binding var addOn: ProductAddOn
     let onDelete: () -> Void
     @State private var priceText: String = ""
@@ -892,6 +903,7 @@ struct AddOnEditorView: View {
 
 // MARK: - Step 6: Review
 struct ReviewStepView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var draft: EnhancedProductDraft
 
     var body: some View {
@@ -957,7 +969,7 @@ struct ReviewStepView: View {
 
                         Text(draft.formattedPriceRange)
                             .font(.title3.bold())
-                            .foregroundColor(.orange)
+                            .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     }
 
                     // Description
@@ -985,10 +997,10 @@ struct ReviewStepView: View {
                         Text(draft.pagePlacement.displayName)
                     }
                     .font(.caption)
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color.orange.opacity(0.2))
+                    .background(appearanceManager.isDarkMode ? Color.orange.opacity(0.2) : Color.red.opacity(0.15))
                     .cornerRadius(8)
                 }
                 .padding()

@@ -16,6 +16,7 @@ class VendorsViewModel: ObservableObject {
     @Published var selectedVendor: PartnerStore?
     @Published var vendorDetails: VendorDetails?
     @Published var isLoading = false
+    @Published var isLoadingDetails = false
     @Published var searchText = ""
     @Published var selectedFilter: VendorFilterStatus = .all
     @Published var error: AppError?
@@ -71,11 +72,14 @@ class VendorsViewModel: ObservableObject {
     }
 
     func loadVendorDetails(vendorId: String) async {
-        isLoading = true
-        error = nil
+        isLoadingDetails = true
+        vendorDetails = nil
 
         do {
-            let vendor = vendors.first { $0.id == vendorId }
+            guard let vendor = vendors.first(where: { $0.id == vendorId }) else {
+                isLoadingDetails = false
+                return
+            }
             let commissions = try await convex.fetchPartnerCommissions(partnerId: vendorId)
             let allOrders = try await convex.fetchOrders(limit: 500)
             let vendorOrders = allOrders.filter { $0.partnerStoreId == vendorId }
@@ -105,7 +109,7 @@ class VendorsViewModel: ObservableObject {
             )
 
             vendorDetails = VendorDetails(
-                store: vendor!,
+                store: vendor,
                 users: [],
                 stats: stats,
                 recentOrders: Array(vendorOrders.prefix(10)),
@@ -116,7 +120,7 @@ class VendorsViewModel: ObservableObject {
             self.error = AppError.from(error)
         }
 
-        isLoading = false
+        isLoadingDetails = false
     }
 
     // MARK: - Filtering

@@ -278,6 +278,7 @@ struct ContentView: View {
 // MARK: - Scrollable Tab Bar
 struct ScrollableTabBar: View {
     @Binding var selectedTab: ContentView.Tab
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -351,7 +352,7 @@ struct ScrollableTabBar: View {
                 Text(tab.rawValue)
                     .font(.caption2)
             }
-            .foregroundColor(selectedTab == tab ? .orange : .gray)
+            .foregroundColor(selectedTab == tab ? (appearanceManager.isDarkMode ? .orange : .red) : .gray)
             .frame(width: 68)
             .padding(.vertical, 4)
         }

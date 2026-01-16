@@ -433,15 +433,6 @@ struct PartnerStore: Codable, Identifiable, Hashable {
             return String(format: "$%.2f", commissionValue)
         }
     }
-
-    // Hashable conformance - compare by id only
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-
-    static func == (lhs: PartnerStore, rhs: PartnerStore) -> Bool {
-        lhs.id == rhs.id
-    }
 }
 
 enum CommissionType: String, Codable, Hashable {

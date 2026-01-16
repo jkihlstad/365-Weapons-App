@@ -9,6 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct ProductsView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @StateObject private var viewModel = ProductsViewModel()
     @State private var showCreateProduct = false
     @State private var showEnhancedCreate = false
@@ -38,7 +39,7 @@ struct ProductsView: View {
                     }
                 }
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Products")
             .searchable(text: $viewModel.searchText, prompt: "Search products...")
             .toolbar {
@@ -120,7 +121,7 @@ struct ProductsView: View {
             }
             .padding()
         }
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
     }
 
     // MARK: - Products Grid
@@ -159,6 +160,7 @@ struct ProductsView: View {
 
 // MARK: - Product Grid Card
 struct ProductGridCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let product: Product
 
     /// Construct full image URL from relative path
@@ -180,7 +182,7 @@ struct ProductGridCard: View {
             GeometryReader { geometry in
                 ZStack {
                     Rectangle()
-                        .fill(Color.white.opacity(0.1))
+                        .fill(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
 
                     if let url = imageURL {
                         KFImage(url)
@@ -232,13 +234,14 @@ struct ProductGridCard: View {
             .frame(height: 80)
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(16)
     }
 }
 
 // MARK: - Product List Card
 struct ProductListCard: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let product: Product
 
     /// Construct full image URL from relative path
@@ -258,7 +261,7 @@ struct ProductListCard: View {
             // Product image - fixed 60x60 size
             ZStack {
                 Rectangle()
-                    .fill(Color.white.opacity(0.1))
+                    .fill(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
 
                 if let url = imageURL {
                     KFImage(url)
@@ -313,13 +316,14 @@ struct ProductListCard: View {
         }
         .padding()
         .frame(height: 80)
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
         .cornerRadius(12)
     }
 }
 
 // MARK: - Create Product View
 struct CreateProductView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var viewModel: ProductsViewModel
     @Environment(\.dismiss) private var dismiss
 
@@ -371,7 +375,7 @@ struct CreateProductView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Create Product")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -431,6 +435,7 @@ struct CreateProductView: View {
 
 // MARK: - Product Detail View
 struct ProductDetailView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let product: Product
     @ObservedObject var viewModel: ProductsViewModel
     @Environment(\.dismiss) private var dismiss
@@ -469,7 +474,7 @@ struct ProductDetailView: View {
                     // Product image
                     ZStack {
                         Rectangle()
-                            .fill(Color.white.opacity(0.1))
+                            .fill(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
 
                         if let url = imageURL {
                             KFImage(url)
@@ -500,7 +505,7 @@ struct ProductDetailView: View {
                         }
                     }
                     .padding()
-                    .background(Color.white.opacity(0.05))
+                    .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
                     .cornerRadius(16)
 
                     // Actions
@@ -509,7 +514,7 @@ struct ProductDetailView: View {
                             Text("Save Changes")
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.orange)
+                                .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
                                 .foregroundColor(.white)
                                 .cornerRadius(12)
                         }
@@ -525,7 +530,7 @@ struct ProductDetailView: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.white.opacity(0.1))
+                                .background(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.secondarySystemBackground))
                                 .foregroundColor(product.inStock ? .red : .green)
                                 .cornerRadius(12)
                             }
@@ -534,7 +539,7 @@ struct ProductDetailView: View {
                 }
                 .padding()
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle(isEditing ? "Edit Product" : "Product Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -568,7 +573,7 @@ struct ProductDetailView: View {
 
                 Text(product.category)
                     .font(.subheadline)
-                    .foregroundColor(.orange)
+                    .foregroundColor(appearanceManager.isDarkMode ? .orange : .red)
             }
 
             HStack {

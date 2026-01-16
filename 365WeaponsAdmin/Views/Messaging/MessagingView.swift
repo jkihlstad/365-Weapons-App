@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MessagingView: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @StateObject private var viewModel = MessagingViewModel()
     @State private var selectedSubmission: UnifiedSubmission?
     @State private var showFilters = false
@@ -32,7 +33,7 @@ struct MessagingView: View {
                     submissionsList
                 }
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Messages")
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $viewModel.searchText, prompt: "Search submissions...")
@@ -43,7 +44,7 @@ struct MessagingView: View {
                         viewModel.showOnlyNew.toggle()
                     } label: {
                         Image(systemName: viewModel.showOnlyNew ? "bell.badge.fill" : "bell.badge")
-                            .foregroundColor(viewModel.showOnlyNew ? .orange : .gray)
+                            .foregroundColor(viewModel.showOnlyNew ? (appearanceManager.isDarkMode ? .orange : .red) : .gray)
                     }
 
                     // Sort menu
@@ -104,7 +105,7 @@ struct MessagingView: View {
                     title: "New",
                     value: "\(viewModel.newCount)",
                     icon: "bell.badge",
-                    color: .orange
+                    color: appearanceManager.isDarkMode ? .orange : .red
                 )
 
                 ForEach(SubmissionType.allCases) { type in
@@ -119,7 +120,7 @@ struct MessagingView: View {
             .padding(.horizontal)
             .padding(.vertical, 12)
         }
-        .background(Color.white.opacity(0.05))
+        .background(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
     }
 
     // MARK: - Type Filter Bar
@@ -157,8 +158,8 @@ struct MessagingView: View {
         List {
             ForEach(viewModel.filteredSubmissions) { submission in
                 SubmissionRow(submission: submission)
-                    .listRowBackground(Color.white.opacity(0.05))
-                    .listRowSeparatorTint(Color.white.opacity(0.1))
+                    .listRowBackground(appearanceManager.isDarkMode ? Color.white.opacity(0.05) : Color.white)
+                    .listRowSeparatorTint(appearanceManager.isDarkMode ? Color.white.opacity(0.1) : Color(UIColor.separator))
                     .contentShape(Rectangle())
                     .onTapGesture {
                         selectedSubmission = submission
@@ -185,7 +186,7 @@ struct MessagingView: View {
         switch type {
         case .inquiry: return .blue
         case .vendorSignup: return .purple
-        case .contact: return .orange
+        case .contact: return appearanceManager.isDarkMode ? .orange : .red
         case .newsletter: return .green
                 }
     }
@@ -244,6 +245,7 @@ struct MessagingFilterChip: View {
 // MARK: - Submission Row
 
 struct SubmissionRow: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let submission: UnifiedSubmission
 
     var body: some View {
@@ -272,7 +274,7 @@ struct SubmissionRow: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color.orange)
+                            .background(appearanceManager.isDarkMode ? Color.orange : Color.red)
                             .cornerRadius(4)
                     }
 
@@ -314,7 +316,7 @@ struct SubmissionRow: View {
         switch type {
         case .inquiry: return .blue
         case .vendorSignup: return .purple
-        case .contact: return .orange
+        case .contact: return appearanceManager.isDarkMode ? .orange : .red
         case .newsletter: return .green
                 }
     }
@@ -323,6 +325,7 @@ struct SubmissionRow: View {
 // MARK: - Submission Status Badge
 
 struct SubmissionStatusBadge: View {
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let status: String
     let type: SubmissionType
 
@@ -339,7 +342,7 @@ struct SubmissionStatusBadge: View {
     private var statusColor: Color {
         let lowercased = status.lowercased()
         if lowercased.contains("new") || lowercased.contains("pending") {
-            return .orange
+            return appearanceManager.isDarkMode ? .orange : .red
         } else if lowercased.contains("active") || lowercased.contains("completed") || lowercased.contains("paid") {
             return .green
         } else if lowercased.contains("inactive") || lowercased.contains("cancelled") || lowercased.contains("unsubscribed") {
