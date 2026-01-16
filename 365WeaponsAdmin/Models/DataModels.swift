@@ -329,7 +329,7 @@ struct CustomerInfo: Codable {
     let email: String?
 }
 
-struct Address: Codable {
+struct Address: Codable, Hashable {
     // Fields for billingAddress format
     let addressLine1: String?
     let addressLine2: String?
@@ -401,7 +401,7 @@ struct Address: Codable {
 }
 
 // MARK: - Partner Store
-struct PartnerStore: Codable, Identifiable {
+struct PartnerStore: Codable, Identifiable, Hashable {
     let id: String
     let storeName: String
     let storeCode: String
@@ -433,9 +433,18 @@ struct PartnerStore: Codable, Identifiable {
             return String(format: "$%.2f", commissionValue)
         }
     }
+
+    // Hashable conformance - compare by id only
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    static func == (lhs: PartnerStore, rhs: PartnerStore) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
-enum CommissionType: String, Codable {
+enum CommissionType: String, Codable, Hashable {
     case percentage
     case flat
     case perService

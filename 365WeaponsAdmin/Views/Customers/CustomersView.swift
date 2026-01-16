@@ -264,6 +264,8 @@ struct CustomerDetailView: View {
     let customer: Customer
     @ObservedObject var viewModel: CustomersViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var showPhoneActions = false
+    @State private var showCustomerProfile = false
 
     var body: some View {
         NavigationStack {
@@ -300,6 +302,29 @@ struct CustomerDetailView: View {
                     Button("Done") { dismiss() }
                 }
             }
+            .confirmationDialog("Contact Options", isPresented: $showPhoneActions, titleVisibility: .visible) {
+                if let phone = customer.phone {
+                    Button("Call") {
+                        if let url = URL(string: "tel:\(phone.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "-", with: ""))") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    Button("Send Message") {
+                        if let url = URL(string: "sms:\(phone.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "-", with: ""))") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    Button("Add to Contacts") {
+                        if let url = URL(string: "contacts://") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    Button("Copy Phone Number") {
+                        UIPasteboard.general.string = phone
+                    }
+                }
+                Button("Cancel", role: .cancel) {}
+            }
         }
         .task {
             await viewModel.loadCustomerDetails(customer: customer)
@@ -330,6 +355,72 @@ struct CustomerDetailView: View {
             Text("Customer since \(customer.createdAt.formatted(date: .abbreviated, time: .omitted))")
                 .font(.caption)
                 .foregroundColor(.gray)
+
+            // Contact action buttons
+            HStack(spacing: 24) {
+                // Email button
+                Button {
+                    if let url = URL(string: "mailto:\(customer.email)") {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    VStack(spacing: 4) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.blue.opacity(0.2))
+                                .frame(width: 50, height: 50)
+                            Image(systemName: "envelope.fill")
+                                .font(.title3)
+                                .foregroundColor(.blue)
+                        }
+                        Text("Email")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+
+                // Phone button
+                if customer.phone != nil {
+                    Button {
+                        showPhoneActions = true
+                    } label: {
+                        VStack(spacing: 4) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.green.opacity(0.2))
+                                    .frame(width: 50, height: 50)
+                                Image(systemName: "phone.fill")
+                                    .font(.title3)
+                                    .foregroundColor(.green)
+                            }
+                            Text("Call")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+
+                // Profile button
+                Button {
+                    // Already viewing profile - could show more details or copy info
+                    UIPasteboard.general.string = "\(customer.name)\n\(customer.email)\n\(customer.phone ?? "")"
+                } label: {
+                    VStack(spacing: 4) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.purple.opacity(0.2))
+                                .frame(width: 50, height: 50)
+                            Image(systemName: "person.fill")
+                                .font(.title3)
+                                .foregroundColor(.purple)
+                        }
+                        Text("Profile")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+            .padding(.top, 8)
         }
         .frame(maxWidth: .infinity)
         .padding()

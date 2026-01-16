@@ -189,6 +189,8 @@ struct VendorDetailView: View {
     let vendor: PartnerStore
     @ObservedObject var viewModel: VendorsViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var showPhoneActions = false
+    @State private var showCustomerProfile = false
 
     var body: some View {
         NavigationStack {
@@ -230,6 +232,28 @@ struct VendorDetailView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
                 }
+            }
+            .confirmationDialog("Contact Options", isPresented: $showPhoneActions, titleVisibility: .visible) {
+                Button("Call") {
+                    if let url = URL(string: "tel:\(vendor.storePhone.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "-", with: ""))") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                Button("Send Message") {
+                    if let url = URL(string: "sms:\(vendor.storePhone.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "-", with: ""))") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                Button("Add to Contacts") {
+                    // Open contacts app
+                    if let url = URL(string: "contacts://") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                Button("Copy Phone Number") {
+                    UIPasteboard.general.string = vendor.storePhone
+                }
+                Button("Cancel", role: .cancel) {}
             }
         }
         .task {
@@ -279,6 +303,69 @@ struct VendorDetailView: View {
             Text("Member since \(vendor.createdAt.formatted(date: .abbreviated, time: .omitted))")
                 .font(.caption)
                 .foregroundColor(.gray)
+
+            // Contact action buttons
+            HStack(spacing: 24) {
+                // Email button
+                Button {
+                    if let url = URL(string: "mailto:\(vendor.storeEmail)") {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    VStack(spacing: 4) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.blue.opacity(0.2))
+                                .frame(width: 50, height: 50)
+                            Image(systemName: "envelope.fill")
+                                .font(.title3)
+                                .foregroundColor(.blue)
+                        }
+                        Text("Email")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+
+                // Phone button
+                Button {
+                    showPhoneActions = true
+                } label: {
+                    VStack(spacing: 4) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.green.opacity(0.2))
+                                .frame(width: 50, height: 50)
+                            Image(systemName: "phone.fill")
+                                .font(.title3)
+                                .foregroundColor(.green)
+                        }
+                        Text("Call")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+
+                // Profile button
+                Button {
+                    showCustomerProfile = true
+                } label: {
+                    VStack(spacing: 4) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.purple.opacity(0.2))
+                                .frame(width: 50, height: 50)
+                            Image(systemName: "person.fill")
+                                .font(.title3)
+                                .foregroundColor(.purple)
+                        }
+                        Text("Profile")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+            .padding(.top, 8)
         }
         .padding()
         .background(Color.white.opacity(0.05))

@@ -13,6 +13,7 @@ enum CustomerSource: String, Codable, CaseIterable, Identifiable {
     case inquiry = "inquiry"
     case newsletter = "newsletter"
     case contact = "contact"
+    case vendor = "vendor"
 
     var id: String { rawValue }
 
@@ -22,6 +23,7 @@ enum CustomerSource: String, Codable, CaseIterable, Identifiable {
         case .inquiry: return "Inquiry"
         case .newsletter: return "Newsletter"
         case .contact: return "Contact Form"
+        case .vendor: return "Vendor"
         }
     }
 
@@ -31,6 +33,7 @@ enum CustomerSource: String, Codable, CaseIterable, Identifiable {
         case .inquiry: return "questionmark.circle"
         case .newsletter: return "envelope"
         case .contact: return "message"
+        case .vendor: return "storefront"
         }
     }
 
@@ -40,6 +43,7 @@ enum CustomerSource: String, Codable, CaseIterable, Identifiable {
         case .inquiry: return "blue"
         case .newsletter: return "purple"
         case .contact: return "orange"
+        case .vendor: return "red"
         }
     }
 }

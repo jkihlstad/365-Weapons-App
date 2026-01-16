@@ -11,6 +11,7 @@ struct SubmissionDetailView: View {
     let submission: UnifiedSubmission
     @Environment(\.dismiss) private var dismiss
     @State private var showCustomerProfile = false
+    @State private var showPhoneActions = false
 
     var body: some View {
         NavigationStack {
@@ -83,6 +84,29 @@ struct SubmissionDetailView: View {
             .sheet(isPresented: $showCustomerProfile) {
                 CustomerProfileSheet(email: submission.email, name: submission.name)
             }
+            .confirmationDialog("Contact Options", isPresented: $showPhoneActions, titleVisibility: .visible) {
+                if let phone = submission.phone {
+                    Button("Call") {
+                        if let url = URL(string: "tel:\(phone.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "-", with: ""))") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    Button("Send Message") {
+                        if let url = URL(string: "sms:\(phone.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "-", with: ""))") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    Button("Add to Contacts") {
+                        if let url = URL(string: "contacts://") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    Button("Copy Phone Number") {
+                        UIPasteboard.general.string = phone
+                    }
+                }
+                Button("Cancel", role: .cancel) {}
+            }
         }
     }
 
@@ -143,11 +167,9 @@ struct SubmissionDetailView: View {
                     }
                 }
 
-                if let phone = submission.phone, !phone.isEmpty {
+                if let _ = submission.phone, !submission.phone!.isEmpty {
                     Button {
-                        if let url = URL(string: "tel:\(phone.replacingOccurrences(of: " ", with: ""))") {
-                            UIApplication.shared.open(url)
-                        }
+                        showPhoneActions = true
                     } label: {
                         VStack {
                             Image(systemName: "phone.fill")
@@ -201,6 +223,16 @@ struct SubmissionDetailView: View {
                 ) {
                     if let url = URL(string: "mailto:\(submission.email)") {
                         UIApplication.shared.open(url)
+                    }
+                }
+
+                if submission.phone != nil {
+                    SubmissionActionButton(
+                        title: "Call",
+                        icon: "phone",
+                        color: .green
+                    ) {
+                        showPhoneActions = true
                     }
                 }
             }

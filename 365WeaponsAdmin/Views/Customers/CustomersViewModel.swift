@@ -46,6 +46,10 @@ class CustomersViewModel: ObservableObject {
         customers.filter { $0.source == .contact }.count
     }
 
+    var vendorCount: Int {
+        customers.filter { $0.source == .vendor }.count
+    }
+
     var totalRevenue: Double {
         customers.reduce(0) { $0 + $1.totalSpent }
     }

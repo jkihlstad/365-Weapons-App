@@ -103,7 +103,9 @@ struct SettingsView: View {
                         HStack(spacing: 8) {
                             ForEach(AppearanceMode.allCases) { mode in
                                 Button {
-                                    appearanceManager.appearanceMode = mode
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        appearanceManager.appearanceMode = mode
+                                    }
                                 } label: {
                                     VStack(spacing: 6) {
                                         Image(systemName: mode.icon)
@@ -134,11 +136,11 @@ struct SettingsView: View {
                                             )
                                     )
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                    .padding(.horizontal)
 
                     // Auto Mode Time Settings
                     if appearanceManager.appearanceMode == .auto {
