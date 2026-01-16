@@ -1,6 +1,7 @@
 # 365 Weapons Admin Backend Dependencies
 fastapi>=0.109.0
 uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
 lancedb>=0.6.0
 openai>=1.30.0
 pydantic>=2.5.0
