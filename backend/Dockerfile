@@ -1,5 +1,5 @@
 # 365 Weapons Admin Backend
-# LanceDB + LangGraph API Server
+# LanceDB + OpenRouter/OpenAI API Server
 
 FROM python:3.11-slim
 
@@ -27,5 +27,5 @@ ENV PORT=8000
 # Expose port
 EXPOSE 8000
 
-# Run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the application using shell form to expand $PORT
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT
