@@ -21,6 +21,11 @@ class DashboardAgent: Agent, ObservableObject {
     private let convex = ConvexClient.shared
     private let postgres = PostgreSQLClient.shared
 
+    // MARK: - Data Cache (avoid redundant API calls)
+    private var cachedDashboardData: DashboardData?
+    private var cacheTimestamp: Date?
+    private let cacheValidityDuration: TimeInterval = 30 // Cache valid for 30 seconds
+
     // MARK: - Agent Protocol
 
     func canHandle(input: AgentInput) -> Bool {
@@ -84,38 +89,72 @@ class DashboardAgent: Agent, ObservableObject {
         }
     }
 
-    private func gatherDashboardData() async throws -> DashboardData {
+    private func gatherDashboardData(forceRefresh: Bool = false) async throws -> DashboardData {
+        // Check cache first (unless forced refresh)
+        if !forceRefresh,
+           let cached = cachedDashboardData,
+           let timestamp = cacheTimestamp,
+           Date().timeIntervalSince(timestamp) < cacheValidityDuration {
+            return cached
+        }
+
         // Fetch core data (stats and orders) - these are required
+        // fetchDashboardStats already fetches products, orders, partners, commissions, inquiries
+        // so we only need orders separately for the recent list
         async let statsTask = convex.fetchDashboardStats()
         async let ordersTask = convex.fetchOrders(limit: 20)
 
-        // Fetch optional data - partners and inquiries may not be available
-        // These are wrapped in try? to handle gracefully when endpoints don't exist
-        let partners: [PartnerStore]? = try? await convex.fetchPartners()
-        let inquiries: [ServiceInquiry]? = try? await convex.fetchInquiries(status: "NEW")
+        // Only fetch partners/inquiries if not already included in stats
+        // The fetchDashboardStats already computes aggregate data, so we only need
+        // detailed partner info if specifically requested
+        let partners: [PartnerStore]? = nil // Skip redundant call - stats already has partner count
+        let inquiries: [ServiceInquiry]? = nil // Skip redundant call - stats already has inquiry count
 
-        // Optional: fetch from PostgreSQL for historical data
-        let topProducts: [ProductSalesData]? = try? await postgres.getTopProducts(limit: 5)
+        // Optional: fetch from PostgreSQL for historical data (only if postgres is connected)
+        var topProducts: [ProductSalesData]? = nil
+        var revenueTimeline: [RevenueDataPoint]? = nil
 
-        let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date()
-        let revenueTimeline: [RevenueDataPoint]? = try? await postgres.getRevenueByDateRange(
-            from: thirtyDaysAgo,
-            to: Date()
-        )
+        if postgres.isConnected {
+            // Run postgres queries in parallel
+            async let topProductsTask = postgres.getTopProducts(limit: 5)
+            async let revenueTask: [RevenueDataPoint]? = {
+                let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date()
+                return try? await postgres.getRevenueByDateRange(from: thirtyDaysAgo, to: Date())
+            }()
+
+            topProducts = try? await topProductsTask
+            revenueTimeline = await revenueTask
+        }
 
         let (stats, orders) = try await (statsTask, ordersTask)
 
-        cachedStats = stats
-        lastRefresh = Date()
-
-        return DashboardData(
+        let data = DashboardData(
             stats: stats,
             recentOrders: orders,
             topProducts: topProducts,
-            partnerStats: partners,  // Will be nil if partners endpoint not available
+            partnerStats: partners,
             revenueTimeline: revenueTimeline,
-            pendingInquiries: inquiries  // Will be nil if inquiries endpoint not available
+            pendingInquiries: inquiries
         )
+
+        // Update cache
+        cachedDashboardData = data
+        cacheTimestamp = Date()
+        cachedStats = stats
+        lastRefresh = Date()
+
+        return data
+    }
+
+    /// Force refresh data, bypassing cache
+    func refreshData() async throws -> DashboardData {
+        return try await gatherDashboardData(forceRefresh: true)
+    }
+
+    /// Clear the cache
+    func clearCache() {
+        cachedDashboardData = nil
+        cacheTimestamp = nil
     }
 
     // MARK: - Task Analysis

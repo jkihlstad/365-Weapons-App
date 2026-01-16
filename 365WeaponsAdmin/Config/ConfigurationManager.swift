@@ -295,6 +295,21 @@ final class ConfigurationManager: ObservableObject {
                     "Backend auth token should be at least 32 characters"
                 )
             }
+
+        case .tavily:
+            // Tavily keys start with "tvly-"
+            if !key.hasPrefix("tvly-") {
+                throw ConfigurationError.invalidKeyFormat(
+                    keyType,
+                    "Tavily keys should start with 'tvly-'"
+                )
+            }
+            if key.count < 20 {
+                throw ConfigurationError.invalidKeyFormat(
+                    keyType,
+                    "Key appears to be too short"
+                )
+            }
         }
     }
 

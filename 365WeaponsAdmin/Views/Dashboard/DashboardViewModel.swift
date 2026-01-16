@@ -40,12 +40,36 @@ class DashboardViewModel: ObservableObject {
 
     // MARK: - Initialization
     init() {
-        setupAutoRefresh()
         setupOfflineObserver()
+        // Don't start auto-refresh automatically - let view control it
     }
 
     deinit {
         refreshTimer?.invalidate()
+    }
+
+    // MARK: - Lifecycle Management
+
+    /// Call when dashboard view appears
+    func onAppear() {
+        startAutoRefresh()
+        ConvexClient.shared.startConnectionMonitoring()
+    }
+
+    /// Call when dashboard view disappears
+    func onDisappear() {
+        stopAutoRefresh()
+        ConvexClient.shared.stopConnectionMonitoring()
+    }
+
+    private func startAutoRefresh() {
+        guard refreshTimer == nil else { return }
+        setupAutoRefresh()
+    }
+
+    private func stopAutoRefresh() {
+        refreshTimer?.invalidate()
+        refreshTimer = nil
     }
 
     // MARK: - Offline Observer Setup
@@ -213,13 +237,14 @@ class DashboardViewModel: ObservableObject {
 
     // MARK: - Auto Refresh
     private func setupAutoRefresh() {
-        // Refresh every 30 seconds
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+        // Refresh every 2 minutes (reduced from 30 seconds to save battery/bandwidth)
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true) { [weak self] _ in
             Task { @MainActor in
-                // Only auto-refresh when online
-                if self?.offlineManager.isOnline == true {
-                    await self?.loadData()
-                }
+                // Only auto-refresh when online and not already loading
+                guard let self = self,
+                      self.offlineManager.isOnline,
+                      !self.isLoading else { return }
+                await self.loadData()
             }
         }
     }

@@ -9,13 +9,13 @@ import SwiftUI
 
 struct SettingsView: View {
     @StateObject private var authClient = ClerkAuthClient.shared
+    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @Environment(\.dismiss) private var dismiss
 
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
     @AppStorage("autoRefresh") private var autoRefresh = true
     @AppStorage("refreshInterval") private var refreshInterval = 30
     @AppStorage("hapticFeedback") private var hapticFeedback = true
-    @AppStorage("darkMode") private var darkMode = true
 
     @State private var showAPISettings = false
     @State private var showAbout = false
@@ -94,7 +94,99 @@ struct SettingsView: View {
 
                 // Appearance
                 Section("Appearance") {
-                    Toggle("Dark Mode", isOn: $darkMode)
+                    // Appearance Mode Picker
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Theme")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+
+                        HStack(spacing: 8) {
+                            ForEach(AppearanceMode.allCases) { mode in
+                                Button {
+                                    appearanceManager.appearanceMode = mode
+                                } label: {
+                                    VStack(spacing: 6) {
+                                        Image(systemName: mode.icon)
+                                            .font(.title2)
+                                        Text(mode.displayName)
+                                            .font(.caption)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 12)
+                                    .background(
+                                        appearanceManager.appearanceMode == mode
+                                            ? Color.orange.opacity(0.2)
+                                            : Color.clear
+                                    )
+                                    .foregroundColor(
+                                        appearanceManager.appearanceMode == mode
+                                            ? .orange
+                                            : .gray
+                                    )
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(
+                                                appearanceManager.appearanceMode == mode
+                                                    ? Color.orange
+                                                    : Color.gray.opacity(0.3),
+                                                lineWidth: 1
+                                            )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+
+                    // Auto Mode Time Settings
+                    if appearanceManager.appearanceMode == .auto {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Auto Mode Schedule")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+
+                            HStack {
+                                Image(systemName: "sun.max.fill")
+                                    .foregroundColor(.yellow)
+                                Text("Light mode starts")
+                                Spacer()
+                                Picker("", selection: $appearanceManager.autoLightStartHour) {
+                                    ForEach(0..<24, id: \.self) { hour in
+                                        Text(formatHour(hour)).tag(hour)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(.orange)
+                            }
+
+                            HStack {
+                                Image(systemName: "moon.fill")
+                                    .foregroundColor(.indigo)
+                                Text("Dark mode starts")
+                                Spacer()
+                                Picker("", selection: $appearanceManager.autoDarkStartHour) {
+                                    ForEach(0..<24, id: \.self) { hour in
+                                        Text(formatHour(hour)).tag(hour)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(.orange)
+                            }
+
+                            // Current status
+                            HStack {
+                                Image(systemName: appearanceManager.isDarkMode ? "moon.fill" : "sun.max.fill")
+                                    .foregroundColor(appearanceManager.isDarkMode ? .indigo : .yellow)
+                                Text("Currently: \(appearanceManager.isDarkMode ? "Dark" : "Light") mode")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.top, 4)
+                        }
+                    }
+
                     Toggle("Haptic Feedback", isOn: $hapticFeedback)
                 }
 
@@ -149,7 +241,7 @@ struct SettingsView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
+            .background(appearanceManager.isDarkMode ? Color.black.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -171,6 +263,19 @@ struct SettingsView: View {
                 DebugConsoleView()
             }
         }
+    }
+
+    // MARK: - Helper Functions
+
+    private func formatHour(_ hour: Int) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h a"
+        var components = DateComponents()
+        components.hour = hour
+        if let date = Calendar.current.date(from: components) {
+            return formatter.string(from: date)
+        }
+        return "\(hour):00"
     }
 }
 

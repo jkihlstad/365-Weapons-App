@@ -1,0 +1,108 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- iOS Liquid Glass Gradient Background -->
+    <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f0f23;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Shield Gradient (Red/Orange like original) -->
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#e63946;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c1121f;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Glass Highlight -->
+    <linearGradient id="glassHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:#ffffff;stop-opacity:0.05" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+    </linearGradient>
+
+    <!-- Inner glow for depth -->
+    <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Drop shadow -->
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="15" stdDeviation="30" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+
+    <!-- Aperture blade clip -->
+    <clipPath id="apertureClip">
+      <circle cx="512" cy="480" r="140"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background (solid for App Store - no transparency allowed) -->
+  <rect width="1024" height="1024" fill="url(#glassGradient)"/>
+
+  <!-- Subtle grid pattern for texture -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  </pattern>
+  <rect width="1024" height="1024" fill="url(#grid)"/>
+
+  <!-- Main Shield Shape with glass effect -->
+  <g filter="url(#dropShadow)">
+    <!-- Shield body -->
+    <path d="M 512 140
+             L 720 200
+             L 720 480
+             Q 720 700 512 820
+             Q 304 700 304 480
+             L 304 200
+             Z"
+          fill="url(#shieldGradient)"
+          stroke="rgba(255,255,255,0.2)"
+          stroke-width="3"/>
+
+    <!-- Glass overlay on shield -->
+    <path d="M 512 140
+             L 720 200
+             L 720 480
+             Q 720 700 512 820
+             Q 304 700 304 480
+             L 304 200
+             Z"
+          fill="url(#glassHighlight)"/>
+  </g>
+
+  <!-- Aperture/Shutter Design (Camera-style like original logo) -->
+  <g transform="translate(512, 470)">
+    <!-- Outer ring -->
+    <circle cx="0" cy="0" r="160" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="8"/>
+
+    <!-- Aperture blades -->
+    <g fill="rgba(255,255,255,0.85)">
+      <!-- 6 aperture blades arranged in circle -->
+      <path d="M 0 -140 L 50 -80 L -50 -80 Z" transform="rotate(0)"/>
+      <path d="M 0 -140 L 50 -80 L -50 -80 Z" transform="rotate(60)"/>
+      <path d="M 0 -140 L 50 -80 L -50 -80 Z" transform="rotate(120)"/>
+      <path d="M 0 -140 L 50 -80 L -50 -80 Z" transform="rotate(180)"/>
+      <path d="M 0 -140 L 50 -80 L -50 -80 Z" transform="rotate(240)"/>
+      <path d="M 0 -140 L 50 -80 L -50 -80 Z" transform="rotate(300)"/>
+    </g>
+
+    <!-- Center circle -->
+    <circle cx="0" cy="0" r="45" fill="rgba(26,26,46,0.8)" stroke="rgba(255,255,255,0.5)" stroke-width="4"/>
+  </g>
+
+  <!-- "365" Text -->
+  <text x="512" y="780"
+        font-family="SF Pro Display, -apple-system, Helvetica Neue, Arial, sans-serif"
+        font-size="120"
+        font-weight="800"
+        fill="white"
+        text-anchor="middle"
+        opacity="0.95">365</text>
+
+  <!-- Top highlight arc for glass effect -->
+  <ellipse cx="512" cy="280" rx="300" ry="100"
+           fill="url(#glassHighlight)"
+           opacity="0.3"/>
+</svg>

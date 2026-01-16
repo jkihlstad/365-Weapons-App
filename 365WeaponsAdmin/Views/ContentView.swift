@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  365WeaponsAdmin
 //
-//  Main content view with tab navigation
+//  Main content view with scrollable tab navigation
 //
 
 import SwiftUI
@@ -16,15 +16,29 @@ struct ContentView: View {
 
     @State private var showAuthSheet = false
     @State private var selectedTab: Tab = .dashboard
-    @State private var showSettings = false
+
+    // Lazy view state - only create views when first accessed
+    @State private var dashboardView: DashboardView?
+    @State private var ordersView: OrdersView?
+    @State private var productsView: ProductsView?
+    @State private var vendorsView: VendorsView?
+    @State private var customersView: CustomersView?
+    @State private var messagingView: MessagingView?
+    @State private var codesView: CodesView?
+    @State private var paymentsView: PaymentsView?
+    @State private var chatView: AIChatView?
+    @State private var settingsView: SettingsView?
 
     enum Tab: String, CaseIterable {
         case dashboard = "Dashboard"
         case orders = "Orders"
         case products = "Products"
+        case messaging = "Messages"
+        case codes = "Codes"
+        case payments = "Pay"
+        case chat = "AI Chat"
         case vendors = "Vendors"
         case customers = "Customers"
-        case chat = "AI Chat"
         case settings = "Settings"
 
         var icon: String {
@@ -32,6 +46,9 @@ struct ContentView: View {
             case .dashboard: return "square.grid.2x2"
             case .orders: return "list.clipboard"
             case .products: return "cube.box"
+            case .messaging: return "envelope.badge"
+            case .codes: return "tag"
+            case .payments: return "dollarsign.circle"
             case .vendors: return "person.2"
             case .customers: return "person.3"
             case .chat: return "bubble.left.and.bubble.right"
@@ -69,56 +86,274 @@ struct ContentView: View {
                 AuthView()
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     private var mainContent: some View {
-        TabView(selection: $selectedTab) {
-            DashboardView()
-                .tabItem {
-                    Label(Tab.dashboard.rawValue, systemImage: Tab.dashboard.icon)
+        ZStack {
+            // Main content area - use ZStack with opacity for tab switching
+            // This preserves view state instead of recreating views
+            ZStack {
+                // Dashboard
+                NavigationStack {
+                    getDashboardView()
                 }
-                .tag(Tab.dashboard)
+                .opacity(selectedTab == .dashboard ? 1 : 0)
+                .zIndex(selectedTab == .dashboard ? 1 : 0)
 
-            OrdersView()
-                .tabItem {
-                    Label(Tab.orders.rawValue, systemImage: Tab.orders.icon)
+                // Orders
+                NavigationStack {
+                    getOrdersView()
                 }
-                .tag(Tab.orders)
+                .opacity(selectedTab == .orders ? 1 : 0)
+                .zIndex(selectedTab == .orders ? 1 : 0)
 
-            ProductsView()
-                .tabItem {
-                    Label(Tab.products.rawValue, systemImage: Tab.products.icon)
+                // Products
+                NavigationStack {
+                    getProductsView()
                 }
-                .tag(Tab.products)
+                .opacity(selectedTab == .products ? 1 : 0)
+                .zIndex(selectedTab == .products ? 1 : 0)
 
-            VendorsView()
-                .tabItem {
-                    Label(Tab.vendors.rawValue, systemImage: Tab.vendors.icon)
+                // Messaging
+                NavigationStack {
+                    getMessagingView()
                 }
-                .tag(Tab.vendors)
+                .opacity(selectedTab == .messaging ? 1 : 0)
+                .zIndex(selectedTab == .messaging ? 1 : 0)
 
-            CustomersView()
-                .tabItem {
-                    Label(Tab.customers.rawValue, systemImage: Tab.customers.icon)
+                // Codes
+                NavigationStack {
+                    getCodesView()
                 }
-                .tag(Tab.customers)
+                .opacity(selectedTab == .codes ? 1 : 0)
+                .zIndex(selectedTab == .codes ? 1 : 0)
 
-            AIChatView()
-                .tabItem {
-                    Label(Tab.chat.rawValue, systemImage: Tab.chat.icon)
+                // Payments
+                NavigationStack {
+                    getPaymentsView()
                 }
-                .tag(Tab.chat)
+                .opacity(selectedTab == .payments ? 1 : 0)
+                .zIndex(selectedTab == .payments ? 1 : 0)
 
-            SettingsView()
-                .tabItem {
-                    Label(Tab.settings.rawValue, systemImage: Tab.settings.icon)
+                // Vendors
+                NavigationStack {
+                    getVendorsView()
                 }
-                .tag(Tab.settings)
+                .opacity(selectedTab == .vendors ? 1 : 0)
+                .zIndex(selectedTab == .vendors ? 1 : 0)
+
+                // Customers
+                NavigationStack {
+                    getCustomersView()
+                }
+                .opacity(selectedTab == .customers ? 1 : 0)
+                .zIndex(selectedTab == .customers ? 1 : 0)
+
+                // Chat (no NavigationStack needed)
+                getChatView()
+                    .opacity(selectedTab == .chat ? 1 : 0)
+                    .zIndex(selectedTab == .chat ? 1 : 0)
+
+                // Settings
+                NavigationStack {
+                    getSettingsView()
+                }
+                .opacity(selectedTab == .settings ? 1 : 0)
+                .zIndex(selectedTab == .settings ? 1 : 0)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            // Scrollable Tab Bar
+            VStack {
+                Spacer()
+                ScrollableTabBar(selectedTab: $selectedTab)
+            }
         }
-        .tint(.orange)
-        .sheet(isPresented: $showSettings) {
+        .ignoresSafeArea(.keyboard)
+    }
+
+    // MARK: - Lazy View Getters
+
+    @ViewBuilder
+    private func getDashboardView() -> some View {
+        if let view = dashboardView {
+            view
+        } else {
+            DashboardView()
+                .onAppear { dashboardView = DashboardView() }
+        }
+    }
+
+    @ViewBuilder
+    private func getOrdersView() -> some View {
+        if let view = ordersView {
+            view
+        } else {
+            OrdersView()
+                .onAppear { ordersView = OrdersView() }
+        }
+    }
+
+    @ViewBuilder
+    private func getProductsView() -> some View {
+        if let view = productsView {
+            view
+        } else {
+            ProductsView()
+                .onAppear { productsView = ProductsView() }
+        }
+    }
+
+    @ViewBuilder
+    private func getMessagingView() -> some View {
+        if let view = messagingView {
+            view
+        } else {
+            MessagingView()
+                .onAppear { messagingView = MessagingView() }
+        }
+    }
+
+    @ViewBuilder
+    private func getCodesView() -> some View {
+        if let view = codesView {
+            view
+        } else {
+            CodesView()
+                .onAppear { codesView = CodesView() }
+        }
+    }
+
+    @ViewBuilder
+    private func getPaymentsView() -> some View {
+        if let view = paymentsView {
+            view
+        } else {
+            PaymentsView()
+                .onAppear { paymentsView = PaymentsView() }
+        }
+    }
+
+    @ViewBuilder
+    private func getVendorsView() -> some View {
+        if let view = vendorsView {
+            view
+        } else {
+            VendorsView()
+                .onAppear { vendorsView = VendorsView() }
+        }
+    }
+
+    @ViewBuilder
+    private func getCustomersView() -> some View {
+        if let view = customersView {
+            view
+        } else {
+            CustomersView()
+                .onAppear { customersView = CustomersView() }
+        }
+    }
+
+    @ViewBuilder
+    private func getChatView() -> some View {
+        if let view = chatView {
+            view
+        } else {
+            AIChatView()
+                .onAppear { chatView = AIChatView() }
+        }
+    }
+
+    @ViewBuilder
+    private func getSettingsView() -> some View {
+        if let view = settingsView {
+            view
+        } else {
             SettingsView()
+                .onAppear { settingsView = SettingsView() }
+        }
+    }
+}
+
+// MARK: - Scrollable Tab Bar
+struct ScrollableTabBar: View {
+    @Binding var selectedTab: ContentView.Tab
+
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 0) {
+                    ForEach(ContentView.Tab.allCases, id: \.self) { tab in
+                        tabButton(for: tab)
+                            .id(tab)
+                    }
+                }
+                .padding(.horizontal, 8)
+            }
+            .padding(.top, 4)
+            .padding(.bottom, 16)
+            .background(
+                // Liquid glass effect
+                ZStack {
+                    // Base blur layer
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+
+                    // Glass tint overlay
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.15),
+                                    Color.white.opacity(0.05)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+
+                    // Top highlight border
+                    VStack {
+                        Rectangle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color.white.opacity(0.4),
+                                        Color.white.opacity(0.1)
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(height: 0.5)
+                        Spacer()
+                    }
+                }
+            )
+            .onChange(of: selectedTab) { _, newTab in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    proxy.scrollTo(newTab, anchor: .center)
+                }
+            }
+        }
+    }
+
+    private func tabButton(for tab: ContentView.Tab) -> some View {
+        Button {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                selectedTab = tab
+            }
+        } label: {
+            VStack(spacing: 2) {
+                Image(systemName: tab.icon)
+                    .font(.system(size: 20))
+                    .symbolEffect(.bounce, value: selectedTab == tab)
+                Text(tab.rawValue)
+                    .font(.caption2)
+            }
+            .foregroundColor(selectedTab == tab ? .orange : .gray)
+            .frame(width: 68)
+            .padding(.vertical, 4)
         }
     }
 }

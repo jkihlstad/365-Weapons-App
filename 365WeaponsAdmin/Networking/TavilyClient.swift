@@ -104,11 +104,13 @@ class TavilyClient {
     private let baseURL = "https://api.tavily.com"
     private let session: URLSession
 
-    // Hardcoded API key (as provided by user)
-    private let apiKey = "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"
-
     private var logger: DebugLogger {
         DebugLogger.shared
+    }
+
+    @MainActor
+    private func getAPIKey() -> String? {
+        ConfigurationManager.shared.getAPIKey(for: .tavily)
     }
 
     private init() {
@@ -131,6 +133,11 @@ class TavilyClient {
         maxResults: Int = 5,
         searchDepth: String = "basic"
     ) async throws -> [TavilySearchResult] {
+        let apiKey = await getAPIKey()
+        guard let apiKey = apiKey else {
+            throw TavilyError.invalidAPIKey
+        }
+
         await MainActor.run {
             logger.log("Tavily search: '\(query)' (max: \(maxResults))", category: .network)
         }
@@ -157,6 +164,11 @@ class TavilyClient {
     ///   - maxResults: Maximum number of results for context (default: 5)
     /// - Returns: Summarized answer from search results
     func searchAndSummarize(query: String, maxResults: Int = 5) async throws -> String {
+        let apiKey = await getAPIKey()
+        guard let apiKey = apiKey else {
+            throw TavilyError.invalidAPIKey
+        }
+
         await MainActor.run {
             logger.log("Tavily search with answer: '\(query)'", category: .network)
         }
@@ -199,6 +211,11 @@ class TavilyClient {
         excludeDomains: [String]? = nil,
         maxResults: Int = 5
     ) async throws -> [TavilySearchResult] {
+        let apiKey = await getAPIKey()
+        guard let apiKey = apiKey else {
+            throw TavilyError.invalidAPIKey
+        }
+
         await MainActor.run {
             logger.log("Tavily domain search: '\(query)'", category: .network)
         }

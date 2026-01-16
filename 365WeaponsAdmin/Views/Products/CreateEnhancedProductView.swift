@@ -292,16 +292,33 @@ struct BasicInfoStepView: View {
 
                 // Page Placement
                 FormField(label: "Page Placement", required: true) {
-                    Picker("Page Placement", selection: $draft.pagePlacement) {
+                    VStack(spacing: 8) {
                         ForEach(PagePlacement.allCases) { placement in
-                            HStack {
-                                Image(systemName: placement.icon)
-                                Text(placement.displayName)
+                            Button {
+                                draft.pagePlacement = placement
+                            } label: {
+                                HStack {
+                                    Image(systemName: placement.icon)
+                                        .frame(width: 24)
+                                    Text(placement.displayName)
+                                        .font(.subheadline)
+                                    Spacer()
+                                    if draft.pagePlacement == placement {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundColor(.orange)
+                                    }
+                                }
+                                .foregroundColor(draft.pagePlacement == placement ? .orange : .white)
+                                .padding()
+                                .background(draft.pagePlacement == placement ? Color.orange.opacity(0.2) : Color.white.opacity(0.1))
+                                .cornerRadius(10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(draft.pagePlacement == placement ? Color.orange : Color.clear, lineWidth: 1)
+                                )
                             }
-                            .tag(placement)
                         }
                     }
-                    .pickerStyle(.segmented)
                 }
 
                 // Slug

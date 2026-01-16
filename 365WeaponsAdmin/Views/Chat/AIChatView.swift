@@ -25,6 +25,7 @@ struct AIChatView: View {
                 // Input area
                 inputArea
             }
+            .padding(.bottom, 80) // Space for tab bar
             .background(Color.black.ignoresSafeArea())
             .navigationTitle("AI Assistant")
             .navigationBarTitleDisplayMode(.inline)

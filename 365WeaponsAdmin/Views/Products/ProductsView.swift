@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ProductsView: View {
     @StateObject private var viewModel = ProductsViewModel()
@@ -182,26 +183,17 @@ struct ProductGridCard: View {
                         .fill(Color.white.opacity(0.1))
 
                     if let url = imageURL {
-                        AsyncImage(url: url) { phase in
-                            switch phase {
-                            case .empty:
+                        KFImage(url)
+                            .placeholder {
                                 ProgressView()
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: geometry.size.width, height: geometry.size.width)
-                                    .clipped()
-                            case .failure:
-                                Image(systemName: "cube.box.fill")
-                                    .font(.largeTitle)
-                                    .foregroundColor(.gray)
-                            @unknown default:
-                                Image(systemName: "cube.box.fill")
-                                    .font(.largeTitle)
-                                    .foregroundColor(.gray)
                             }
-                        }
+                            .retry(maxCount: 2, interval: .seconds(2))
+                            .cacheMemoryOnly(false)
+                            .fade(duration: 0.25)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: geometry.size.width, height: geometry.size.width)
+                            .clipped()
                     } else {
                         Image(systemName: "cube.box.fill")
                             .font(.largeTitle)
@@ -269,25 +261,18 @@ struct ProductListCard: View {
                     .fill(Color.white.opacity(0.1))
 
                 if let url = imageURL {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .empty:
+                    KFImage(url)
+                        .placeholder {
                             ProgressView()
                                 .scaleEffect(0.5)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 60, height: 60)
-                                .clipped()
-                        case .failure:
-                            Image(systemName: "cube.box.fill")
-                                .foregroundColor(.gray)
-                        @unknown default:
-                            Image(systemName: "cube.box.fill")
-                                .foregroundColor(.gray)
                         }
-                    }
+                        .retry(maxCount: 2, interval: .seconds(2))
+                        .cacheMemoryOnly(false)
+                        .fade(duration: 0.25)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 60, height: 60)
+                        .clipped()
                 } else {
                     Image(systemName: "cube.box.fill")
                         .foregroundColor(.gray)
@@ -487,24 +472,15 @@ struct ProductDetailView: View {
                             .fill(Color.white.opacity(0.1))
 
                         if let url = imageURL {
-                            AsyncImage(url: url) { phase in
-                                switch phase {
-                                case .empty:
+                            KFImage(url)
+                                .placeholder {
                                     ProgressView()
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                case .failure:
-                                    Image(systemName: "cube.box.fill")
-                                        .font(.system(size: 60))
-                                        .foregroundColor(.gray)
-                                @unknown default:
-                                    Image(systemName: "cube.box.fill")
-                                        .font(.system(size: 60))
-                                        .foregroundColor(.gray)
                                 }
-                            }
+                                .retry(maxCount: 2, interval: .seconds(2))
+                                .cacheMemoryOnly(false)
+                                .fade(duration: 0.25)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
                         } else {
                             Image(systemName: "cube.box.fill")
                                 .font(.system(size: 60))

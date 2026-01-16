@@ -23,6 +23,7 @@ struct WeaponsAdminApp: App {
     @StateObject private var orchestrator = OrchestrationAgent.shared
     @StateObject private var appState = AppState.shared
     @StateObject private var configManager = ConfigurationManager.shared
+    @StateObject private var appearanceManager = AppearanceManager.shared
     @State private var clerk = Clerk.shared
     @State private var showSetupSheet = false
     @State private var isInitialized = false
@@ -53,7 +54,8 @@ struct WeaponsAdminApp: App {
             .environmentObject(orchestrator)
             .environmentObject(appState)
             .environmentObject(configManager)
-            .preferredColorScheme(.dark)
+            .environmentObject(appearanceManager)
+            .preferredColorScheme(appearanceManager.currentColorScheme)
             .task {
                 await initializeApp()
             }

@@ -555,11 +555,22 @@ struct DiscountCode: Codable, Identifiable {
     let active: Bool
     let expiresAt: Date?
     let createdAt: Date
+    // Stripe integration
+    let stripeCouponId: String?
+    // Product restriction
+    let productId: String?
+    let isCustomProduct: Bool?
+    // Commission settings
+    let commissionEnabled: Bool?
+    let commissionType: DiscountType?
+    let commissionValue: Double?
 
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case code, partnerStoreId, discountType, discountValue
         case usageCount, maxUsage, active, expiresAt, createdAt
+        case stripeCouponId, productId, isCustomProduct
+        case commissionEnabled, commissionType, commissionValue
     }
 
     var formattedDiscount: String {
@@ -570,11 +581,54 @@ struct DiscountCode: Codable, Identifiable {
             return String(format: "$%.2f off", discountValue)
         }
     }
+
+    var formattedCommission: String? {
+        guard let enabled = commissionEnabled, enabled,
+              let type = commissionType,
+              let value = commissionValue else { return nil }
+        switch type {
+        case .percentage:
+            return "\(Int(value))% commission"
+        case .fixed:
+            return String(format: "$%.2f commission", value)
+        }
+    }
+
+    /// Calculate discount amount for a given order total
+    func discountAmount(for orderTotal: Double) -> Double {
+        switch discountType {
+        case .percentage:
+            return orderTotal * discountValue
+        case .fixed:
+            return min(discountValue, orderTotal)
+        }
+    }
+
+    /// Calculate commission amount for a given order total
+    func commissionAmount(for orderTotal: Double) -> Double {
+        guard let enabled = commissionEnabled, enabled,
+              let type = commissionType,
+              let value = commissionValue else { return 0 }
+        let afterDiscount = orderTotal - discountAmount(for: orderTotal)
+        switch type {
+        case .percentage:
+            return afterDiscount * (value / 100)
+        case .fixed:
+            return value
+        }
+    }
 }
 
-enum DiscountType: String, Codable {
+enum DiscountType: String, Codable, CaseIterable {
     case percentage
     case fixed
+
+    var displayName: String {
+        switch self {
+        case .percentage: return "Percentage"
+        case .fixed: return "Fixed Amount"
+        }
+    }
 }
 
 // MARK: - Dashboard Analytics

@@ -46,6 +46,7 @@ enum APIKeyType: String, CaseIterable, Identifiable {
     case clerk = "com.365weapons.admin.clerk"
     case convex = "com.365weapons.admin.convex"
     case backendAuth = "com.365weapons.admin.backend"
+    case tavily = "com.365weapons.admin.tavily"
 
     var id: String { rawValue }
 
@@ -57,6 +58,7 @@ enum APIKeyType: String, CaseIterable, Identifiable {
         case .clerk: return "Clerk"
         case .convex: return "Convex"
         case .backendAuth: return "Backend API"
+        case .tavily: return "Tavily"
         }
     }
 
@@ -68,6 +70,7 @@ enum APIKeyType: String, CaseIterable, Identifiable {
         case .clerk: return "CLERK_PUBLISHABLE_KEY"
         case .convex: return "CONVEX_DEPLOYMENT_URL"
         case .backendAuth: return "API_AUTH_TOKEN"
+        case .tavily: return "TAVILY_API_KEY"
         }
     }
 
@@ -79,6 +82,7 @@ enum APIKeyType: String, CaseIterable, Identifiable {
         case .clerk: return "Authentication"
         case .convex: return "Backend Database"
         case .backendAuth: return "LanceDB & Backend API"
+        case .tavily: return "Web Search"
         }
     }
 }

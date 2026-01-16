@@ -38,6 +38,7 @@
 		A2B7D9AB /* SyncModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9D63A /* SyncModels.swift */; };
 		A238AAC9 /* WebhookModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A245C26B /* WebhookModels.swift */; };
 		A20DB892 /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2ABEF3F /* CacheService.swift */; };
+		A9000001 /* AppearanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9000002 /* AppearanceManager.swift */; };
 		A2A2F453 /* OfflineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A4EC2E /* OfflineManager.swift */; };
 		A24E5FB8 /* WebhookService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28F8704 /* WebhookService.swift */; };
 		A2FC2798 /* ErrorHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23250BE /* ErrorHandling.swift */; };
@@ -76,6 +77,17 @@
 		A6000019 /* VendorsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000020 /* VendorsViewModel.swift */; };
 		A6000021 /* CustomersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000022 /* CustomersView.swift */; };
 		A6000023 /* CustomersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6000024 /* CustomersViewModel.swift */; };
+		A7000001 /* MessagingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7000002 /* MessagingView.swift */; };
+		A7000003 /* MessagingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7000004 /* MessagingViewModel.swift */; };
+		A7000005 /* SubmissionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7000006 /* SubmissionDetailView.swift */; };
+		A7000007 /* NotificationsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7000008 /* NotificationsSettingsView.swift */; };
+		A8000001 /* CodesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8000002 /* CodesView.swift */; };
+		A8000003 /* CodesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8000004 /* CodesViewModel.swift */; };
+		A8000005 /* CodeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8000006 /* CodeDetailView.swift */; };
+		B1000001 /* PaymentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000002 /* PaymentsView.swift */; };
+		B1000003 /* PaymentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000004 /* PaymentsViewModel.swift */; };
+		B1000005 /* PaymentHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000006 /* PaymentHistoryView.swift */; };
+		B1000007 /* PaymentMethodSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000008 /* PaymentMethodSheet.swift */; };
 /* End PBXBuildFile section */
 
 
@@ -122,6 +134,7 @@
 		A2B9D63A /* SyncModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncModels.swift; sourceTree = "<group>"; };
 		A245C26B /* WebhookModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebhookModels.swift; sourceTree = "<group>"; };
 		A2ABEF3F /* CacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheService.swift; sourceTree = "<group>"; };
+		A9000002 /* AppearanceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceManager.swift; sourceTree = "<group>"; };
 		A2A4EC2E /* OfflineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineManager.swift; sourceTree = "<group>"; };
 		A28F8704 /* WebhookService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebhookService.swift; sourceTree = "<group>"; };
 		A23250BE /* ErrorHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandling.swift; sourceTree = "<group>"; };
@@ -161,6 +174,17 @@
 		A6000020 /* VendorsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorsViewModel.swift; sourceTree = "<group>"; };
 		A6000022 /* CustomersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersView.swift; sourceTree = "<group>"; };
 		A6000024 /* CustomersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersViewModel.swift; sourceTree = "<group>"; };
+		A7000002 /* MessagingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingView.swift; sourceTree = "<group>"; };
+		A7000004 /* MessagingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingViewModel.swift; sourceTree = "<group>"; };
+		A7000006 /* SubmissionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionDetailView.swift; sourceTree = "<group>"; };
+		A7000008 /* NotificationsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSettingsView.swift; sourceTree = "<group>"; };
+		A8000002 /* CodesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodesView.swift; sourceTree = "<group>"; };
+		A8000004 /* CodesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodesViewModel.swift; sourceTree = "<group>"; };
+		A8000006 /* CodeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDetailView.swift; sourceTree = "<group>"; };
+		B1000002 /* PaymentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsView.swift; sourceTree = "<group>"; };
+		B1000004 /* PaymentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsViewModel.swift; sourceTree = "<group>"; };
+		B1000006 /* PaymentHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentHistoryView.swift; sourceTree = "<group>"; };
+		B1000008 /* PaymentMethodSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentMethodSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,6 +249,9 @@
 				A1000064 /* Products */,
 				A6000025 /* Vendors */,
 				A6000026 /* Customers */,
+				A7000009 /* Messaging */,
+				A8000007 /* Codes */,
+				B1000009 /* Payments */,
 				A1000065 /* Chat */,
 				A1000066 /* Analytics */,
 				A24BDC9A /* Components */,
@@ -281,7 +308,8 @@
 				A1000046 /* ActionTrackingService.swift */,
 				A2ABEF3F /* CacheService.swift */,
 				A2A4EC2E /* OfflineManager.swift */,
-				A28F8704 /* WebhookService.swift */);
+				A28F8704 /* WebhookService.swift */,
+				A9000002 /* AppearanceManager.swift */);
 			path = Services;
 			sourceTree = "<group>";
 		};
@@ -397,6 +425,38 @@
 				A6000024 /* CustomersViewModel.swift */,
 			);
 			path = Customers;
+			sourceTree = "<group>";
+		};
+		A7000009 /* Messaging */ = {
+			isa = PBXGroup;
+			children = (
+				A7000002 /* MessagingView.swift */,
+				A7000004 /* MessagingViewModel.swift */,
+				A7000006 /* SubmissionDetailView.swift */,
+				A7000008 /* NotificationsSettingsView.swift */,
+			);
+			path = Messaging;
+			sourceTree = "<group>";
+		};
+		A8000007 /* Codes */ = {
+			isa = PBXGroup;
+			children = (
+				A8000002 /* CodesView.swift */,
+				A8000004 /* CodesViewModel.swift */,
+				A8000006 /* CodeDetailView.swift */,
+			);
+			path = Codes;
+			sourceTree = "<group>";
+		};
+		B1000009 /* Payments */ = {
+			isa = PBXGroup;
+			children = (
+				B1000002 /* PaymentsView.swift */,
+				B1000004 /* PaymentsViewModel.swift */,
+				B1000006 /* PaymentHistoryView.swift */,
+				B1000008 /* PaymentMethodSheet.swift */,
+			);
+			path = Payments;
 			sourceTree = "<group>";
 		};
 
@@ -544,6 +604,7 @@
 				A2B7D9AB /* SyncModels.swift in Sources */,
 				A238AAC9 /* WebhookModels.swift in Sources */,
 				A20DB892 /* CacheService.swift in Sources */,
+				A9000001 /* AppearanceManager.swift in Sources */,
 				A2A2F453 /* OfflineManager.swift in Sources */,
 				A24E5FB8 /* WebhookService.swift in Sources */,
 				A2FC2798 /* ErrorHandling.swift in Sources */,
@@ -575,7 +636,18 @@
 				A6000017 /* VendorsView.swift in Sources */,
 				A6000019 /* VendorsViewModel.swift in Sources */,
 				A6000021 /* CustomersView.swift in Sources */,
-				A6000023 /* CustomersViewModel.swift in Sources */);
+				A6000023 /* CustomersViewModel.swift in Sources */,
+				A7000001 /* MessagingView.swift in Sources */,
+				A7000003 /* MessagingViewModel.swift in Sources */,
+				A7000005 /* SubmissionDetailView.swift in Sources */,
+				A7000007 /* NotificationsSettingsView.swift in Sources */,
+				A8000001 /* CodesView.swift in Sources */,
+				A8000003 /* CodesViewModel.swift in Sources */,
+				A8000005 /* CodeDetailView.swift in Sources */,
+				B1000001 /* PaymentsView.swift in Sources */,
+				B1000003 /* PaymentsViewModel.swift in Sources */,
+				B1000005 /* PaymentHistoryView.swift in Sources */,
+				B1000007 /* PaymentMethodSheet.swift in Sources */);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 
@@ -723,6 +795,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = D33FTL28LK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "365Weapons Admin";
@@ -755,6 +828,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = D33FTL28LK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "365Weapons Admin";

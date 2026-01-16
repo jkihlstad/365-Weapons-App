@@ -112,17 +112,24 @@ struct NewsletterSubscriber: Identifiable, Codable {
     let lastName: String?
     let email: String
     let phone: String?
-    let subscribedAt: Date
-    let isActive: Bool
+    let company: String?
+    let source: String?
+    let createdAt: Date
 
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case firstName, lastName, email, phone, subscribedAt, isActive
+        case firstName, lastName, email, phone, company, source, createdAt
     }
 
     var fullName: String {
         [firstName, lastName].compactMap { $0 }.joined(separator: " ")
     }
+
+    /// Alias for createdAt to maintain compatibility
+    var subscribedAt: Date { createdAt }
+
+    /// Newsletter subscribers from this table are always active (unsubscribed would be deleted)
+    var isActive: Bool { true }
 }
 
 // MARK: - Contact Submission
@@ -134,26 +141,31 @@ struct ContactSubmission: Identifiable, Codable {
     let subject: String?
     let message: String
     let status: ContactStatus
+    let emailSentToAdmin: Bool?
+    let emailSentToCustomer: Bool?
     let createdAt: Date
-    let respondedAt: Date?
 
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, email, phone, subject, message, status, createdAt, respondedAt
+        case name, email, phone, subject, message, status
+        case emailSentToAdmin, emailSentToCustomer, createdAt
     }
+
+    /// Placeholder for respondedAt - not in Convex schema
+    var respondedAt: Date? { nil }
 }
 
 enum ContactStatus: String, Codable, CaseIterable {
     case new = "NEW"
     case read = "READ"
-    case responded = "RESPONDED"
+    case replied = "REPLIED"
     case archived = "ARCHIVED"
 
     var displayName: String {
         switch self {
         case .new: return "New"
         case .read: return "Read"
-        case .responded: return "Responded"
+        case .replied: return "Replied"
         case .archived: return "Archived"
         }
     }

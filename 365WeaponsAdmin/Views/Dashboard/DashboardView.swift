@@ -153,6 +153,12 @@ struct DashboardView: View {
         .task {
             await loadDataWithErrorHandling()
         }
+        .onAppear {
+            viewModel.onAppear()
+        }
+        .onDisappear {
+            viewModel.onDisappear()
+        }
     }
 
     // MARK: - Error Handling Methods

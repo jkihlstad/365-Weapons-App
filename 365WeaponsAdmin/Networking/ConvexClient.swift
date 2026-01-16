@@ -61,27 +61,45 @@ class ConvexClient: ObservableObject {
         }
     }
 
+    /// Timer for connection monitoring - only active when needed
+    private var connectionTimer: AnyCancellable?
+    private var isMonitoringActive = false
+
     private init() {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = ConvexConfig.requestTimeout
         config.timeoutIntervalForResource = ConvexConfig.resourceTimeout
         self.session = URLSession(configuration: config)
         self.retryConfig = ConvexConfig.defaultRetryConfig
-        setupConnectionMonitoring()
+        // Don't start monitoring automatically - let views opt-in
     }
 
     // MARK: - Connection Monitoring
 
-    private func setupConnectionMonitoring() {
-        // Periodic connection check
-        Timer.publish(every: 30, on: .main, in: .common)
+    /// Start connection monitoring (call when view appears)
+    func startConnectionMonitoring() {
+        guard !isMonitoringActive else { return }
+        isMonitoringActive = true
+
+        connectionTimer = Timer.publish(every: 60, on: .main, in: .common) // Reduced from 30s to 60s
             .autoconnect()
             .sink { [weak self] _ in
                 Task { @MainActor in
                     await self?.checkConnection()
                 }
             }
-            .store(in: &cancellables)
+
+        // Do initial check
+        Task { @MainActor in
+            await checkConnection()
+        }
+    }
+
+    /// Stop connection monitoring (call when view disappears)
+    func stopConnectionMonitoring() {
+        isMonitoringActive = false
+        connectionTimer?.cancel()
+        connectionTimer = nil
     }
 
     private func checkConnection() async {
@@ -712,7 +730,7 @@ class ConvexClient: ObservableObject {
         if useMockData {
             return MockData.newsletterSubscribers
         }
-        return try await query("newsletter:list")
+        return try await query("newsletterSubscribers:list")
     }
 
     /// Fetch all contact form submissions
@@ -720,7 +738,7 @@ class ConvexClient: ObservableObject {
         if useMockData {
             return MockData.contactSubmissions
         }
-        return try await query("contacts:list")
+        return try await query("contactSubmissions:list")
     }
 
     /// Fetch discount codes for a partner store
@@ -736,7 +754,128 @@ class ConvexClient: ObservableObject {
         if useMockData {
             return MockData.discountCodes
         }
-        return try await query("discountCodes:list")
+        return try await query("discountCodes:listAll")
+    }
+
+    /// Fetch all discount codes with partner/product names (enriched)
+    func fetchAllDiscountCodesEnriched() async throws -> [EnrichedDiscountCode] {
+        if useMockData {
+            // Return enriched mock data
+            return MockData.discountCodes.map { code in
+                EnrichedDiscountCode(
+                    id: code.id,
+                    code: code.code,
+                    partnerStoreId: code.partnerStoreId,
+                    discountType: code.discountType,
+                    discountValue: code.discountValue,
+                    usageCount: code.usageCount,
+                    maxUsage: code.maxUsage,
+                    active: code.active,
+                    expiresAt: code.expiresAt,
+                    createdAt: code.createdAt,
+                    stripeCouponId: code.stripeCouponId,
+                    productId: code.productId,
+                    isCustomProduct: code.isCustomProduct,
+                    commissionEnabled: code.commissionEnabled,
+                    commissionType: code.commissionType,
+                    commissionValue: code.commissionValue,
+                    partnerName: "Mock Partner",
+                    productName: nil
+                )
+            }
+        }
+        return try await query("discountCodes:listAll")
+    }
+
+    /// Create a new discount code
+    func createDiscountCode(
+        code: String,
+        partnerStoreId: String,
+        discountType: String,
+        discountValue: Double,
+        maxUsage: Int?,
+        expiresAt: Int?,
+        productId: String?,
+        isCustomProduct: Bool?,
+        commissionEnabled: Bool,
+        commissionType: String?,
+        commissionValue: Double?
+    ) async throws {
+        var args: [String: Any] = [
+            "code": code,
+            "partnerStoreId": partnerStoreId,
+            "discountType": discountType,
+            "discountValue": discountValue,
+            "commissionEnabled": commissionEnabled
+        ]
+
+        if let maxUsage = maxUsage {
+            args["maxUsage"] = maxUsage
+        }
+        if let expiresAt = expiresAt {
+            args["expiresAt"] = expiresAt
+        }
+        if let productId = productId {
+            args["productId"] = productId
+        }
+        if let isCustomProduct = isCustomProduct {
+            args["isCustomProduct"] = isCustomProduct
+        }
+        if let commissionType = commissionType {
+            args["commissionType"] = commissionType
+        }
+        if let commissionValue = commissionValue {
+            args["commissionValue"] = commissionValue
+        }
+
+        let _: Bool = try await mutation("discountCodes:create", args: args)
+    }
+
+    /// Update a discount code
+    func updateDiscountCode(
+        codeId: String,
+        discountType: String? = nil,
+        discountValue: Double? = nil,
+        maxUsage: Int? = nil,
+        expiresAt: Int? = nil,
+        active: Bool? = nil,
+        commissionEnabled: Bool? = nil,
+        commissionType: String? = nil,
+        commissionValue: Double? = nil
+    ) async throws {
+        var args: [String: Any] = ["codeId": codeId]
+
+        if let discountType = discountType {
+            args["discountType"] = discountType
+        }
+        if let discountValue = discountValue {
+            args["discountValue"] = discountValue
+        }
+        if let maxUsage = maxUsage {
+            args["maxUsage"] = maxUsage
+        }
+        if let expiresAt = expiresAt {
+            args["expiresAt"] = expiresAt
+        }
+        if let active = active {
+            args["active"] = active
+        }
+        if let commissionEnabled = commissionEnabled {
+            args["commissionEnabled"] = commissionEnabled
+        }
+        if let commissionType = commissionType {
+            args["commissionType"] = commissionType
+        }
+        if let commissionValue = commissionValue {
+            args["commissionValue"] = commissionValue
+        }
+
+        let _: Bool = try await mutation("discountCodes:update", args: args)
+    }
+
+    /// Delete a discount code
+    func deleteDiscountCode(codeId: String) async throws {
+        let _: Bool = try await mutation("discountCodes:remove", args: ["codeId": codeId])
     }
 
     // MARK: - Bulk Order Operations
@@ -1108,8 +1247,9 @@ struct MockData {
             lastName: "Johnson",
             email: "subscriber1@example.com",
             phone: "555-8888",
-            subscribedAt: Date().addingTimeInterval(-86400 * 30),
-            isActive: true
+            company: nil,
+            source: "homepage",
+            createdAt: Date().addingTimeInterval(-86400 * 30)
         ),
         NewsletterSubscriber(
             id: "news_002",
@@ -1117,8 +1257,9 @@ struct MockData {
             lastName: "Williams",
             email: "subscriber2@example.com",
             phone: nil,
-            subscribedAt: Date().addingTimeInterval(-86400 * 15),
-            isActive: true
+            company: "Gun Shop LLC",
+            source: "checkout",
+            createdAt: Date().addingTimeInterval(-86400 * 15)
         ),
         NewsletterSubscriber(
             id: "news_003",
@@ -1126,8 +1267,9 @@ struct MockData {
             lastName: "Brown",
             email: "subscriber3@example.com",
             phone: "555-9999",
-            subscribedAt: Date().addingTimeInterval(-86400 * 7),
-            isActive: true
+            company: nil,
+            source: "homepage",
+            createdAt: Date().addingTimeInterval(-86400 * 7)
         )
     ]
 
@@ -1140,8 +1282,9 @@ struct MockData {
             subject: "Bulk Order Inquiry",
             message: "Interested in bulk order pricing for my shop",
             status: .new,
-            createdAt: Date().addingTimeInterval(-86400 * 2),
-            respondedAt: nil
+            emailSentToAdmin: true,
+            emailSentToCustomer: true,
+            createdAt: Date().addingTimeInterval(-86400 * 2)
         ),
         ContactSubmission(
             id: "contact_002",
@@ -1150,9 +1293,10 @@ struct MockData {
             phone: nil,
             subject: "Turnaround Time Question",
             message: "Question about custom engraving turnaround time",
-            status: .responded,
-            createdAt: Date().addingTimeInterval(-86400 * 5),
-            respondedAt: Date().addingTimeInterval(-86400 * 4)
+            status: .replied,
+            emailSentToAdmin: true,
+            emailSentToCustomer: true,
+            createdAt: Date().addingTimeInterval(-86400 * 5)
         )
     ]
 
@@ -1167,7 +1311,13 @@ struct MockData {
             maxUsage: nil,
             active: true,
             expiresAt: nil,
-            createdAt: Date().addingTimeInterval(-86400 * 90)
+            createdAt: Date().addingTimeInterval(-86400 * 90),
+            stripeCouponId: nil,
+            productId: nil,
+            isCustomProduct: nil,
+            commissionEnabled: true,
+            commissionType: .percentage,
+            commissionValue: 10.0
         ),
         DiscountCode(
             id: "disc_002",
@@ -1179,7 +1329,13 @@ struct MockData {
             maxUsage: 100,
             active: true,
             expiresAt: Date().addingTimeInterval(86400 * 30),
-            createdAt: Date().addingTimeInterval(-86400 * 60)
+            createdAt: Date().addingTimeInterval(-86400 * 60),
+            stripeCouponId: nil,
+            productId: nil,
+            isCustomProduct: nil,
+            commissionEnabled: false,
+            commissionType: nil,
+            commissionValue: nil
         )
     ]
 }
