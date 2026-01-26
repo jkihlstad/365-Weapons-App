@@ -133,7 +133,7 @@ struct CustomersView: View {
                     .foregroundColor(Color.appTextSecondary)
                 Text(viewModel.formattedTotalRevenue)
                     .font(.title3.weight(.bold))
-                    .foregroundColor(.green)
+                    .foregroundColor(Color.appSuccess)
             }
         }
         .padding()
@@ -212,7 +212,7 @@ struct CustomerCard: View {
                     if customer.totalSpent > 0 {
                         Text(customer.formattedTotalSpent)
                             .font(.subheadline.weight(.bold))
-                            .foregroundColor(.green)
+                            .foregroundColor(Color.appSuccess)
                     }
                 }
             }
@@ -224,11 +224,11 @@ struct CustomerCard: View {
 
     private var sourceColor: Color {
         switch customer.source {
-        case .order: return .green
-        case .inquiry: return .blue
-        case .newsletter: return .purple
+        case .order: return Color.appSuccess
+        case .inquiry: return Color.appAccent
+        case .newsletter: return Color.appAccent
         case .contact: return Color.appAccent
-        case .vendor: return .red
+        case .vendor: return Color.appDanger
         }
     }
 }
@@ -254,11 +254,11 @@ struct SourceBadge: View {
 
     private var sourceColor: Color {
         switch source {
-        case .order: return .green
-        case .inquiry: return .blue
-        case .newsletter: return .purple
+        case .order: return Color.appSuccess
+        case .inquiry: return Color.appAccent
+        case .newsletter: return Color.appAccent
         case .contact: return Color.appAccent
-        case .vendor: return .red
+        case .vendor: return Color.appDanger
         }
     }
 }
@@ -372,11 +372,11 @@ struct CustomerDetailView: View {
                     VStack(spacing: 4) {
                         ZStack {
                             Circle()
-                                .fill(Color.blue.opacity(0.2))
+                                .fill(Color.appAccent.opacity(0.2))
                                 .frame(width: 50, height: 50)
                             Image(systemName: "envelope.fill")
                                 .font(.title3)
-                                .foregroundColor(.blue)
+                                .foregroundColor(Color.appAccent)
                         }
                         Text("Email")
                             .font(.caption)
@@ -392,11 +392,11 @@ struct CustomerDetailView: View {
                         VStack(spacing: 4) {
                             ZStack {
                                 Circle()
-                                    .fill(Color.green.opacity(0.2))
+                                    .fill(Color.appSuccess.opacity(0.2))
                                     .frame(width: 50, height: 50)
                                 Image(systemName: "phone.fill")
                                     .font(.title3)
-                                    .foregroundColor(.green)
+                                    .foregroundColor(Color.appSuccess)
                             }
                             Text("Call")
                                 .font(.caption)
@@ -413,11 +413,11 @@ struct CustomerDetailView: View {
                     VStack(spacing: 4) {
                         ZStack {
                             Circle()
-                                .fill(Color.purple.opacity(0.2))
+                                .fill(Color.appAccent.opacity(0.2))
                                 .frame(width: 50, height: 50)
                             Image(systemName: "person.fill")
                                 .font(.title3)
-                                .foregroundColor(.purple)
+                                .foregroundColor(Color.appAccent)
                         }
                         Text("Profile")
                             .font(.caption)
@@ -476,7 +476,7 @@ struct CustomerDetailView: View {
                         .foregroundColor(Color.appTextSecondary)
                     Text(customer.formattedTotalSpent)
                         .font(.title2.weight(.bold))
-                        .foregroundColor(.green)
+                        .foregroundColor(Color.appSuccess)
                 }
             }
 
@@ -517,7 +517,7 @@ struct CustomerDetailView: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(order.formattedTotal)
                             .font(.subheadline.weight(.bold))
-                            .foregroundColor(.green)
+                            .foregroundColor(Color.appSuccess)
                         StatusBadge(orderStatus: order.status)
                     }
                 }
@@ -560,8 +560,8 @@ struct CustomerDetailView: View {
                             .font(.caption)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color.blue.opacity(0.2))
-                            .foregroundColor(.blue)
+                            .background(Color.appAccent.opacity(0.2))
+                            .foregroundColor(Color.appAccent)
                             .cornerRadius(4)
                     }
                 }
@@ -579,11 +579,11 @@ struct CustomerDetailView: View {
 
     private var sourceColor: Color {
         switch customer.source {
-        case .order: return .green
-        case .inquiry: return .blue
-        case .newsletter: return .purple
+        case .order: return Color.appSuccess
+        case .inquiry: return Color.appAccent
+        case .newsletter: return Color.appAccent
         case .contact: return Color.appAccent
-        case .vendor: return .red
+        case .vendor: return Color.appDanger
         }
     }
 }

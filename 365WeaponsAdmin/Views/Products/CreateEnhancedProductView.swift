@@ -221,7 +221,7 @@ struct NavigationButtonsView: View {
                     .foregroundColor(Color.appBackground)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(canSubmit ? (Color.appAccent) : Color.gray)
+                    .background(canSubmit ? Color.appAccent : Color.appTextSecondary)
                     .cornerRadius(10)
                 }
                 .disabled(!canSubmit || isSubmitting)
@@ -312,7 +312,7 @@ struct BasicInfoStepView: View {
                                             .foregroundColor(Color.appAccent)
                                     }
                                 }
-                                .foregroundColor(draft.pagePlacement == placement ? (Color.appAccent) : .white)
+                                .foregroundColor(draft.pagePlacement == placement ? (Color.appAccent) : Color.appTextPrimary)
                                 .padding()
                                 .background(draft.pagePlacement == placement ? Color.appAccent.opacity(0.2) : Color.appSurface2)
                                 .cornerRadius(10)
@@ -520,7 +520,7 @@ struct MediaStepView: View {
                                     draft.videos.remove(at: index)
                                 } label: {
                                     Image(systemName: "xmark.circle.fill")
-                                        .foregroundColor(.red)
+                                        .foregroundColor(Color.appDanger)
                                 }
                             }
                             .padding(8)
@@ -604,10 +604,10 @@ struct ImageThumbnailView: View {
                     AsyncImage(url: imageUrl) { image in
                         image.resizable().scaledToFill()
                     } placeholder: {
-                        Color.gray
+                        Color.appSurface2
                     }
                 } else {
-                    Color.gray
+                    Color.appSurface2
                 }
             }
             .frame(width: 80, height: 80)
@@ -735,7 +735,7 @@ struct VariantEditorView: View {
                     onDelete()
                 } label: {
                     Image(systemName: "trash")
-                        .foregroundColor(.red)
+                        .foregroundColor(Color.appDanger)
                 }
             }
 
@@ -759,7 +759,7 @@ struct VariantEditorView: View {
                             set: { variant.options[optIndex].priceModifier = $0 }
                         ), format: .number)
                         .keyboardType(.decimalPad)
-                        .foregroundColor(option.priceModifier >= 0 ? .green : .red)
+                        .foregroundColor(option.priceModifier >= 0 ? Color.appSuccess : Color.appDanger)
                         .frame(width: 60)
                     }
 
@@ -767,7 +767,7 @@ struct VariantEditorView: View {
                         variant.options.remove(at: optIndex)
                     } label: {
                         Image(systemName: "minus.circle")
-                            .foregroundColor(.red)
+                            .foregroundColor(Color.appDanger)
                     }
                 }
                 .padding(8)
@@ -868,7 +868,7 @@ struct AddOnEditorView: View {
                         .foregroundColor(Color.appTextSecondary)
                     TextField("0", text: $priceText)
                         .keyboardType(.decimalPad)
-                        .foregroundColor(.green)
+                        .foregroundColor(Color.appSuccess)
                         .frame(width: 60)
                         .onChange(of: priceText) { _, newValue in
                             addOn.price = Double(newValue) ?? 0
@@ -879,7 +879,7 @@ struct AddOnEditorView: View {
                     onDelete()
                 } label: {
                     Image(systemName: "trash")
-                        .foregroundColor(.red)
+                        .foregroundColor(Color.appDanger)
                 }
             }
 
@@ -918,19 +918,19 @@ struct ReviewStepView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.red)
+                                .foregroundColor(Color.appDanger)
                             Text("Please fix the following:")
-                                .foregroundColor(.red)
+                                .foregroundColor(Color.appDanger)
                         }
 
                         ForEach(draft.validationErrors, id: \.self) { error in
                             Text("- \(error)")
                                 .font(.caption)
-                                .foregroundColor(.red)
+                                .foregroundColor(Color.appDanger)
                         }
                     }
                     .padding()
-                    .background(Color.red.opacity(0.2))
+                    .background(Color.appDanger.opacity(0.2))
                     .cornerRadius(10)
                 }
 
@@ -944,7 +944,7 @@ struct ReviewStepView: View {
                                     .resizable()
                                     .scaledToFill()
                             } else {
-                                Color.gray
+                                Color.appSurface2
                             }
                         }
                         .frame(height: 200)
@@ -1043,7 +1043,7 @@ struct FormField<Content: View>: View {
                     .foregroundColor(Color.appTextSecondary)
                 if required {
                     Text("*")
-                        .foregroundColor(.red)
+                        .foregroundColor(Color.appDanger)
                 }
             }
             content

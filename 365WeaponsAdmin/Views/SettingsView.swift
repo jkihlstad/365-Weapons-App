@@ -33,7 +33,7 @@ struct SettingsView: View {
                             Circle()
                                 .fill(
                                     LinearGradient(
-                                        colors: [Color.appAccent, .red],
+                                        colors: [Color.appAccent, Color.appDanger],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     )
@@ -53,10 +53,10 @@ struct SettingsView: View {
 
                             HStack {
                                 Image(systemName: "checkmark.shield.fill")
-                                    .foregroundColor(.green)
+                                    .foregroundColor(Color.appSuccess)
                                 Text("Admin Access")
                                     .font(.caption)
-                                    .foregroundColor(.green)
+                                    .foregroundColor(Color.appSuccess)
                             }
                         }
                     }
@@ -208,7 +208,7 @@ struct SettingsView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -319,7 +319,7 @@ struct CacheManagementView: View {
                     Label("Connection", systemImage: offlineManager.isOnline ? "wifi" : "wifi.slash")
                     Spacer()
                     Text(offlineManager.isOnline ? "Online" : "Offline")
-                        .foregroundColor(offlineManager.isOnline ? .green : .red)
+                        .foregroundColor(offlineManager.isOnline ? Color.appSuccess : Color.appDanger)
                 }
 
                 HStack {
@@ -591,7 +591,7 @@ struct APISettingsView: View {
                 ForEach(configManager.keyStatuses) { status in
                     HStack {
                         Image(systemName: status.isConfigured ? "checkmark.circle.fill" : "circle")
-                            .foregroundColor(status.isConfigured ? .green : .gray)
+                            .foregroundColor(status.isConfigured ? Color.appSuccess : Color.appTextSecondary)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text(status.keyType.displayName)
@@ -605,7 +605,7 @@ struct APISettingsView: View {
 
                         if let result = testResults[status.keyType] {
                             Image(systemName: result ? "checkmark.circle.fill" : "xmark.circle.fill")
-                                .foregroundColor(result ? .green : .red)
+                                .foregroundColor(result ? Color.appSuccess : Color.appDanger)
                         }
                     }
                 }
@@ -649,7 +649,7 @@ struct APISettingsView: View {
                     Spacer()
                     if configManager.hasAPIKey(for: .openRouter) {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(Color.appSuccess)
                             .font(.caption)
                     }
                 }
@@ -693,7 +693,7 @@ struct APISettingsView: View {
                     Spacer()
                     if configManager.hasAPIKey(for: .openAI) {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(Color.appSuccess)
                             .font(.caption)
                     }
                 }
@@ -737,7 +737,7 @@ struct APISettingsView: View {
                     Spacer()
                     if configManager.hasAPIKey(for: .clerk) {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(Color.appSuccess)
                             .font(.caption)
                     }
                 }
@@ -791,7 +791,7 @@ struct APISettingsView: View {
                     Spacer()
                     if configManager.hasAPIKey(for: .convex) {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(Color.appSuccess)
                             .font(.caption)
                     }
                 }
@@ -835,7 +835,7 @@ struct APISettingsView: View {
                     Spacer()
                     if configManager.hasAPIKey(for: .tavily) {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(Color.appSuccess)
                             .font(.caption)
                     }
                 }
@@ -900,7 +900,7 @@ struct APISettingsView: View {
                     Spacer()
                     if configManager.hasAPIKey(for: .backendAuth) {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(Color.appSuccess)
                             .font(.caption)
                     }
                 }
@@ -1163,7 +1163,7 @@ struct AboutView: View {
                     .font(.system(size: 80))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [Color.appAccent, .red],
+                            colors: [Color.appAccent, Color.appDanger],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )

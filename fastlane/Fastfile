@@ -1,0 +1,252 @@
+# Fastfile for 365WeaponsAdmin
+# https://docs.fastlane.tools
+
+default_platform(:ios)
+
+platform :ios do
+
+  # ==========================================
+  # CERTIFICATE MANAGEMENT
+  # ==========================================
+
+  desc "Revoke and regenerate ALL certificates (use after security incident)"
+  lane :nuke_and_regenerate do
+    UI.important("WARNING: This will revoke ALL existing certificates!")
+    UI.important("Press Enter to continue or Ctrl+C to abort...")
+    STDIN.gets
+
+    # Nuke existing certs (requires confirmation)
+    begin
+      match_nuke(type: "development", skip_confirmation: false)
+      match_nuke(type: "appstore", skip_confirmation: false)
+    rescue => e
+      UI.error("Nuke failed (may not have match set up): #{e.message}")
+    end
+
+    # Generate fresh certificates
+    regenerate_certs
+  end
+
+  desc "Create new development and distribution certificates"
+  lane :regenerate_certs do
+    # Development certificate
+    cert(
+      development: true,
+      force: true,
+      output_path: "./fastlane/certs"
+    )
+
+    # Distribution certificate
+    cert(
+      development: false,
+      force: true,
+      output_path: "./fastlane/certs"
+    )
+
+    UI.success("Certificates regenerated successfully!")
+    UI.message("Now run: fastlane regenerate_profiles")
+  end
+
+  desc "Regenerate all provisioning profiles"
+  lane :regenerate_profiles do
+    # Development profile
+    sigh(
+      app_identifier: "com.weapons365.admin",
+      development: true,
+      force: true,
+      output_path: "./fastlane/profiles"
+    )
+
+    # App Store distribution profile
+    sigh(
+      app_identifier: "com.weapons365.admin",
+      development: false,
+      force: true,
+      output_path: "./fastlane/profiles"
+    )
+
+    UI.success("Provisioning profiles regenerated!")
+  end
+
+  desc "Full certificate and profile setup (fresh start)"
+  lane :setup_signing do
+    regenerate_certs
+    regenerate_profiles
+  end
+
+  # ==========================================
+  # MATCH (Certificate Sync via GitHub)
+  # Repo: https://github.com/jkihlstad/365weapons-certificates
+  # ==========================================
+
+  desc "SECURITY RECOVERY: Nuke old certs and create fresh ones via match"
+  lane :security_reset do
+    UI.header("SECURITY INCIDENT RECOVERY")
+    UI.important("This will:")
+    UI.important("  1. Revoke ALL existing certificates")
+    UI.important("  2. Delete ALL provisioning profiles")
+    UI.important("  3. Generate new certificates")
+    UI.important("  4. Store encrypted copies in GitHub")
+    UI.message("")
+    UI.important("Type 'RESET' to confirm:")
+
+    confirm = STDIN.gets.chomp
+    if confirm != "RESET"
+      UI.user_error!("Aborted")
+    end
+
+    # Nuke development certs
+    match_nuke(type: "development")
+
+    # Nuke distribution certs
+    match_nuke(type: "appstore")
+
+    # Generate fresh certs via match
+    match(type: "development", force: true)
+    match(type: "appstore", force: true)
+
+    UI.success("Security reset complete!")
+    UI.success("New certificates are stored in: https://github.com/jkihlstad/365weapons-certificates")
+  end
+
+  desc "Generate new certificates and profiles via match (first-time setup)"
+  lane :match_setup do
+    match(type: "development", force: false)
+    match(type: "appstore", force: false)
+    UI.success("Certificates synced to GitHub!")
+  end
+
+  desc "Sync certificates using match (generates if missing)"
+  lane :sync_certs do
+    match(type: "development", readonly: false)
+    match(type: "appstore", readonly: false)
+  end
+
+  desc "Fetch certificates in readonly mode (use on CI/CD)"
+  lane :fetch_certs do
+    match(type: "development", readonly: true)
+    match(type: "appstore", readonly: true)
+  end
+
+  # ==========================================
+  # BUILD
+  # ==========================================
+
+  desc "Build for simulator testing"
+  lane :build_simulator do
+    xcodebuild(
+      project: "365WeaponsAdmin.xcodeproj",
+      scheme: "365WeaponsAdmin",
+      sdk: "iphonesimulator",
+      destination: "platform=iOS Simulator,name=iPhone 16e",
+      build: true,
+      clean: true
+    )
+  end
+
+  desc "Build for device/TestFlight"
+  lane :build_release do
+    # Ensure we have valid signing
+    sigh(
+      app_identifier: "com.weapons365.admin",
+      development: false,
+      readonly: true
+    )
+
+    build_app(
+      project: "365WeaponsAdmin.xcodeproj",
+      scheme: "365WeaponsAdmin",
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "365WeaponsAdmin.ipa",
+      clean: true
+    )
+  end
+
+  # ==========================================
+  # TESTFLIGHT
+  # ==========================================
+
+  desc "Bump version for TestFlight (increments by 0.1)"
+  lane :bump_version do
+    # Get current version
+    current = get_version_number(xcodeproj: "365WeaponsAdmin.xcodeproj")
+    new_version = (current.to_f + 0.1).round(1).to_s
+
+    # Update version
+    increment_version_number(
+      version_number: new_version,
+      xcodeproj: "365WeaponsAdmin.xcodeproj"
+    )
+
+    # Increment build number
+    increment_build_number(xcodeproj: "365WeaponsAdmin.xcodeproj")
+
+    UI.success("Version bumped to #{new_version}")
+  end
+
+  desc "Build and upload to TestFlight"
+  lane :testflight_deploy do
+    # Bump version
+    bump_version
+
+    # Build
+    build_release
+
+    # Upload to TestFlight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      apple_id: ENV["APP_APPLE_ID"] # App's Apple ID (not your account)
+    )
+
+    # Commit version bump
+    version = get_version_number(xcodeproj: "365WeaponsAdmin.xcodeproj")
+    git_commit(
+      path: ["365WeaponsAdmin.xcodeproj"],
+      message: "Bump version to #{version} for TestFlight"
+    )
+
+    UI.success("Uploaded to TestFlight!")
+  end
+
+  # ==========================================
+  # UTILITIES
+  # ==========================================
+
+  desc "Clean derived data and build artifacts"
+  lane :clean do
+    clear_derived_data
+    sh("rm -rf ../build/*.ipa")
+    sh("rm -rf ../build/*.dSYM.zip")
+    UI.success("Cleaned!")
+  end
+
+  desc "Display current signing status"
+  lane :signing_status do
+    UI.message("Checking signing identities...")
+    sh("security find-identity -v -p codesigning")
+
+    UI.message("\nChecking provisioning profiles...")
+    sh("ls -la ~/Library/MobileDevice/Provisioning\\ Profiles/ 2>/dev/null || echo 'No profiles found'")
+  end
+
+  desc "Revoke all certificates (DANGER)"
+  lane :revoke_all do
+    UI.important("This will revoke ALL certificates for team D33FTL28LK")
+    UI.important("You will need to regenerate certs for ALL apps using this team!")
+    UI.important("Type 'REVOKE' to confirm:")
+
+    confirm = STDIN.gets.chomp
+    if confirm != "REVOKE"
+      UI.user_error!("Aborted")
+    end
+
+    # Note: This requires manual intervention at developer.apple.com
+    # Fastlane can't programmatically revoke certs without match
+    UI.important("Please manually revoke certificates at:")
+    UI.important("https://developer.apple.com/account/resources/certificates/list")
+    UI.message("")
+    UI.message("After revoking, run: fastlane setup_signing")
+  end
+
+end

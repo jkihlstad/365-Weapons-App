@@ -143,11 +143,11 @@ struct VendorCard: View {
 
                 VStack(alignment: .trailing, spacing: 4) {
                     Circle()
-                        .fill(vendor.active ? Color.green : Color.red)
+                        .fill(vendor.active ? Color.appSuccess : Color.appDanger)
                         .frame(width: 10, height: 10)
                     Text(vendor.active ? "Active" : "Inactive")
                         .font(.caption2)
-                        .foregroundColor(vendor.active ? .green : .red)
+                        .foregroundColor(vendor.active ? Color.appSuccess : Color.appDanger)
                 }
             }
 
@@ -282,10 +282,10 @@ struct VendorDetailView: View {
                         if !vendor.onboardingComplete {
                             Text("Pending")
                                 .font(.caption)
-                                .foregroundColor(.yellow)
+                                .foregroundColor(Color.appWarning)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(Color.yellow.opacity(0.2))
+                                .background(Color.appWarning.opacity(0.2))
                                 .cornerRadius(6)
                         }
                     }
@@ -295,11 +295,11 @@ struct VendorDetailView: View {
 
                 VStack {
                     Circle()
-                        .fill(vendor.active ? Color.green : Color.red)
+                        .fill(vendor.active ? Color.appSuccess : Color.appDanger)
                         .frame(width: 12, height: 12)
                     Text(vendor.active ? "Active" : "Inactive")
                         .font(.caption)
-                        .foregroundColor(vendor.active ? .green : .red)
+                        .foregroundColor(vendor.active ? Color.appSuccess : Color.appDanger)
                 }
             }
 
@@ -318,11 +318,11 @@ struct VendorDetailView: View {
                     VStack(spacing: 4) {
                         ZStack {
                             Circle()
-                                .fill(Color.blue.opacity(0.2))
+                                .fill(Color.appAccent.opacity(0.2))
                                 .frame(width: 50, height: 50)
                             Image(systemName: "envelope.fill")
                                 .font(.title3)
-                                .foregroundColor(.blue)
+                                .foregroundColor(Color.appAccent)
                         }
                         Text("Email")
                             .font(.caption)
@@ -337,11 +337,11 @@ struct VendorDetailView: View {
                     VStack(spacing: 4) {
                         ZStack {
                             Circle()
-                                .fill(Color.green.opacity(0.2))
+                                .fill(Color.appSuccess.opacity(0.2))
                                 .frame(width: 50, height: 50)
                             Image(systemName: "phone.fill")
                                 .font(.title3)
-                                .foregroundColor(.green)
+                                .foregroundColor(Color.appSuccess)
                         }
                         Text("Call")
                             .font(.caption)
@@ -356,11 +356,11 @@ struct VendorDetailView: View {
                     VStack(spacing: 4) {
                         ZStack {
                             Circle()
-                                .fill(Color.purple.opacity(0.2))
+                                .fill(Color.appAccent.opacity(0.2))
                                 .frame(width: 50, height: 50)
                             Image(systemName: "person.fill")
                                 .font(.title3)
-                                .foregroundColor(.purple)
+                                .foregroundColor(Color.appAccent)
                         }
                         Text("Profile")
                             .font(.caption)
@@ -453,7 +453,7 @@ struct VendorDetailView: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(order.formattedTotal)
                             .font(.subheadline.weight(.bold))
-                            .foregroundColor(.green)
+                            .foregroundColor(Color.appSuccess)
                         StatusBadge(orderStatus: order.status)
                     }
                 }
@@ -510,10 +510,10 @@ struct VendorDetailView: View {
     private func commissionStatusColor(_ status: CommissionStatus) -> Color {
         switch status {
         case .pending: return Color.appAccent
-        case .eligible: return .blue
-        case .approved: return .purple
-        case .paid: return .green
-        case .voided: return .red
+        case .eligible: return Color.appAccent
+        case .approved: return Color.appAccent
+        case .paid: return Color.appSuccess
+        case .voided: return Color.appDanger
         }
     }
 }

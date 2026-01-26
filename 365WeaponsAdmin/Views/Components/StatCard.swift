@@ -70,8 +70,13 @@ struct StatCard: View {
             valueSection
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.appBorder, lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
     }
 
     private var headerRow: some View {
@@ -149,10 +154,10 @@ struct ComingSoonBadge: View {
     var body: some View {
         Text("Soon")
             .font(.caption2)
-            .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+            .foregroundColor(Color.appAccent)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.2) : Color.red.opacity(0.15))
+            .background(Color.appAccent.opacity(0.2))
             .cornerRadius(4)
     }
 }
@@ -206,7 +211,7 @@ struct CompactStatCard: View {
             }
         }
         .padding(12)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 }
@@ -259,5 +264,5 @@ struct CompactStatCard: View {
         )
     }
     .padding()
-    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
+    .background(Color.appBackground)
 }

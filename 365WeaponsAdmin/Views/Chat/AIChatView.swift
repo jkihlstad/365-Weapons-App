@@ -284,7 +284,7 @@ struct MessageBubble: View {
                 // User avatar
                 ZStack {
                     Circle()
-                        .fill(Color.blue)
+                        .fill(Color.appAccent)
                     Image(systemName: "person.fill")
                         .font(.caption)
                         .foregroundColor(Color.appTextPrimary)
@@ -326,7 +326,7 @@ struct TypingIndicator: View {
         HStack(spacing: 4) {
             ForEach(0..<3) { index in
                 Circle()
-                    .fill(Color.gray)
+                    .fill(Color.appTextSecondary)
                     .frame(width: 8, height: 8)
                     .offset(y: animationOffset)
                     .animation(
@@ -410,7 +410,7 @@ struct VoiceModeView: View {
                 Button(action: toggleRecording) {
                     ZStack {
                         Circle()
-                            .fill(isRecording ? Color.red : Color.appAccent)
+                            .fill(isRecording ? Color.appDanger : Color.appAccent)
                             .frame(width: 80, height: 80)
 
                         Image(systemName: isRecording ? "stop.fill" : "mic.fill")
@@ -565,7 +565,7 @@ struct ChatSettingsView: View {
                     Button("Clear Conversation History") {
                         viewModel.clearHistory()
                     }
-                    .foregroundColor(.red)
+                    .foregroundColor(Color.appDanger)
                 }
             }
             .scrollContentBackground(.hidden)

@@ -93,7 +93,7 @@ struct SearchBar: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
+        .background(Color.appSurface2)
         .cornerRadius(10)
         .onAppear {
             if focusOnAppear {
@@ -115,7 +115,7 @@ struct SearchBar: View {
         Button(action: { onFilterTap?() }) {
             Image(systemName: "line.3.horizontal.decrease.circle")
                 .font(.title2)
-                .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                .foregroundColor(Color.appAccent)
         }
         .buttonStyle(.plain)
     }
@@ -147,7 +147,7 @@ extension SearchBar {
             return AnyView(
                 self
                     .padding(.vertical, 4)
-                    .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+                    .background(Color.appSurface)
                     .cornerRadius(12)
             )
         case .minimal:
@@ -203,7 +203,7 @@ private struct ScopeButton: View {
                 .font(.subheadline)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(isSelected ? (appearanceManager.isDarkMode ? Color.appAccent : Color.red) : (appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground)))
+                .background(isSelected ? Color.appAccent : Color.appSurface2)
                 .foregroundColor(isSelected ? Color.appTextPrimary : Color.appTextSecondary)
                 .cornerRadius(16)
         }
@@ -246,7 +246,7 @@ struct InlineSearchBar: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
+        .background(Color.appSurface2)
         .cornerRadius(8)
     }
 }
@@ -278,5 +278,5 @@ struct InlineSearchBar: View {
         Spacer()
     }
     .padding()
-    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
+    .background(Color.appBackground)
 }

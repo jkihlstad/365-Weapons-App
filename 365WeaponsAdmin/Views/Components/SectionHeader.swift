@@ -112,7 +112,7 @@ struct SectionHeader<TrailingContent: View>: View {
                         Image(systemName: "chevron.right")
                             .font(.caption2)
                     }
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
                 }
                 .buttonStyle(.plain)
             }
@@ -295,7 +295,7 @@ struct CardSection<Content: View>: View {
             content()
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 }
@@ -373,5 +373,5 @@ struct CardSection<Content: View>: View {
         }
         .padding()
     }
-    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
+    .background(Color.appBackground)
 }

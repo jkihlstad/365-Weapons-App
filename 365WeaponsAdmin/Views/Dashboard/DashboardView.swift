@@ -87,7 +87,7 @@ struct DashboardView: View {
                     }
                     .padding()
                 }
-                .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+                .background(Color.appBackground.ignoresSafeArea())
 
                 // Loading overlay using new component
                 if viewModel.isLoading {
@@ -109,8 +109,8 @@ struct DashboardView: View {
                         .font(.subheadline.weight(.medium))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.2) : Color.red.opacity(0.15))
-                        .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                        .background(Color.appAccent.opacity(0.2))
+                        .foregroundColor(Color.appAccent)
                         .cornerRadius(8)
                     }
                 }
@@ -248,7 +248,7 @@ struct DashboardView: View {
         HStack(spacing: 12) {
             Image(systemName: "wifi.slash")
                 .font(.system(size: 18))
-                .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                .foregroundColor(Color.appAccent)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Connection Lost")
@@ -269,27 +269,27 @@ struct DashboardView: View {
             }) {
                 Text("Retry")
                     .font(.caption.weight(.semibold))
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.2) : Color.red.opacity(0.15))
+                    .background(Color.appAccent.opacity(0.2))
                     .cornerRadius(6)
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.1) : Color.red.opacity(0.1))
+        .background(Color.appAccent.opacity(0.1))
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke((appearanceManager.isDarkMode ? Color.appAccent : Color.red).opacity(0.3), lineWidth: 1)
+                .stroke(Color.appAccent.opacity(0.3), lineWidth: 1)
         )
     }
 
     private func connectionColor(for state: ConvexClient.ConnectionState) -> Color {
         switch state {
         case .connected: return .green
-        case .connecting, .reconnecting: return appearanceManager.isDarkMode ? Color.appAccent : .red
-        case .disconnected, .error: return .red
+        case .connecting, .reconnecting: return Color.appAccent
+        case .disconnected, .error: return Color.appDanger
         }
     }
 
@@ -324,7 +324,7 @@ struct DashboardView: View {
                         Text("\(String(format: "%.1f", abs(growth)))% \(growth >= 0 ? "growth" : "decline")")
                     }
                     .font(.subheadline)
-                    .foregroundColor(growth >= 0 ? .green : .red)
+                    .foregroundColor(growth >= 0 ? Color.appSuccess : Color.appDanger)
                 }
             }
 
@@ -340,7 +340,7 @@ struct DashboardView: View {
             .frame(width: 200)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -461,7 +461,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -478,7 +478,7 @@ struct DashboardView: View {
                         Image(systemName: "chevron.right")
                             .font(.caption2)
                     }
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
                 }
             }
 
@@ -497,7 +497,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -534,7 +534,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -565,7 +565,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -583,10 +583,10 @@ struct DashboardView: View {
                 } else {
                     Text("Coming Soon")
                         .font(.caption)
-                        .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                        .foregroundColor(Color.appAccent)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.2) : Color.red.opacity(0.15))
+                        .background(Color.appAccent.opacity(0.2))
                         .cornerRadius(4)
                 }
             }
@@ -616,7 +616,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -645,7 +645,7 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 }
@@ -717,10 +717,10 @@ struct PendingItemRow: View {
             if isComingSoon {
                 Text("Coming Soon")
                     .font(.caption2)
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.2) : Color.red.opacity(0.15))
+                    .background(Color.appAccent.opacity(0.2))
                     .cornerRadius(4)
             } else {
                 Text(isCurrency ? Double(count).currencyFormatted : "\(count)")
@@ -741,7 +741,7 @@ struct ServiceTypeCard: View {
         VStack(spacing: 8) {
             Image(systemName: serviceType.icon)
                 .font(.title2)
-                .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                .foregroundColor(Color.appAccent)
 
             Text(serviceType.displayName)
                 .font(.caption2)
@@ -752,7 +752,7 @@ struct ServiceTypeCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(8)
     }
 }
@@ -796,7 +796,7 @@ struct ActivityRow: View {
     var body: some View {
         HStack {
             Image(systemName: action.actionType.icon)
-                .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                .foregroundColor(Color.appAccent)
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -857,7 +857,7 @@ struct AIInsightsSheet: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("AI Insights")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

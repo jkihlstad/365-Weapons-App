@@ -36,6 +36,12 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output/
+fastlane/certs/
+fastlane/profiles/
+fastlane/.env
+fastlane/.env.local
+!fastlane/.env.default
+fastlane/README.md
 
 # Code Injection
 iOSInjectionProject/

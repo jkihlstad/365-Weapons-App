@@ -103,7 +103,7 @@ struct EmptyStateView: View {
                 .foregroundColor(Color.appTextPrimary)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
-                .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
+                .background(Color.appAccent)
                 .cornerRadius(10)
         }
         .padding(.top, 8)
@@ -207,7 +207,7 @@ struct EmptyStateCard: View {
             style: .card
         )
         .frame(maxWidth: .infinity)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 }
@@ -252,7 +252,7 @@ struct NoResultsView: View {
                                     .font(.subheadline)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
-                                    .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
+                                    .background(Color.appSurface2)
                                     .foregroundColor(Color.appTextPrimary)
                                     .cornerRadius(16)
                             }
@@ -282,7 +282,7 @@ struct ErrorStateView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [.red.opacity(0.8), (appearanceManager.isDarkMode ? Color.appAccent.opacity(0.6) : Color.red.opacity(0.6))],
+                        colors: [Color.appDanger.opacity(0.8), Color.appAccent.opacity(0.6)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -311,7 +311,7 @@ struct ErrorStateView: View {
                     .foregroundColor(Color.appTextPrimary)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
+                    .background(Color.appAccent)
                     .cornerRadius(10)
                 }
             }
@@ -335,14 +335,14 @@ struct ComingSoonView: View {
         VStack(spacing: 20) {
             ZStack {
                 Circle()
-                    .fill(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.1) : Color.red.opacity(0.1))
+                    .fill(Color.appAccent.opacity(0.1))
                     .frame(width: 100, height: 100)
 
                 Image(systemName: icon)
                     .font(.system(size: 40))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [appearanceManager.isDarkMode ? Color.appAccent : .red, .red],
+                            colors: [Color.appAccent, Color.appAccent.opacity(0.7)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -356,7 +356,7 @@ struct ComingSoonView: View {
 
                 Text("Coming Soon")
                     .font(.subheadline.weight(.medium))
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
 
                 if let description = description {
                     Text(description)
@@ -442,7 +442,7 @@ struct FlowLayout: Layout {
                 actionTitle: "Add Product",
                 action: {}
             )
-            .background(AppearanceManager.shared.isDarkMode ? Color.appSurface : Color.white)
+            .background(Color.appSurface)
             .cornerRadius(16)
 
             // Compact empty state
@@ -452,7 +452,7 @@ struct FlowLayout: Layout {
                 subtitle: "No orders to display",
                 style: .compact
             )
-            .background(AppearanceManager.shared.isDarkMode ? Color.appSurface : Color.white)
+            .background(Color.appSurface)
             .cornerRadius(12)
 
             // Card empty state
@@ -470,7 +470,7 @@ struct FlowLayout: Layout {
                 message: "Please check your connection and try again.",
                 retryAction: {}
             )
-            .background(AppearanceManager.shared.isDarkMode ? Color.appSurface : Color.white)
+            .background(Color.appSurface)
             .cornerRadius(16)
 
             // Coming soon
@@ -478,7 +478,7 @@ struct FlowLayout: Layout {
                 feature: "Advanced Analytics",
                 description: "Detailed insights and reporting will be available in a future update."
             )
-            .background(AppearanceManager.shared.isDarkMode ? Color.appSurface : Color.white)
+            .background(Color.appSurface)
             .cornerRadius(16)
 
             // No results
@@ -487,10 +487,10 @@ struct FlowLayout: Layout {
                 suggestions: ["Glock", "Pistol", "Handgun"],
                 onSuggestionTap: { _ in }
             )
-            .background(AppearanceManager.shared.isDarkMode ? Color.appSurface : Color.white)
+            .background(Color.appSurface)
             .cornerRadius(16)
         }
         .padding()
     }
-    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
+    .background(Color.appBackground)
 }

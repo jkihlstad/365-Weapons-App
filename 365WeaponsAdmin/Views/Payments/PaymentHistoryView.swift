@@ -27,7 +27,7 @@ struct PaymentHistoryView: View {
                 transactionsList
             }
         }
-        .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+        .background(Color.appBackground.ignoresSafeArea())
         .navigationTitle("Transaction History")
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $viewModel.searchText, prompt: "Search transactions...")
@@ -139,7 +139,7 @@ struct PaymentHistoryView: View {
             .padding(.horizontal)
             .padding(.vertical, 12)
         }
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
     }
 
     // MARK: - Transactions List
@@ -190,7 +190,7 @@ struct PaymentHistoryView: View {
 
             Text("No Transactions Found")
                 .font(.headline)
-                .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                .foregroundColor(Color.appTextPrimary)
 
             Text("Try adjusting your filters or search term")
                 .font(.subheadline)
@@ -220,10 +220,10 @@ struct FilterChipLabel: View {
             Image(systemName: "chevron.down")
                 .font(.caption2)
         }
-        .foregroundColor(isActive ? Color.appTextPrimary : (appearanceManager.isDarkMode ? Color.appTextPrimary : .primary))
+        .foregroundColor(isActive ? Color.appTextPrimary : Color.appTextPrimary)
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(isActive ? Color.appAccent : (appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground)))
+        .background(isActive ? Color.appAccent : Color.appSurface2)
         .cornerRadius(20)
     }
 }
@@ -264,7 +264,7 @@ struct TransactionDetailView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Transaction Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -294,7 +294,7 @@ struct TransactionDetailView: View {
         VStack(spacing: 8) {
             Text(transaction.formattedAmount)
                 .font(.system(size: 48, weight: .bold))
-                .foregroundColor(transaction.status == .refunded ? .red : (appearanceManager.isDarkMode ? .white : .primary))
+                .foregroundColor(transaction.status == .refunded ? Color.appDanger : Color.appTextPrimary)
 
             if transaction.status == .refunded {
                 Text("REFUNDED")
@@ -302,7 +302,7 @@ struct TransactionDetailView: View {
                     .foregroundColor(Color.appTextPrimary)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)
-                    .background(Color.red)
+                    .background(Color.appDanger)
                     .cornerRadius(12)
             }
         }
@@ -336,7 +336,7 @@ struct TransactionDetailView: View {
             Spacer()
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
@@ -346,7 +346,7 @@ struct TransactionDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Payment Details")
                 .font(.headline)
-                .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                .foregroundColor(Color.appTextPrimary)
 
             DetailInfoRow(label: "Method", value: methodDisplay)
 
@@ -361,7 +361,7 @@ struct TransactionDetailView: View {
             DetailInfoRow(label: "Transaction ID", value: transaction.id, isMonospaced: true)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
@@ -381,7 +381,7 @@ struct TransactionDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Customer")
                 .font(.headline)
-                .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                .foregroundColor(Color.appTextPrimary)
 
             if let name = transaction.customerName {
                 DetailInfoRow(label: "Name", value: name)
@@ -392,7 +392,7 @@ struct TransactionDetailView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
@@ -402,7 +402,7 @@ struct TransactionDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Timeline")
                 .font(.headline)
-                .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                .foregroundColor(Color.appTextPrimary)
 
             TimelineItem(
                 icon: "plus.circle",
@@ -430,7 +430,7 @@ struct TransactionDetailView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
@@ -447,10 +447,10 @@ struct TransactionDetailView: View {
                         Image(systemName: "arrow.uturn.backward")
                         Text("Refund Payment")
                     }
-                    .foregroundColor(.red)
+                    .foregroundColor(Color.appDanger)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.red.opacity(0.1))
+                    .background(Color.appDanger.opacity(0.1))
                     .cornerRadius(12)
                 }
             }
@@ -510,11 +510,11 @@ struct DetailInfoRow: View {
             if isMonospaced {
                 Text(value)
                     .font(.caption.monospaced())
-                    .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                    .foregroundColor(Color.appTextPrimary)
             } else {
                 Text(value)
                     .font(.subheadline)
-                    .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                    .foregroundColor(Color.appTextPrimary)
             }
         }
     }
@@ -539,7 +539,7 @@ struct TimelineItem: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.subheadline)
-                    .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                    .foregroundColor(Color.appTextPrimary)
                 Text(date.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption)
                     .foregroundColor(Color.appTextSecondary)

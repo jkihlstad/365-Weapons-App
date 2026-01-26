@@ -46,7 +46,7 @@ struct SubmissionDetailView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle(submission.type.rawValue)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -140,7 +140,7 @@ struct SubmissionDetailView: View {
                             .foregroundColor(Color.appTextPrimary)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
+                            .background(Color.appAccent)
                             .cornerRadius(6)
                     }
                 }
@@ -198,7 +198,7 @@ struct SubmissionDetailView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -246,7 +246,7 @@ struct SubmissionDetailView: View {
         switch submission.type {
         case .inquiry: return .blue
         case .vendorSignup: return .purple
-        case .contact: return appearanceManager.isDarkMode ? Color.appAccent : .red
+        case .contact: return Color.appAccent
         case .newsletter: return .green
         }
     }
@@ -472,7 +472,7 @@ struct DetailSection<Content: View>: View {
                 content
             }
             .padding()
-            .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+            .background(Color.appSurface)
             .cornerRadius(12)
         }
     }
@@ -600,7 +600,7 @@ struct CustomerProfileSheet: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Customer Profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -665,11 +665,11 @@ struct OrderMiniCard: View {
 
                 Text(order.status.displayName)
                     .font(.caption)
-                    .foregroundColor(order.status == .completed ? .green : (appearanceManager.isDarkMode ? Color.appAccent : .red))
+                    .foregroundColor(order.status == .completed ? Color.appSuccess : Color.appAccent)
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
         .padding(.horizontal)
     }
@@ -700,11 +700,11 @@ struct InquiryMiniCard: View {
 
                 Text(inquiry.status.displayName)
                     .font(.caption)
-                    .foregroundColor(inquiry.status == .completed ? .green : .blue)
+                    .foregroundColor(inquiry.status == .completed ? Color.appSuccess : .blue)
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
         .padding(.horizontal)
     }

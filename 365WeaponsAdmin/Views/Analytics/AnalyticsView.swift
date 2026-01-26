@@ -179,7 +179,7 @@ struct AnalyticsView: View {
                             x: .value("Date", point.date),
                             y: .value("Revenue", point.revenue)
                         )
-                        .foregroundStyle(.green)
+                        .foregroundStyle(Color.appSuccess)
                         .lineStyle(StrokeStyle(lineWidth: 2))
 
                     case .orders:
@@ -187,7 +187,7 @@ struct AnalyticsView: View {
                             x: .value("Date", point.date),
                             y: .value("Orders", point.orders)
                         )
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color.appAccent)
                         .cornerRadius(4)
 
                     default:
@@ -195,7 +195,7 @@ struct AnalyticsView: View {
                             x: .value("Date", point.date),
                             y: .value("Value", point.revenue)
                         )
-                        .foregroundStyle(.purple)
+                        .foregroundStyle(Color.appAccent)
                     }
                 }
                 .chartYAxis {
@@ -383,7 +383,7 @@ struct AnalyticsView: View {
                     .font(.headline)
 
                 Circle()
-                    .fill(.green)
+                    .fill(Color.appSuccess)
                     .frame(width: 8, height: 8)
                     .modifier(PulseAnimation())
 
@@ -457,7 +457,7 @@ struct MetricCard: View {
                             Text("\(String(format: "%.0f", abs(trend)))%")
                                 .font(.caption2)
                         }
-                        .foregroundColor(trend >= 0 ? .green : .red)
+                        .foregroundColor(trend >= 0 ? Color.appSuccess : Color.appDanger)
                     }
                 }
 

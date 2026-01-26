@@ -34,7 +34,7 @@ struct CodesView: View {
                     codesList
                 }
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Discount Codes")
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $viewModel.searchText, prompt: "Search codes...")
@@ -44,7 +44,7 @@ struct CodesView: View {
                         showCreateSheet = true
                     } label: {
                         Image(systemName: "plus.circle.fill")
-                            .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                            .foregroundColor(Color.appAccent)
                     }
                 }
             }
@@ -106,7 +106,7 @@ struct CodesView: View {
             .padding(.horizontal)
             .padding(.vertical, 12)
         }
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
     }
 
     // MARK: - Filter Bar
@@ -163,8 +163,8 @@ struct CodesView: View {
         List {
             ForEach(viewModel.filteredCodes) { code in
                 CodeRow(code: code)
-                    .listRowBackground(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
-                    .listRowSeparatorTint(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.separator))
+                    .listRowBackground(Color.appSurface)
+                    .listRowSeparatorTint(Color.appBorder)
                     .contentShape(Rectangle())
                     .onTapGesture {
                         selectedCode = code
@@ -185,7 +185,7 @@ struct CodesView: View {
                             Label(code.active ? "Disable" : "Enable",
                                   systemImage: code.active ? "xmark.circle" : "checkmark.circle")
                         }
-                        .tint(code.active ? (appearanceManager.isDarkMode ? Color.appAccent : .red) : .green)
+                        .tint(code.active ? Color.appAccent : .green)
                     }
             }
         }
@@ -320,7 +320,7 @@ struct CodeRow: View {
                         Text(commission)
                             .font(.caption)
                     }
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
                 }
             }
 
@@ -481,7 +481,7 @@ struct CreateCodeView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Create Discount Code")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -533,7 +533,7 @@ struct CreateCodeView: View {
                     commissionVal
 
                 Text("Commission Example: On a $\(String(format: "%.2f", exampleOrderTotal)) order, the partner would earn: $\(String(format: "%.2f", commissionAmount))")
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
             } else {
                 Text("Enter discount and commission values to see the example")
             }

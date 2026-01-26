@@ -122,12 +122,12 @@ struct StatusBadge: View {
     /// Returns the appropriate color for an OrderStatus.
     static func color(for status: OrderStatus) -> Color {
         switch status {
-        case .pending: return .yellow
+        case .pending: return Color.appWarning
         case .awaitingPayment: return Color.appAccent
-        case .awaitingShipment: return .blue
-        case .inProgress: return .purple
-        case .completed: return .green
-        case .cancelled: return .red
+        case .awaitingShipment: return Color.blue
+        case .inProgress: return Color.purple
+        case .completed: return Color.appSuccess
+        case .cancelled: return Color.appDanger
         }
     }
 
@@ -135,24 +135,24 @@ struct StatusBadge: View {
     static func color(for status: CommissionStatus) -> Color {
         switch status {
         case .pending: return Color.appAccent
-        case .eligible: return .blue
-        case .approved: return .purple
-        case .paid: return .green
-        case .voided: return .red
+        case .eligible: return Color.blue
+        case .approved: return Color.purple
+        case .paid: return Color.appSuccess
+        case .voided: return Color.appDanger
         }
     }
 
     /// Returns the appropriate color for an InquiryStatus.
     static func color(for status: InquiryStatus) -> Color {
         switch status {
-        case .new: return .blue
-        case .reviewed: return .purple
+        case .new: return Color.blue
+        case .reviewed: return Color.purple
         case .quoted: return Color.appAccent
-        case .invoiceSent: return .yellow
-        case .paid: return .teal
-        case .inProgress: return .indigo
-        case .completed: return .green
-        case .cancelled: return .red
+        case .invoiceSent: return Color.appWarning
+        case .paid: return Color.teal
+        case .inProgress: return Color.indigo
+        case .completed: return Color.appSuccess
+        case .cancelled: return Color.appDanger
         }
     }
 }
@@ -357,10 +357,10 @@ struct StatusDot: View {
                     .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 8) {
-                    StatusBadge(status: "Standard", color: .blue, style: .standard)
-                    StatusBadge(status: "Pill", color: .green, style: .pill)
+                    StatusBadge(status: "Standard", color: Color.blue, style: .standard)
+                    StatusBadge(status: "Pill", color: Color.appSuccess, style: .pill)
                     StatusBadge(status: "Outline", color: Color.appAccent, style: .outline)
-                    StatusBadge(status: "Solid", color: .purple, style: .solid)
+                    StatusBadge(status: "Solid", color: Color.purple, style: .solid)
                 }
             }
 
@@ -371,9 +371,9 @@ struct StatusDot: View {
                     .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 8) {
-                    StatusBadge(status: "Small", color: .blue, size: .small)
-                    StatusBadge(status: "Medium", color: .blue, size: .medium)
-                    StatusBadge(status: "Large", color: .blue, size: .large)
+                    StatusBadge(status: "Small", color: Color.blue, size: .small)
+                    StatusBadge(status: "Medium", color: Color.blue, size: .medium)
+                    StatusBadge(status: "Large", color: Color.blue, size: .large)
                 }
             }
 
@@ -384,9 +384,9 @@ struct StatusDot: View {
                     .foregroundColor(Color.appTextPrimary)
 
                 HStack(spacing: 8) {
-                    IconStatusBadge(status: "Active", icon: "checkmark.circle", color: .green)
+                    IconStatusBadge(status: "Active", icon: "checkmark.circle", color: Color.appSuccess)
                     IconStatusBadge(status: "Pending", icon: "clock", color: Color.appAccent)
-                    IconStatusBadge(status: "Error", icon: "exclamationmark.triangle", color: .red)
+                    IconStatusBadge(status: "Error", icon: "exclamationmark.triangle", color: Color.appDanger)
                 }
             }
 
@@ -398,21 +398,21 @@ struct StatusDot: View {
 
                 HStack(spacing: 16) {
                     HStack(spacing: 4) {
-                        StatusDot(color: .green)
+                        StatusDot(color: Color.appSuccess)
                         Text("Online")
                             .font(.caption)
                             .foregroundColor(Color.appTextSecondary)
                     }
 
                     HStack(spacing: 4) {
-                        StatusDot(color: .green, isPulsing: true)
+                        StatusDot(color: Color.appSuccess, isPulsing: true)
                         Text("Live")
                             .font(.caption)
                             .foregroundColor(Color.appTextSecondary)
                     }
 
                     HStack(spacing: 4) {
-                        StatusDot(color: .red)
+                        StatusDot(color: Color.appDanger)
                         Text("Offline")
                             .font(.caption)
                             .foregroundColor(Color.appTextSecondary)
@@ -422,5 +422,5 @@ struct StatusDot: View {
         }
         .padding()
     }
-    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
+    .background(Color.appBackground)
 }

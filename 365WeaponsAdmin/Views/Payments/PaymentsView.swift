@@ -35,7 +35,7 @@ struct PaymentsView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Payments")
             .navigationBarTitleDisplayMode(.large)
             .refreshable {
@@ -111,7 +111,7 @@ struct PaymentsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Quick Actions")
                 .font(.headline)
-                .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                .foregroundColor(Color.appTextPrimary)
 
             HStack(spacing: 12) {
                 QuickActionButton(
@@ -147,7 +147,7 @@ struct PaymentsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Accept Payment")
                 .font(.headline)
-                .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                .foregroundColor(Color.appTextPrimary)
 
             VStack(spacing: 8) {
                 ForEach(PaymentMethod.allCases) { method in
@@ -166,7 +166,7 @@ struct PaymentsView: View {
             HStack {
                 Text("Recent Transactions")
                     .font(.headline)
-                    .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                    .foregroundColor(Color.appTextPrimary)
 
                 Spacer()
 
@@ -215,11 +215,11 @@ struct PaymentStatCard: View {
             if let amount = amount {
                 Text(formatCurrency(amount))
                     .font(.title2.bold())
-                    .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                    .foregroundColor(Color.appTextPrimary)
             } else if let count = count {
                 Text("\(count)")
                     .font(.title2.bold())
-                    .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                    .foregroundColor(Color.appTextPrimary)
             }
 
             Text(title)
@@ -228,9 +228,9 @@ struct PaymentStatCard: View {
         }
         .padding()
         .frame(width: 140)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
-        .shadow(color: appearanceManager.isDarkMode ? .clear : .black.opacity(0.05), radius: 5)
+        .shadow(color: .black.opacity(0.05), radius: 5)
     }
 
     private func formatCurrency(_ amount: Double) -> String {
@@ -260,13 +260,13 @@ struct PayQuickActionButton: View {
 
                 Text(title)
                     .font(.caption)
-                    .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                    .foregroundColor(Color.appTextPrimary)
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+            .background(Color.appSurface)
             .cornerRadius(12)
-            .shadow(color: appearanceManager.isDarkMode ? .clear : .black.opacity(0.05), radius: 5)
+            .shadow(color: .black.opacity(0.05), radius: 5)
         }
     }
 }
@@ -299,7 +299,7 @@ struct PaymentMethodRow: View {
                     HStack {
                         Text(method.displayName)
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                            .foregroundColor(Color.appTextPrimary)
 
                         if !isAvailable {
                             Text("Unavailable")
@@ -324,9 +324,9 @@ struct PaymentMethodRow: View {
                     .foregroundColor(Color.appTextSecondary)
             }
             .padding()
-            .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+            .background(Color.appSurface)
             .cornerRadius(12)
-            .shadow(color: appearanceManager.isDarkMode ? .clear : .black.opacity(0.05), radius: 5)
+            .shadow(color: .black.opacity(0.05), radius: 5)
         }
         .disabled(!isAvailable)
     }
@@ -356,13 +356,13 @@ struct TransactionRow: View {
                 HStack {
                     Text(transaction.customerName ?? "Customer")
                         .font(.subheadline.weight(.medium))
-                        .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                        .foregroundColor(Color.appTextPrimary)
 
                     Spacer()
 
                     Text(transaction.formattedAmount)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(transaction.status == .refunded ? .red : (appearanceManager.isDarkMode ? .white : .primary))
+                        .foregroundColor(transaction.status == .refunded ? Color.appDanger : Color.appTextPrimary)
                 }
 
                 HStack {
@@ -388,9 +388,9 @@ struct TransactionRow: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
-        .shadow(color: appearanceManager.isDarkMode ? .clear : .black.opacity(0.05), radius: 5)
+        .shadow(color: .black.opacity(0.05), radius: 5)
     }
 }
 
@@ -407,7 +407,7 @@ struct EmptyTransactionsView: View {
 
             Text("No Transactions Yet")
                 .font(.headline)
-                .foregroundColor(appearanceManager.isDarkMode ? .white : .primary)
+                .foregroundColor(Color.appTextPrimary)
 
             Text("Accept your first payment to see it here")
                 .font(.subheadline)
@@ -415,7 +415,7 @@ struct EmptyTransactionsView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(40)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 }

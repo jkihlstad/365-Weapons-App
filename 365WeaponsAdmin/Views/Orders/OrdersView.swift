@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct OrdersView: View {
-    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @StateObject private var viewModel = OrdersViewModel()
     @State private var showBulkStatusPicker = false
     @State private var showExportSheet = false
@@ -47,7 +46,7 @@ struct OrdersView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Orders")
             .searchable(text: $viewModel.searchText, prompt: "Search orders...")
             .toolbar {
@@ -107,7 +106,7 @@ struct OrdersView: View {
                         .ignoresSafeArea()
                     ProgressView("Processing...")
                         .padding()
-                        .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
+                        .background(Color.appSurface2)
                         .cornerRadius(12)
                 }
             }
@@ -139,12 +138,12 @@ struct OrdersView: View {
             if viewModel.hasSelection {
                 Text("\(viewModel.selectedOrdersCount) selected")
                     .font(.subheadline)
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
             }
         }
         .padding(.horizontal)
         .padding(.vertical, 8)
-        .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.1) : Color.red.opacity(0.1))
+        .background(Color.appAccent.opacity(0.1))
     }
 
     // MARK: - Bulk Action Bar
@@ -181,21 +180,21 @@ struct OrdersView: View {
                             .font(.caption2)
                     }
                 }
-                .foregroundColor(.red)
+                .foregroundColor(Color.appDanger)
 
                 Spacer()
 
                 // Selection count
                 Text("\(viewModel.selectedOrdersCount)")
                     .font(.title2.weight(.bold))
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.2) : Color.red.opacity(0.15))
+                    .background(Color.appAccent.opacity(0.2))
                     .cornerRadius(8)
             }
             .padding()
-            .background(appearanceManager.isDarkMode ? Color.appBackground.opacity(0.95) : Color(UIColor.systemBackground).opacity(0.95))
+            .background(Color.appBackground.opacity(0.95))
         }
     }
 
@@ -222,7 +221,7 @@ struct OrdersView: View {
             }
             .padding()
         }
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
     }
 
     // MARK: - Orders List
@@ -236,7 +235,7 @@ struct OrdersView: View {
                             Button(action: { viewModel.toggleSelection(orderId: order.id) }) {
                                 Image(systemName: viewModel.isSelected(orderId: order.id) ? "checkmark.circle.fill" : "circle")
                                     .font(.title2)
-                                    .foregroundColor(viewModel.isSelected(orderId: order.id) ? (appearanceManager.isDarkMode ? Color.appAccent : .red) : Color.appTextSecondary)
+                                    .foregroundColor(viewModel.isSelected(orderId: order.id) ? Color.appAccent : Color.appTextSecondary)
                             }
                         }
 
@@ -276,7 +275,6 @@ struct OrdersView: View {
 
 // MARK: - Filter Chip
 struct FilterChip: View {
-    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let title: String
     let count: Int
     let isSelected: Bool
@@ -294,13 +292,13 @@ struct FilterChip: View {
                         .font(.caption2.weight(.bold))
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(isSelected ? Color.appTextPrimary.opacity(0.3) : (appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground)))
+                        .background(isSelected ? Color.appTextPrimary.opacity(0.3) : Color.appSurface2)
                         .cornerRadius(8)
                 }
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(isSelected ? color : (appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground)))
+            .background(isSelected ? color : Color.appSurface2)
             .foregroundColor(isSelected ? Color.appTextPrimary : Color.appTextSecondary)
             .cornerRadius(20)
         }
@@ -309,7 +307,6 @@ struct FilterChip: View {
 
 // MARK: - Order Card
 struct OrderCard: View {
-    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let order: Order
 
     var body: some View {
@@ -330,7 +327,7 @@ struct OrderCard: View {
             }
 
             Divider()
-                .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
+                .background(Color.appBorder)
 
             // Details
             HStack {
@@ -343,7 +340,7 @@ struct OrderCard: View {
                     if let serviceType = order.serviceType {
                         Label(serviceType.displayName, systemImage: serviceType.icon)
                             .font(.caption)
-                            .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                            .foregroundColor(Color.appAccent)
                     }
                 }
 
@@ -352,27 +349,26 @@ struct OrderCard: View {
                 VStack(alignment: .trailing, spacing: 4) {
                     Text(order.formattedTotal)
                         .font(.title3.weight(.bold))
-                        .foregroundColor(.green)
+                        .foregroundColor(Color.appSuccess)
 
                     Text(order.placedBy == .partner ? "Partner Order" : "Direct Order")
                         .font(.caption2)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(order.placedBy == .partner ? (appearanceManager.isDarkMode ? Color.appAccent.opacity(0.2) : Color.red.opacity(0.15)) : Color.blue.opacity(0.2))
-                        .foregroundColor(order.placedBy == .partner ? (appearanceManager.isDarkMode ? Color.appAccent : .red) : .blue)
+                        .background(order.placedBy == .partner ? Color.appAccent.opacity(0.2) : Color.blue.opacity(0.2))
+                        .foregroundColor(order.placedBy == .partner ? Color.appAccent : .blue)
                         .cornerRadius(4)
                 }
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 }
 
 // MARK: - Order Detail View
 struct OrderDetailView: View {
-    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let order: Order
     @ObservedObject var viewModel: OrdersViewModel
     @Environment(\.dismiss) private var dismiss
@@ -411,7 +407,7 @@ struct OrderDetailView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Order #\(order.orderNumber)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -431,7 +427,7 @@ struct OrderDetailView: View {
                         .foregroundColor(Color.appTextSecondary)
                     Text(order.formattedTotal)
                         .font(.largeTitle.weight(.bold))
-                        .foregroundColor(.green)
+                        .foregroundColor(Color.appSuccess)
                 }
 
                 Spacer()
@@ -442,7 +438,7 @@ struct OrderDetailView: View {
             if let paidAt = order.paidAt {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.green)
+                        .foregroundColor(Color.appSuccess)
                     Text("Paid on \(paidAt, style: .date)")
                         .font(.caption)
                         .foregroundColor(Color.appTextSecondary)
@@ -450,7 +446,7 @@ struct OrderDetailView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -471,14 +467,14 @@ struct OrderDetailView: View {
                     Text("Save Status")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
+                        .background(Color.appAccent)
                         .foregroundColor(Color.appTextPrimary)
                         .cornerRadius(12)
                 }
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -499,7 +495,7 @@ struct OrderDetailView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -521,11 +517,11 @@ struct OrderDetailView: View {
             InfoRow(label: "Created", value: order.createdAt.formatted())
 
             if let totals = order.totals {
-                Divider().background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
+                Divider().background(Color.appBorder)
 
                 InfoRow(label: "Subtotal", value: String(format: "$%.2f", totals.subtotal))
                 if let discount = totals.discountAmount, discount > 0 {
-                    InfoRow(label: "Discount", value: String(format: "-$%.2f", discount), valueColor: .green)
+                    InfoRow(label: "Discount", value: String(format: "-$%.2f", discount), valueColor: Color.appSuccess)
                 }
                 if let tax = totals.tax {
                     InfoRow(label: "Tax", value: String(format: "$%.2f", tax))
@@ -536,7 +532,7 @@ struct OrderDetailView: View {
             }
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -550,7 +546,7 @@ struct OrderDetailView: View {
                 .foregroundColor(Color.appTextSecondary)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -583,7 +579,6 @@ struct InfoRow: View {
 
 // MARK: - Bulk Status Picker Sheet
 struct BulkStatusPickerSheet: View {
-    @ObservedObject private var appearanceManager = AppearanceManager.shared
     @ObservedObject var viewModel: OrdersViewModel
     @Environment(\.dismiss) private var dismiss
 
@@ -617,7 +612,7 @@ struct BulkStatusPickerSheet: View {
                 }
                 .listStyle(.plain)
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground : Color(UIColor.systemBackground))
+            .background(Color.appBackground)
             .navigationTitle("Update Status")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -643,7 +638,6 @@ struct BulkStatusPickerSheet: View {
 
 // MARK: - Export Sheet
 struct ExportSheet: View {
-    @ObservedObject private var appearanceManager = AppearanceManager.shared
     let csv: String
     @Environment(\.dismiss) private var dismiss
     @State private var showShareSheet = false
@@ -653,7 +647,7 @@ struct ExportSheet: View {
             VStack(spacing: 20) {
                 Image(systemName: "doc.text")
                     .font(.system(size: 60))
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
 
                 Text("Export Ready")
                     .font(.title2.weight(.bold))
@@ -671,7 +665,7 @@ struct ExportSheet: View {
                         .padding()
                 }
                 .frame(maxHeight: 200)
-                .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+                .background(Color.appSurface)
                 .cornerRadius(12)
 
                 Spacer()
@@ -686,7 +680,7 @@ struct ExportSheet: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
+                    .background(Color.appAccent)
                     .foregroundColor(Color.appTextPrimary)
                     .cornerRadius(12)
                 }
@@ -702,13 +696,13 @@ struct ExportSheet: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appTextPrimary : .primary)
+                    .background(Color.appSurface2)
+                    .foregroundColor(Color.appTextPrimary)
                     .cornerRadius(12)
                 }
             }
             .padding()
-            .background(appearanceManager.isDarkMode ? Color.appBackground : Color(UIColor.systemBackground))
+            .background(Color.appBackground)
             .navigationTitle("Export Orders")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

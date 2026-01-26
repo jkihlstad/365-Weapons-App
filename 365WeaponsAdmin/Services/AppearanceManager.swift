@@ -101,33 +101,65 @@ class AppearanceManager: ObservableObject {
 
     /// Configure UIKit appearances to match theme
     private func updateUIKitAppearance() {
-        // Get colors from named assets with fallbacks
-        let backgroundColor = UIColor(named: "AppBackground") ?? .systemBackground
-        let textColor = UIColor(named: "AppTextPrimary") ?? .label
-        let accentColor = UIColor(named: "AppAccent") ?? .orange
+        // Get fully opaque colors from named assets with fallbacks
+        let backgroundColor = UIColor(named: "AppBackground")?.withAlphaComponent(1.0) ?? .systemBackground
+        let textColor = UIColor(named: "AppTextPrimary")?.withAlphaComponent(1.0) ?? .label
+        let accentColor = UIColor(named: "AppAccent")?.withAlphaComponent(1.0) ?? .orange
 
-        // Navigation bar appearance
+        // Note: iOS 26 liquid glass is controlled at the SwiftUI level via
+        // .preferredGlassEffect() modifier, not via UIKit appearance
+
+        // Navigation bar appearance with fully opaque background
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
         navBarAppearance.backgroundColor = backgroundColor
-        navBarAppearance.titleTextAttributes = [.foregroundColor: textColor]
-        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: textColor]
+        navBarAppearance.titleTextAttributes = [
+            .foregroundColor: textColor,
+            .font: UIFont.boldSystemFont(ofSize: 17)
+        ]
+        navBarAppearance.largeTitleTextAttributes = [
+            .foregroundColor: textColor,
+            .font: UIFont.boldSystemFont(ofSize: 34)
+        ]
+        // Ensure back button and bar button items have proper contrast
+        navBarAppearance.buttonAppearance.normal.titleTextAttributes = [.foregroundColor: accentColor]
+        navBarAppearance.doneButtonAppearance.normal.titleTextAttributes = [.foregroundColor: accentColor]
 
         UINavigationBar.appearance().standardAppearance = navBarAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
         UINavigationBar.appearance().compactAppearance = navBarAppearance
+        if #available(iOS 15.0, *) {
+            UINavigationBar.appearance().compactScrollEdgeAppearance = navBarAppearance
+        }
         UINavigationBar.appearance().tintColor = accentColor
+        UINavigationBar.appearance().isTranslucent = false
 
-        // Tab bar appearance
+        // Tab bar appearance with fully opaque background
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithOpaqueBackground()
         tabBarAppearance.backgroundColor = backgroundColor
 
+        // Configure tab bar item appearances for proper contrast
+        let tabItemAppearance = UITabBarItemAppearance()
+        tabItemAppearance.normal.iconColor = textColor.withAlphaComponent(0.6)
+        tabItemAppearance.normal.titleTextAttributes = [.foregroundColor: textColor.withAlphaComponent(0.6)]
+        tabItemAppearance.selected.iconColor = accentColor
+        tabItemAppearance.selected.titleTextAttributes = [.foregroundColor: accentColor]
+
+        tabBarAppearance.stackedLayoutAppearance = tabItemAppearance
+        tabBarAppearance.inlineLayoutAppearance = tabItemAppearance
+        tabBarAppearance.compactInlineLayoutAppearance = tabItemAppearance
+
         UITabBar.appearance().standardAppearance = tabBarAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        UITabBar.appearance().isTranslucent = false
 
-        // Table view appearance
+        // Table view appearance - set clear to let SwiftUI control backgrounds
         UITableView.appearance().backgroundColor = .clear
+        UITableView.appearance().separatorColor = UIColor(named: "AppBorder")
+
+        // Collection view appearance
+        UICollectionView.appearance().backgroundColor = .clear
 
         // Force refresh windows
         for scene in UIApplication.shared.connectedScenes {
@@ -138,6 +170,12 @@ class AppearanceManager: ObservableObject {
                         window.overrideUserInterfaceStyle = scheme == .dark ? .dark : .light
                     } else {
                         window.overrideUserInterfaceStyle = .unspecified
+                    }
+
+                    // Force layout update to apply appearance changes
+                    window.subviews.forEach { view in
+                        view.removeFromSuperview()
+                        window.addSubview(view)
                     }
                 }
             }

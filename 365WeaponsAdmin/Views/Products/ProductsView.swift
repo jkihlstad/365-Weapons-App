@@ -222,12 +222,12 @@ struct ProductGridCard: View {
                 HStack {
                     Text(product.formattedPrice)
                         .font(.subheadline.weight(.bold))
-                        .foregroundColor(.green)
+                        .foregroundColor(Color.appSuccess)
 
                     Spacer()
 
                     Circle()
-                        .fill(product.inStock ? Color.green : Color.red)
+                        .fill(product.inStock ? Color.appSuccess : Color.appDanger)
                         .frame(width: 8, height: 8)
                 }
             }
@@ -298,12 +298,12 @@ struct ProductListCard: View {
                 HStack {
                     Text(product.inStock ? "In Stock" : "Out of Stock")
                         .font(.caption2)
-                        .foregroundColor(product.inStock ? .green : .red)
+                        .foregroundColor(product.inStock ? Color.appSuccess : Color.appDanger)
 
                     if product.hasOptions ?? false {
                         Text("Has Options")
                             .font(.caption2)
-                            .foregroundColor(.blue)
+                            .foregroundColor(Color.appAccent)
                     }
                 }
             }
@@ -312,7 +312,7 @@ struct ProductListCard: View {
 
             Text(product.formattedPrice)
                 .font(.headline)
-                .foregroundColor(.green)
+                .foregroundColor(Color.appSuccess)
         }
         .padding()
         .frame(height: 80)
@@ -531,7 +531,7 @@ struct ProductDetailView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(Color.appSurface2)
-                                .foregroundColor(product.inStock ? .red : .green)
+                                .foregroundColor(product.inStock ? Color.appDanger : Color.appSuccess)
                                 .cornerRadius(12)
                             }
                         }
@@ -579,17 +579,17 @@ struct ProductDetailView: View {
             HStack {
                 Text(product.formattedPrice)
                     .font(.title.weight(.bold))
-                    .foregroundColor(.green)
+                    .foregroundColor(Color.appSuccess)
 
                 Spacer()
 
                 HStack(spacing: 4) {
                     Circle()
-                        .fill(product.inStock ? Color.green : Color.red)
+                        .fill(product.inStock ? Color.appSuccess : Color.appDanger)
                         .frame(width: 8, height: 8)
                     Text(product.inStock ? "In Stock" : "Out of Stock")
                         .font(.subheadline)
-                        .foregroundColor(product.inStock ? .green : .red)
+                        .foregroundColor(product.inStock ? Color.appSuccess : Color.appDanger)
                 }
             }
 

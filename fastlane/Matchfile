@@ -1,0 +1,19 @@
+# Matchfile - Certificate and profile syncing
+# https://docs.fastlane.tools/actions/match/
+
+# Private git repo for storing encrypted certificates
+git_url("https://github.com/jkihlstad/365weapons-certificates.git")
+storage_mode("git")
+
+app_identifier(["com.weapons365.admin"])
+username(ENV["APPLE_ID"] || "your-apple-id@email.com")
+team_id("D33FTL28LK")
+
+# Default type (can be overridden per command)
+type("appstore")
+
+# Optional: Set a custom branch
+# git_branch("main")
+
+# Clone using shallow clone for faster operations
+shallow_clone(true)

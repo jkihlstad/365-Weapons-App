@@ -130,7 +130,8 @@ struct WeaponsAdminApp: App {
         }
 
         // Configure OpenAI for Whisper (speech-to-text) and TTS
-        if let openAIKey = configManager.openAIAPIKey {
+        let openAIKey = configManager.openAIAPIKey
+        if let openAIKey = openAIKey {
             OpenAIClient.shared.configure(apiKey: openAIKey)
         }
 
@@ -138,6 +139,24 @@ struct WeaponsAdminApp: App {
         if let clerkKey = configManager.clerkPublishableKey {
             clerk.configure(publishableKey: clerkKey)
             try? await clerk.load()
+        }
+
+        // Configure PostgreSQL client for analytics
+        if let backendAuthToken = configManager.getAPIKey(for: .backendAuth) {
+            PostgreSQLClient.shared.configure(
+                proxyEndpoint: PostgreSQLConfig.proxyEndpoint,
+                authToken: backendAuthToken
+            )
+        }
+
+        // Configure LanceDB for vector search and RAG
+        if let backendAuthToken = configManager.getAPIKey(for: .backendAuth),
+           let openAIKey = openAIKey {
+            LanceDBClient.shared.configure(
+                serverEndpoint: LanceDBConfig.serverEndpoint,
+                authToken: backendAuthToken,
+                openAIKey: openAIKey
+            )
         }
     }
 }

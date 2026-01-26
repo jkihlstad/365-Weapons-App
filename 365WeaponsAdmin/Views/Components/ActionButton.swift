@@ -125,7 +125,7 @@ enum ActionButtonStyle {
         switch self {
         case .primary: return Color.appAccent
         case .secondary: return .clear
-        case .destructive: return .red
+        case .destructive: return Color.appDanger
         case .ghost: return .clear
         case .subtle: return Color.appSurface2
         }
@@ -448,7 +448,7 @@ struct ButtonGroup<Content: View>: View {
 
                 HStack(spacing: 16) {
                     IconButton(icon: "plus", action: {})
-                    IconButton(icon: "trash", color: .red, action: {})
+                    IconButton(icon: "trash", color: Color.appDanger, action: {})
                     IconButton(icon: "gearshape", backgroundColor: Color.appSurface2, action: {})
                 }
             }
@@ -479,5 +479,5 @@ struct ButtonGroup<Content: View>: View {
         }
         .padding()
     }
-    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
+    .background(Color.appBackground)
 }

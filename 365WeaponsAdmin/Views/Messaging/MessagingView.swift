@@ -33,7 +33,7 @@ struct MessagingView: View {
                     submissionsList
                 }
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Messages")
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $viewModel.searchText, prompt: "Search submissions...")
@@ -44,7 +44,7 @@ struct MessagingView: View {
                         viewModel.showOnlyNew.toggle()
                     } label: {
                         Image(systemName: viewModel.showOnlyNew ? "bell.badge.fill" : "bell.badge")
-                            .foregroundColor(viewModel.showOnlyNew ? (appearanceManager.isDarkMode ? Color.appAccent : .red) : Color.appTextSecondary)
+                            .foregroundColor(viewModel.showOnlyNew ? Color.appAccent : Color.appTextSecondary)
                     }
 
                     // Sort menu
@@ -105,7 +105,7 @@ struct MessagingView: View {
                     title: "New",
                     value: "\(viewModel.newCount)",
                     icon: "bell.badge",
-                    color: appearanceManager.isDarkMode ? Color.appAccent : .red
+                    color: Color.appAccent
                 )
 
                 ForEach(SubmissionType.allCases) { type in
@@ -120,7 +120,7 @@ struct MessagingView: View {
             .padding(.horizontal)
             .padding(.vertical, 12)
         }
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
     }
 
     // MARK: - Type Filter Bar
@@ -158,8 +158,8 @@ struct MessagingView: View {
         List {
             ForEach(viewModel.filteredSubmissions) { submission in
                 SubmissionRow(submission: submission)
-                    .listRowBackground(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
-                    .listRowSeparatorTint(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.separator))
+                    .listRowBackground(Color.appSurface)
+                    .listRowSeparatorTint(Color.appBorder)
                     .contentShape(Rectangle())
                     .onTapGesture {
                         selectedSubmission = submission
@@ -186,9 +186,9 @@ struct MessagingView: View {
         switch type {
         case .inquiry: return .blue
         case .vendorSignup: return .purple
-        case .contact: return appearanceManager.isDarkMode ? Color.appAccent : .red
+        case .contact: return Color.appAccent
         case .newsletter: return .green
-                }
+        }
     }
 }
 
@@ -274,7 +274,7 @@ struct SubmissionRow: View {
                             .foregroundColor(Color.appTextPrimary)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
+                            .background(Color.appAccent)
                             .cornerRadius(4)
                     }
 
@@ -316,9 +316,9 @@ struct SubmissionRow: View {
         switch type {
         case .inquiry: return .blue
         case .vendorSignup: return .purple
-        case .contact: return appearanceManager.isDarkMode ? Color.appAccent : .red
+        case .contact: return Color.appAccent
         case .newsletter: return .green
-                }
+        }
     }
 }
 
@@ -342,11 +342,11 @@ struct SubmissionStatusBadge: View {
     private var statusColor: Color {
         let lowercased = status.lowercased()
         if lowercased.contains("new") || lowercased.contains("pending") {
-            return appearanceManager.isDarkMode ? Color.appAccent : .red
+            return Color.appAccent
         } else if lowercased.contains("active") || lowercased.contains("completed") || lowercased.contains("paid") {
-            return .green
+            return Color.appSuccess
         } else if lowercased.contains("inactive") || lowercased.contains("cancelled") || lowercased.contains("unsubscribed") {
-            return .red
+            return Color.appDanger
         } else {
             return .blue
         }

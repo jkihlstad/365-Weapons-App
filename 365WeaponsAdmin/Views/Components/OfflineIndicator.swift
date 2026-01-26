@@ -18,13 +18,13 @@ struct OfflineIndicator: View {
 
     private var statusColor: Color {
         if !offlineManager.isOnline {
-            return .red
+            return Color.appDanger
         } else if offlineManager.isSyncing {
-            return .blue
+            return Color.blue
         } else if offlineManager.hasPendingActions {
-            return appearanceManager.isDarkMode ? Color.appAccent : .red
+            return Color.appAccent
         } else {
-            return .green
+            return Color.appSuccess
         }
     }
 
@@ -60,7 +60,7 @@ struct OfflineIndicator: View {
                                 .font(.caption.weight(.semibold))
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(appearanceManager.isDarkMode ? Color.appAccent : Color.red)
+                                .background(Color.appAccent)
                                 .foregroundColor(Color.appTextPrimary)
                                 .cornerRadius(12)
                         }
@@ -138,14 +138,14 @@ struct OfflineIndicator: View {
     private var expandedDetails: some View {
         VStack(alignment: .leading, spacing: 12) {
             Divider()
-                .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.separator))
+                .background(Color.appBorder)
 
             // Pending actions list
             ForEach(offlineManager.pendingActions.prefix(5)) { action in
                 HStack(spacing: 12) {
                     Image(systemName: action.type.icon)
                         .font(.caption)
-                        .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                        .foregroundColor(Color.appAccent)
                         .frame(width: 20)
 
                     VStack(alignment: .leading, spacing: 2) {
@@ -162,7 +162,7 @@ struct OfflineIndicator: View {
                     if action.retryCount > 0 {
                         Text("Retry \(action.retryCount)")
                             .font(.caption2)
-                            .foregroundColor(.red)
+                            .foregroundColor(Color.appDanger)
                     }
                 }
             }
@@ -186,7 +186,7 @@ struct OfflineIndicator: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(appearanceManager.isDarkMode ? Color.appSurface.opacity(0.4) : Color(UIColor.systemBackground))
+        .background(Color.appSurface)
     }
 
     // MARK: - Actions
@@ -239,11 +239,11 @@ struct CompactOfflineIndicator: View {
 
     private var statusColor: Color {
         if !offlineManager.isOnline {
-            return .red
+            return Color.appDanger
         } else if offlineManager.hasPendingActions {
-            return appearanceManager.isDarkMode ? Color.appAccent : .red
+            return Color.appAccent
         } else {
-            return .green
+            return Color.appSuccess
         }
     }
 
@@ -314,10 +314,10 @@ struct CachedDataIndicator: View {
                         .foregroundColor(Color.appTextSecondary)
                 }
             }
-            .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+            .foregroundColor(Color.appAccent)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(appearanceManager.isDarkMode ? Color.appAccent.opacity(0.15) : Color.red.opacity(0.12))
+            .background(Color.appAccent.opacity(0.15))
             .cornerRadius(12)
         }
     }
@@ -347,10 +347,10 @@ struct SyncStatusBadge: View {
 
     private var statusColor: Color {
         switch status {
-        case .synced: return .green
-        case .pending: return appearanceManager.isDarkMode ? Color.appAccent : .red
-        case .failed: return .red
-        case .syncing: return .blue
+        case .synced: return Color.appSuccess
+        case .pending: return Color.appAccent
+        case .failed: return Color.appDanger
+        case .syncing: return Color.blue
         }
     }
 }
@@ -378,5 +378,5 @@ struct SyncStatusBadge: View {
         }
     }
     .padding()
-    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+    .background(Color.appBackground.ignoresSafeArea())
 }

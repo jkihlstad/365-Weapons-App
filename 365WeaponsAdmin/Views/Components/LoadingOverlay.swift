@@ -85,7 +85,7 @@ struct LoadingOverlay: View {
                 }
             }
             .padding(32)
-            .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
+            .background(Color.appSurface2)
             .cornerRadius(16)
         }
     }
@@ -105,7 +105,7 @@ struct LoadingOverlay: View {
         }
         .frame(maxWidth: .infinity)
         .padding(24)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -225,7 +225,7 @@ struct SkeletonCard: View {
             SkeletonView(width: 120, height: 14)
         }
         .padding()
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 }
@@ -296,7 +296,7 @@ struct DeterminateLoadingOverlay: View {
                 }
             }
             .padding(32)
-            .background(appearanceManager.isDarkMode ? Color.appSurface2 : Color(UIColor.secondarySystemBackground))
+            .background(Color.appSurface2)
             .cornerRadius(16)
         }
     }
@@ -306,7 +306,7 @@ struct DeterminateLoadingOverlay: View {
 
 #Preview("Loading Overlays") {
     ZStack {
-        (AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground)).ignoresSafeArea()
+        Color.appBackground.ignoresSafeArea()
 
         VStack(spacing: 24) {
             Text("Background Content")
@@ -357,5 +357,5 @@ struct DeterminateLoadingOverlay: View {
         }
         .padding()
     }
-    .background(AppearanceManager.shared.isDarkMode ? Color.appBackground : Color(UIColor.systemGroupedBackground))
+    .background(Color.appBackground)
 }

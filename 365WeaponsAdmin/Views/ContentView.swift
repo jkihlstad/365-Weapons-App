@@ -291,46 +291,22 @@ struct ScrollableTabBar: View {
                 }
                 .padding(.horizontal, 8)
             }
-            .padding(.top, 4)
+            .padding(.top, 8)
             .padding(.bottom, 16)
             .background(
-                // Liquid glass effect
-                ZStack {
-                    // Base blur layer
+                // Solid background with top border
+                VStack(spacing: 0) {
+                    // Top border
                     Rectangle()
-                        .fill(.ultraThinMaterial)
+                        .fill(Color.appBorder)
+                        .frame(height: 1)
 
-                    // Glass tint overlay
+                    // Solid background
                     Rectangle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0.15),
-                                    Color.white.opacity(0.05)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-
-                    // Top highlight border
-                    VStack {
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(0.4),
-                                        Color.white.opacity(0.1)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(height: 0.5)
-                        Spacer()
-                    }
+                        .fill(Color.appSurface)
                 }
             )
+            .shadow(color: Color.appTextPrimary.opacity(0.1), radius: 8, x: 0, y: -4)
             .onChange(of: selectedTab) { _, newTab in
                 withAnimation(.easeInOut(duration: 0.3)) {
                     proxy.scrollTo(newTab, anchor: .center)
@@ -352,7 +328,7 @@ struct ScrollableTabBar: View {
                 Text(tab.rawValue)
                     .font(.caption2)
             }
-            .foregroundColor(selectedTab == tab ? (appearanceManager.isDarkMode ? Color.appAccent : .red) : Color.appTextSecondary)
+            .foregroundColor(selectedTab == tab ? Color.appTextPrimary : Color.appTextSecondary)
             .frame(width: 68)
             .padding(.vertical, 4)
         }
@@ -365,7 +341,7 @@ struct LoginView: View {
         ZStack {
             // Background gradient
             LinearGradient(
-                colors: [Color.appBackground, Color(red: 0.1, green: 0.1, blue: 0.15)],
+                colors: [Color.appBackground, Color.appSurface],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -380,7 +356,7 @@ struct LoginView: View {
                         .font(.system(size: 80))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [Color.appAccent, .red],
+                                colors: [Color.appAccent, Color.appDanger],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )

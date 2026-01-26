@@ -50,7 +50,7 @@ struct CodeDetailView: View {
                 }
                 .padding()
             }
-            .background(appearanceManager.isDarkMode ? Color.appBackground.ignoresSafeArea() : Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+            .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("Code Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -129,7 +129,7 @@ struct CodeDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(20)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(16)
     }
 
@@ -176,7 +176,7 @@ struct CodeDetailView: View {
             }
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
@@ -184,7 +184,7 @@ struct CodeDetailView: View {
 
     private var commissionDetailsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeaderLabel(title: "Commission", icon: "dollarsign.circle.fill", color: appearanceManager.isDarkMode ? Color.appAccent : .red)
+            SectionHeaderLabel(title: "Commission", icon: "dollarsign.circle.fill", color: Color.appAccent)
 
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
@@ -203,7 +203,7 @@ struct CodeDetailView: View {
                         .foregroundColor(Color.appTextSecondary)
                     Text(code.formattedCommission ?? "N/A")
                         .font(.title3.weight(.bold))
-                        .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                        .foregroundColor(Color.appAccent)
                 }
             }
 
@@ -218,11 +218,11 @@ struct CodeDetailView: View {
                     .foregroundColor(Color.appTextSecondary)
                 Text("Partner earns $\(String(format: "%.2f", commissionAmount))")
                     .font(.subheadline)
-                    .foregroundColor(appearanceManager.isDarkMode ? Color.appAccent : .red)
+                    .foregroundColor(Color.appAccent)
             }
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
@@ -261,7 +261,7 @@ struct CodeDetailView: View {
             }
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
@@ -289,7 +289,7 @@ struct CodeDetailView: View {
             }
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
@@ -346,14 +346,14 @@ struct CodeDetailView: View {
                 QuickActionButton(
                     title: "Email",
                     icon: "envelope",
-                    color: appearanceManager.isDarkMode ? Color.appAccent : .red
+                    color: Color.appAccent
                 ) {
                     showEmailInput = true
                 }
             }
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
@@ -378,7 +378,7 @@ struct CodeDetailView: View {
             CodeInfoRow(label: "Code ID", value: String(code.id.prefix(20)) + "...")
         }
         .padding(16)
-        .background(appearanceManager.isDarkMode ? Color.appSurface : Color.white)
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 
